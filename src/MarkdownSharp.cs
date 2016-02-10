@@ -1379,7 +1379,7 @@ namespace Docnet
 		}
 
 
-		private static Regex _alertBlock = new Regex(@"(@alert) (\S+)\n([\s\S]+?)\s(@end)", RegexOptions.Compiled);
+		private static Regex _alertBlock = new Regex(@"(@alert) (\S+)\s*([\s\S]+?)\s(@end)", RegexOptions.Compiled);
 
 		private string DoAlertBlocks(string text)
 		{
