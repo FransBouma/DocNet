@@ -55,6 +55,9 @@ Each level, starting with the root, has a special page defined, `__index`. This 
 ### Levels without __index defined
 If a level has no `__index` defined, `DocNet` will create a `__index` entry for the level and will specify as target `<path to index of parent>/nameoflevel.md`. If the page exists it will be loaded as the content for the index of the level, if it doesn't exist, the HTML will simply contain the topictitle and a list of all the sub topics in the level. This guarantees the tree can always be navigated in full.  
 
+## Automatic H2 level ToC entry discovery
+`Docnet` will automatically add all H2 (`##` marked) headers to the ToC as sub navigation elements below a page ToC item. It will automatically add anchors to these H2 headers in the HTML output for the page as well. This makes it very easy to create a fine-grained ToC for easy discovery.
+
 ## Themes
 `Docnet` uses themes to produce output in a certain form. A theme is a folder within the `Themes` folder which contains a `PageTemplate.htm` file and a `Destination` folder which contains zero or more folders and files which have to be copied to the `Destination` folder specified in the `docnet.json` file. 
 

@@ -68,7 +68,7 @@ namespace Docnet
 			// Get the files in the directory and copy them to the new location.
 			foreach(FileInfo file in sourceFolder.GetFiles())
 			{
-				file.CopyTo(Path.Combine(destinationFolderName, file.Name), false);
+				file.CopyTo(Path.Combine(destinationFolderName, file.Name), true);
 			}
 			if(copySubFolders)
 			{
