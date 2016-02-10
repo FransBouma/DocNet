@@ -116,6 +116,10 @@ namespace Docnet
 				Console.WriteLine("[WARNING] Destination is empty. No folder to clear.");
 				return;
 			}
+			if(!Directory.Exists(this.Destination))
+			{
+				return;
+			}
 			Directory.Delete(this.Destination, true);
 			Directory.CreateDirectory(this.Destination);
 		}
