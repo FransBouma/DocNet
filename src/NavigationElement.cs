@@ -1,0 +1,56 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Docnet
+{
+	public abstract class NavigationElement<T> : INavigationElement
+		where T : class
+	{
+		/// <summary>
+		/// Generates the output for this navigation element
+		/// </summary>
+		/// <param name="activeConfig">The active configuration to use for the output.</param>
+		/// <param name="activePath">The active path navigated through the ToC to reach this element.</param>
+		/// <returns>true if everything went well, false otherwise</returns>
+		public abstract void GenerateOutput(Config activeConfig, NavigatedPath activePath);
+		/// <summary>
+		/// Generates the ToC fragment for this element, which can either be a simple line or a full expanded menu.
+		/// </summary>
+		/// <param name="navigatedPath">The navigated path to the current element, which doesn't necessarily have to be this element.</param>
+		/// <param name="relativePathToRoot">The relative path back to the URL root, e.g. ../.., so it can be used for links to elements in this path.</param>
+		/// <returns></returns>
+		public abstract string GenerateToCFragment(NavigatedPath navigatedPath, string relativePathToRoot);
+		/// <summary>
+		/// Collects the search index entries. These are created from simple navigation elements found in this container, which aren't index element.
+		/// </summary>
+		/// <param name="collectedEntries">The collected entries.</param>
+		/// <param name="activePath">The active path currently navigated.</param>
+		public abstract void CollectSearchIndexEntries(List<SearchIndexEntry> collectedEntries, NavigatedPath activePath);
+
+
+		#region Properties
+		public abstract string TargetURL { get; }
+		/// <summary>
+		/// Gets / sets a value indicating whether this element is the __index element
+		/// </summary>
+		public abstract bool IsIndexElement { get; set; }
+
+		public string Name { get; set; }
+		/// <summary>
+		/// Gets or sets the value of this element, which can either be a string or a NavigationLevel
+		/// </summary>
+		public T Value { get; set; }
+
+		object INavigationElement.Value
+		{
+			get { return this.Value; }
+			set { this.Value = value as T; }
+		}
+
+		public NavigationLevel ParentContainer { get; set; }
+		#endregion
+	}
+}
