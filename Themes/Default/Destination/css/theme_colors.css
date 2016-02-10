@@ -54,7 +54,11 @@ mark {
 
 /* #region general classes */
 .no-highlight {
-  color: #333;
+	color: #333;
+}
+
+.toc-footer hr {
+	border-color: #3e3a3a;
 }
 /* #endregion */
 
@@ -250,6 +254,7 @@ mark {
 .nav .menu-vertical a {
 	color: #b3b3b3;
 }
+
 /* #endregion*/
 
 /* #region media queries*/

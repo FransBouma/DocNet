@@ -493,6 +493,24 @@ td {
 .text-strike {
 	text-decoration: line-through;
 }
+
+.toc-footer {
+	align-items: center;
+	text-align: center;
+}
+
+.toc-footer hr {
+	width: 100%;
+	display: block;
+	height: 1px;
+	border: 0;
+	border-top: 1px solid;
+	margin-left: auto;
+	margin-right: auto;
+	padding-bottom: 0;
+	margin-bottom: 5px;
+}
+
 /* #endregion */
 
 /* #region Alert boxes*/
