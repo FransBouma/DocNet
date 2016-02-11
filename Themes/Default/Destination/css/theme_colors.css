@@ -257,6 +257,32 @@ mark {
 
 /* #endregion*/
 
+/* #region Tabs*/
+/* 
+	Tab CSS by Joseph Fusco. http://codepen.io/fusco/pen/Wvzjrm, slightly adjusted to remove the round corners. 
+	Shadow colors are defined in theme.css, as they can only be defined with the shadow definition directly.
+*/
+
+.tab-wrap {
+	background-color: #fff;
+}
+
+.tab:checked + label {
+	background-color: #fff;
+}
+
+.tab + label {
+	color: #222;
+	background-color: #f2f2f2;
+}
+
+.tab + label:hover {
+	background-color: #f9f9f9;
+}
+/* #endregion*/
+
+
+
 /* #region media queries*/
 @media screen and (max-width: 768px) {
 	.body-for-nav {

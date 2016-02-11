@@ -30,6 +30,6 @@ namespace Docnet
 {
 	public class Constants
 	{
-		public const string Version = "0.7.2";
+		public const string Version = "0.8.0";
 	}
 }

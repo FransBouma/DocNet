@@ -101,6 +101,29 @@ Example:
 This will display the font-awesome icon for anchor:  @fa-anchor
 ```
 
+### Tabs
+It's very easy with `Docnet` to add a tab control with one or more tabs to the HTML with a simple set of markdown statements. The tab statements are converted into pure CSS3/HTML tabs, based on the work of Joseph Fusco (http://codepen.io/fusco/pen/Wvzjrm)
+
+To start a Tab control, start with `@tabs` and end the tabs definition with `@endtabs`. Between those two statements, which each need to be suffixed with a newline, you define one or more tabs using `@tab` followed by the label text for that tab, followed by a newline. End your tab contents with `@end`.
+
+The following example shows two tabs, one with label 'C#' and one with 'VB.NET':
+   
+    @tabs
+    @tab C#
+    Content 1 2 3
+    ```cs
+    var text = DoTabsBlocks("text");
+    ```
+    @end
+    @tab VB.NET1
+    Content 1 2 3
+    ```vb
+    Dim text = DoTabsBlocks("text")
+    ```
+    Additional text
+    @end
+    @endtabs
+
 ##Search
 `Docnet` will generate a search_data.json file in the root of the destination folder which is used with the javascript based search. It's a simple text search which can locate pages based on the word/sentence specified and will list them in first come first served order. For general purposes of locating a general piece of documentation regarding a topic it's good enough.
 
@@ -108,6 +131,9 @@ This will display the font-awesome icon for anchor:  @fa-anchor
 
 ##Linking
 `Docnet` doesn't transform links. This means that any link to any document in your documentation has to use the url it will get in the destination folder. Example: you want to link to the file `How to\AddEntity.md` from a page. In the result site this should be the link `How%20to/AddEntity.htm`, which you should specify in your markdown. In the future it might be `docnet` will be updated with link transformation, at the moment it doesn't convert any links besides the usual markdown ones. The markdown parser also doesn't allow spaces to be present in the urls. If you need a space in the url, escape it with `%20`. 
+
+##Requirements
+`Docnet` is a .NET full application (using .NET 4.6.1) and requires .NET full to run. Not tested on Mono but it's highly likely it works on Mono without a problem. The code uses .NET 4.6.1 but it can be compiled against lower versions of .NET full, it doesn't use .NET 4.6 specific features but as Microsoft supports only the latest .NET 4.x versions, it was a logical choice to use .NET 4.6.1.
 
 ##Acknowledgements
 This application wouldn't be possible without the work of others. The (likely incomplete) list below contains the work `Docnet` is based on / builds upon. 

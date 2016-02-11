@@ -21,6 +21,10 @@
 * History: Milan ported the Markdown processor to C#. He granted license to me so I can open source it
 * and let the community contribute to and improve MarkdownSharp.
 * 
+* [FB] I added for DocNet: (2016) https://github.com/FransBouma/DocNet
+* - @alert...@end, to specify alert boxes using markdown
+* - @fa-name, to specify font awesome directives
+* - @tabs-@endtabs, to specify CSS3 / HTML tabs in the output using markdown.
 */
 
 #region Copyright and license
@@ -312,6 +316,8 @@ namespace Docnet
         private int _listLevel;
         private static string AutoLinkPreventionMarker = "\x1AP"; // temporarily replaces "://" where auto-linking shouldn't happen;
 
+	    private int _tabIdCounter=0;	// counter used to create unique tab ids on a page. 
+
         /// <summary>
         /// In the static constuctor we'll initialize what stays the same across all transforms.
         /// </summary>
@@ -381,23 +387,24 @@ namespace Docnet
         /// </summary>
         private string RunBlockGamut(string text, bool unhash = true)
         {
-            text = DoHeaders(text);
+			text = DoHeaders(text);
             text = DoHorizontalRules(text);
             text = DoLists(text);
-	        text = DoAlertBlocks(text);
+			text = DoAlertBlocks(text);
             text = DoGithubCodeBlocks(text);
             text = DoCodeBlocks(text);
             text = DoBlockQuotes(text);
+			text = DoTabsBlocks(text);
 
-            // We already ran HashHTMLBlocks() before, in Markdown(), but that
-            // was to escape raw HTML in the original Markdown source. This time,
-            // we're escaping the markup we've just created, so that we don't wrap
-            // <p> tags around block-level tags.
-            text = HashHTMLBlocks(text);
+			// We already ran HashHTMLBlocks() before, in Markdown(), but that
+			// was to escape raw HTML in the original Markdown source. This time,
+			// we're escaping the markup we've just created, so that we don't wrap
+			// <p> tags around block-level tags.
+			text = HashHTMLBlocks(text);
 
             text = FormParagraphs(text, unhash: unhash);
 
-            return text;
+			return text;
         }
 
 
@@ -1378,6 +1385,43 @@ namespace Docnet
 			return string.Concat("<i class=\"fa fa-", iconName, "\"></i>");
 		}
 
+		private static Regex _tabsBlock = new Regex(@"(@tabs)\s*([\s\S]+?)\s(@endtabs)", RegexOptions.Compiled);
+		private static Regex _tabBlock = new Regex(@"(@tab) (\S+)\s*([\s\S]+?)\s(@end)", RegexOptions.Compiled);
+		private string DoTabsBlocks(string text)
+		{
+			_tabIdCounter = 0;
+			return _tabsBlock.Replace(text, new MatchEvaluator(TabsEvaluator));
+		}
+
+		private string TabsEvaluator(Match match)
+		{
+			_tabIdCounter++;
+
+			string text = match.Groups[2].Value;
+			// 'text' is the markdown which contains the different tab definitions. We simply use another regex to collect the tab content - tab header pairs
+			// which we'll then use here to build the tab HTML. We'll use some global vars to make sure the tabs are unique on the page so the user can specify multiple tabs
+			// on them.
+			var tabsMatches = _tabBlock.Matches(text);
+			var headerSB = new StringBuilder();
+			var contentSB = new StringBuilder();
+			int tabCounter = 0;
+			var checkedAttribute = " checked";
+			foreach(Match m in tabsMatches)
+			{
+				// header
+				headerSB.AppendFormat("<input type=\"radio\" id=\"tab{0}_{1}\" name=\"tabGroup{1}\" class=\"tab\"{2}><label for=\"tab{0}_{1}\">{3}</label>", 
+										tabCounter, _tabIdCounter, checkedAttribute, m.Groups[2].Value);
+				// content
+				var contentText = m.Groups.Count < 2 ? string.Empty : _newlinesLeadingTrailing.Replace(m.Groups[3].Value, "");
+				contentSB.AppendFormat("<div class=\"tab-content\">{0}</div>", contentText);
+
+				// done
+				checkedAttribute = string.Empty;
+				tabCounter++;
+			}
+			return string.Concat("<div class=\"tab-wrap\">", headerSB.ToString(), contentSB.ToString(), "</div>");
+		}
+
 
 		private static Regex _alertBlock = new Regex(@"(@alert) (\S+)\s*([\s\S]+?)\s(@end)", RegexOptions.Compiled);
 
@@ -1409,7 +1453,7 @@ namespace Docnet
 					break;
 			}
 
-			//removed Outdent on the codeblock
+			//removed Outdent on the alert block
 			text = _newlinesLeadingTrailing.Replace(text, "");
 			return string.Concat("\n\n<div class=\"alert alert-", alertType, "\"><span class=\"alert-title\"><i class=\"fa fa-", faIconName, "\"></i> ", title, "</span>",
 								 text, "</div>");
