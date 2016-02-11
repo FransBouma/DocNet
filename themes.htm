@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en">
+<!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Themes - DocNet Documentation</title>
+    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="stylesheet" href="css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="css/theme_colors.css" type="text/css" />
+    <link rel="stylesheet" href="css/styles/vs.css">
+    <link rel="stylesheet" href="css/font-awesome.4.5.0.min.css">
+</head>
+<body role="document">
+    <div class="grid-for-nav">
+        <nav data-toggle="nav-shift" class="nav-side stickynav">
+            <div class="side-nav-search">
+                <a href="index.htm"><i class="fa fa-home"></i> DocNet Documentation</a>
+                <div role="search">
+                    <form id="search-form" class="form" action="Docnet_Search.htm" method="get">
+                        <input type="text" name="q" placeholder="Search docs" />
+                    </form>
+                </div>
+            </div>
+            <div class="menu menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+<ul>
+<li class="tocentry"><a href="index.htm">Home</a>
+</li>
+
+<li class="tocentry"><a href="usage.htm">Usage</a>
+</li>
+<li class="tocentry">
+<span class="navigationgroup"><i class="fa fa-caret-right"></i> <a href="Configuration.htm">Configuration</a></span>
+</li>
+<li class="tocentry">
+<ul>
+<li><span class="navigationgroup"><i class="fa fa-caret-down"></i> <a href="Authoringcontent.htm">Authoring content</a></span></li>
+<li class="tocentry current"><a class="current" href="themes.htm">Themes</a>
+<ul class="currentrelative">
+<li class="tocentry"><a href="#Themesfolder">Themes folder</a></li>
+<li class="tocentry"><a href="#Defaulttheme">Default theme</a></li>
+<li class="tocentry"><a href="#PageTemplatehtm">PageTemplate.htm</a></li>
+</ul>
+<li class="tocentry"><a href="markdownextensions.htm">Writing content using Markdown</a>
+</li>
+
+</ul>
+</li>
+</ul>
+				<div class="toc-footer">
+					<span class="text-small">
+						<hr/>
+						<a href="https://github.com/FransBouma/DocNet" target="_blank">Made with <i class="fa fa-github"></i> DocNet</a>
+					</span>
+				</div>	
+			</div>
+            &nbsp;
+        </nav>
+        <section data-toggle="nav-shift" class="nav-content-wrap">
+            <nav class="nav-top" role="navigation" aria-label="top navigation">
+                <i data-toggle="nav-top" class="fa fa-bars"></i>
+                <a href="index.htm">DocNet Documentation</a>
+            </nav>
+            <div class="nav-content">
+                <div role="navigation" aria-label="breadcrumbs navigation">
+                    <div class="breadcrumbs">
+<ul><li><a href="index.htm">Home</a></li> / <li><a href="Authoringcontent.htm">Authoring content</a></li> / <li><a href="themes.htm">Themes</a></li></ul>
+					
+                    </div>
+                    <hr />
+                </div>
+                <div role="main">
+                    <div class="section">
+<p><h1>Themes</h1></p>
+
+<p><code>Docnet</code> uses themes to produce output in a certain form. A theme is a folder within the <code>Themes</code> folder which contains a <code>PageTemplate.htm</code> file and a <code>Destination</code> folder which contains zero or more folders and files which have to be copied to the <code>Destination</code> folder specified in the <code>docnet.json</code> file. </p>
+
+<p><a name="Themesfolder"></a><h2>Themes folder</h2></p>
+
+<p><code>Docnet</code> expects the <code>Themes</code> folder to be located in the folder where the executable is started from. This means that if you build <code>Docnet</code> from source, you have to manually copy the Themes folder to the folder your binary is located. To make development easier, you could create a <code>junction</code> in the bin\debug or bin\release folder to the Themes folder in the source repository, using <code>mklink</code> on a windows command prompt.</p>
+
+<p><a name="Defaulttheme"></a><h2>Default theme</h2></p>
+
+<p>The default theme is called <code>Default</code> and is chosen if no theme has been specified in the <a href="docnetjson.htm">docnet.json</a> file. It is based on the theme from ReadTheDocs, and is created from the one shipped with MkDocs.</p>
+
+<p><a name="PageTemplatehtm"></a><h2>PageTemplate.htm</h2></p>
+
+<p>The <code>PageTemplate.htm</code> file is a simple HTML file, located in each <code>theme</code> folder, which is used as the template for all generated <code>.htm</code> files. You can place whatever you like in there, including references to css/js files, headers, footers etc. DocNet however expects a couple of <em>markers</em> which are replaced with the data created from the markdown files. These markers are described below. The markers have to be specified as-is.</p>
+
+<ul>
+<li><code>{{Name}}</code>. This is replaced with the value specified in <code>Name</code> in the <code>docnet.json</code> file.</li>
+<li><code>{{Content}}</code>. This is replaced with the HTML generated from the markdown file. </li>
+<li><code>{{ToC}}</code>. This is replaced with a <code>&lt;ul&gt;&lt;li&gt;&lt;/li&gt;&lt;/ul&gt;</code> tree built from the names and structure given to pages in <code>Pages</code>.</li>
+<li><code>{{TopicTitle}}</code>. This is replaced with the title of the page, which is the value specified as name in the <code>Pages</code> tree. </li>
+<li><code>{{Footer}}</code>. This is replaced with the value specified in <code>Footer</code> in the docnet.json file. </li>
+<li><code>{{Breadcrumbs}}</code>. This is replaced with a / delimited list of names making up the bread crumbs representing the navigation through the ToC to reach the current page. </li>
+<li><code>{{ExtraScript}}</code>. This is replaced with extra script definitions / references required by some pages, like the search page. It's <code>docnet</code> specific and if this marker isn't present, search won't work.</li>
+<li><code>{{Path}}</code>. This is used to fill in the relative path to reach css/js files in hard-coded URLs in the <code>PageTemplate</code> file. This means that specifying a css URL in <code>PageTemplate</code> should look like:</li>
+</ul>
+
+<p><pre><code class="HTML">&lt;link rel="stylesheet" href="{{Path}}css/theme.css" type="text/css" /&gt;
+</code></pre></p>
+
+<p><code>Docnet</code> will then replace <code>{{Path}}</code> with e.g. '../../' to get to the css file from the location of the .htm file loaded.</p>
+
+                    </div>
+                </div>
+                <footer>
+                    <hr />
+                    <div role="contentinfo">
+Made with DocNet. Get your copy at: <a href='https://github.com/FransBouma/DocNet' target='_blank'>https://github.com/FransBouma/DocNet</a>.
+                    </div>
+                </footer>
+            </div>
+        </section>
+    </div>
+    <script src="js/jquery-2.1.1.min.js"></script>
+    <script src="js/modernizr-2.8.3.min.js"></script>
+    <script src="js/highlight.pack.js"></script>
+    <script src="js/theme.js"></script>
+{{ExtraScript}}
+</body>
+</html>

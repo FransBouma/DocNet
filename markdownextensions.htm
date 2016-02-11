@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en">
+<!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Writing content using Markdown - DocNet Documentation</title>
+    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="stylesheet" href="css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="css/theme_colors.css" type="text/css" />
+    <link rel="stylesheet" href="css/styles/vs.css">
+    <link rel="stylesheet" href="css/font-awesome.4.5.0.min.css">
+</head>
+<body role="document">
+    <div class="grid-for-nav">
+        <nav data-toggle="nav-shift" class="nav-side stickynav">
+            <div class="side-nav-search">
+                <a href="index.htm"><i class="fa fa-home"></i> DocNet Documentation</a>
+                <div role="search">
+                    <form id="search-form" class="form" action="Docnet_Search.htm" method="get">
+                        <input type="text" name="q" placeholder="Search docs" />
+                    </form>
+                </div>
+            </div>
+            <div class="menu menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+<ul>
+<li class="tocentry"><a href="index.htm">Home</a>
+</li>
+
+<li class="tocentry"><a href="usage.htm">Usage</a>
+</li>
+<li class="tocentry">
+<span class="navigationgroup"><i class="fa fa-caret-right"></i> <a href="Configuration.htm">Configuration</a></span>
+</li>
+<li class="tocentry">
+<ul>
+<li><span class="navigationgroup"><i class="fa fa-caret-down"></i> <a href="Authoringcontent.htm">Authoring content</a></span></li>
+<li class="tocentry"><a href="themes.htm">Themes</a>
+</li>
+<li class="tocentry current"><a class="current" href="markdownextensions.htm">Writing content using Markdown</a>
+<ul class="currentrelative">
+<li class="tocentry"><a href="#Markdownextensions">Markdown extensions</a></li>
+<li class="tocentry"><a href="#Search">Search</a></li>
+<li class="tocentry"><a href="#Linking">Linking</a></li>
+<li class="tocentry"><a href="#Requirements">Requirements</a></li>
+<li class="tocentry"><a href="#Acknowledgements">Acknowledgements</a></li>
+<li class="tocentry"><a href="#License">License</a></li>
+</ul>
+
+</ul>
+</li>
+</ul>
+				<div class="toc-footer">
+					<span class="text-small">
+						<hr/>
+						<a href="https://github.com/FransBouma/DocNet" target="_blank">Made with <i class="fa fa-github"></i> DocNet</a>
+					</span>
+				</div>	
+			</div>
+            &nbsp;
+        </nav>
+        <section data-toggle="nav-shift" class="nav-content-wrap">
+            <nav class="nav-top" role="navigation" aria-label="top navigation">
+                <i data-toggle="nav-top" class="fa fa-bars"></i>
+                <a href="index.htm">DocNet Documentation</a>
+            </nav>
+            <div class="nav-content">
+                <div role="navigation" aria-label="breadcrumbs navigation">
+                    <div class="breadcrumbs">
+<ul><li><a href="index.htm">Home</a></li> / <li><a href="Authoringcontent.htm">Authoring content</a></li> / <li><a href="markdownextensions.htm">Writing content using Markdown</a></li></ul>
+					
+                    </div>
+                    <hr />
+                </div>
+                <div role="main">
+                    <div class="section">
+<p><h1>Writing content using Markdown</h1></p>
+
+<p><code>DocNet</code> uses markdown files as input. The markdown is parsed with the markdown parser from StackExchange (called '<a href="https://github.com/KyleGobel/MarkdownSharp-GithubCodeBlocks">MarkdownSharp</a>'). It supports the default markdown statements as well as github style code block markers and specific extensions for writing documentation, which are described below. </p>
+
+<p><a name="Markdownextensions"></a><h2>Markdown extensions</h2></p>
+
+<p><code>Docnet</code> defines the following markdown extensions to make writing  </p>
+
+<p><h3>Alert boxes</h3></p>
+
+<p>To quickly define alert boxes, <code>Docnet</code> defines the <strong>&#64;alert</strong> element. Three types of alerts are defined: <em>danger</em> (displayed in red), <em>warning</em> (displayed in yellow) and <em>info</em> or <em>neutral</em>, which is displayed in blue. You specify the type of the alert after the <strong>&#64;alert</strong> statement using &#64;alert <em>name</em>. Close the &#64;alert with &#64;end. </p>
+
+<p>Below are examples for each alert box and the markdown used to create them. </p>
+
+<p>The markdown: </p>
+
+<p>&#64;alert danger</p>
+
+<p>This is a dangerous text, it will be displayed in a danger alert box!</p>
+
+<p>&#64;end</p>
+
+<p>Results in</p>
+
+<p><div class="alert alert-danger"><span class="alert-title"><i class="fa fa-times-circle"></i> Danger!</span>This is a dangerous text, it will be displayed in a danger alert box!</div></p>
+
+<p>The markdown: </p>
+
+<p>&#64;alert warning</p>
+
+<p>This is a warning text, it will be displayed in a warning alert box!</p>
+
+<p>&#64;end</p>
+
+<p><div class="alert alert-warning"><span class="alert-title"><i class="fa fa-warning"></i> Warning!</span>This is a warning text, it will be displayed in a warning alert box!</div></p>
+
+<p>The markdown: </p>
+
+<p>&#64;alert warning\
+This is an info text, it will be displayed in an info alert box!\
+&#64;end</p>
+
+<p>Results in</p>
+
+<p><div class="alert alert-info"><span class="alert-title"><i class="fa fa-info-circle"></i> Info</span>This is an info text, it will be displayed in an info alert box!</div></p>
+
+<p><h3>Font Awesome icons</h3></p>
+
+<p>To specify a font-awesome icon, use <code><i class="fa fa-iconname`,"></i> where <em>iconname</em> is the name of the font-awesome icon.</p>
+
+<p>Example:</p>
+
+<p><pre><code class="">This will display the font-awesome icon for anchor:  <i class="fa fa-anchor"></i>
+</code></pre></p>
+
+<p><h3>Tabs</h3></p>
+
+<p>It's very easy with <code>Docnet</code> to add a tab control with one or more tabs to the HTML with a simple set of markdown statements. The tab statements are converted into pure CSS3/HTML tabs, based on the work of Joseph Fusco (http://codepen.io/fusco/pen/Wvzjrm)</p>
+
+To start a Tab control, start with `<div class="tab-wrap"><input type="radio" id="tab0_1" name="tabGroup1" class="tab" checked><label for="tab0_1">C#</label><input type="radio" id="tab1_1" name="tabGroup1" class="tab"><label for="tab1_1">VB.NET1</label><div class="tab-content">Content 1 2 3
+</code></pre>
+
+<p><pre><code class="cs">    var text = DoTabsBlocks("text");
+</code></pre></p>
+
+<pre><code></div><div class="tab-content">Content 1 2 3
+</code></pre>
+
+<p><pre><code class="vb">    Dim text = DoTabsBlocks("text")
+</code></pre></p>
+
+<pre><code>
+Additional text</div></div>
+</code></pre>
+
+<p><a name="Search"></a><h2>Search</h2></p>
+
+<p><code>Docnet</code> will generate a search_data.json file in the root of the destination folder which is used with the javascript based search. It's a simple text search which can locate pages based on the word/sentence specified and will list them in first come first served order. For general purposes of locating a general piece of documentation regarding a topic it's good enough.</p>
+
+<p><em>NOTE</em>: Search locally on a file:/// served site won't work in Chrome, due to cross-origin protection because the search loads the search index and a template from disk in javascript. Either use Firefox or use the site with a server.</p>
+
+<p><a name="Linking"></a><h2>Linking</h2></p>
+
+<p><code>Docnet</code> doesn't transform links. This means that any link to any document in your documentation has to use the url it will get in the destination folder. Example: you want to link to the file <code>How to\AddEntity.md</code> from a page. In the result site this should be the link <code>How%20to/AddEntity.htm</code>, which you should specify in your markdown. In the future it might be <code>docnet</code> will be updated with link transformation, at the moment it doesn't convert any links besides the usual markdown ones. The markdown parser also doesn't allow spaces to be present in the urls. If you need a space in the url, escape it with <code>%20</code>. </p>
+
+<p><a name="Requirements"></a><h2>Requirements</h2></p>
+
+<p><code>Docnet</code> is a .NET full application (using .NET 4.6.1) and requires .NET full to run. Not tested on Mono but it's highly likely it works on Mono without a problem. The code uses .NET 4.6.1 but it can be compiled against lower versions of .NET full, it doesn't use .NET 4.6 specific features but as Microsoft supports only the latest .NET 4.x versions, it was a logical choice to use .NET 4.6.1.</p>
+
+<p><a name="Acknowledgements"></a><h2>Acknowledgements</h2></p>
+
+<p>This application wouldn't be possible without the work of others. The (likely incomplete) list below contains the work <code>Docnet</code> is based on / builds upon. </p>
+
+<ul>
+<li><a href="http://www.mkdocs.org/">MkDocs</a>. <code>Docnet</code> borrows a great deal from <code>MkDocs</code>: the theme css <code>Docnet</code> uses is based on a cleaned up version of their <code>Readthedocs</code> theme, as well as the javascript based search is from MkDocs. </li>
+<li><a href="https://github.com/KyleGobel/MarkdownSharp-GithubCodeBlocks">MarkdownSharp</a>. The markdown parser is an extended version of the <code>MarkdownSharp</code> parser from StackExchange with the extensions added by Kyle Gobel. </li>
+<li><a href="http://www.newtonsoft.com/json">Json.NET</a>. The reading/writing of json files is important for <code>Docnet</code> and it uses Json.NET for that. </li>
+</ul>
+I wrote the initial version in roughly 7-8 days, to meet our needs for generating a static searchable documentation site. It therefore might not match what you need or not flexible enough. Feel free to fork the repo and adjust it accordingly!
+
+<p><a name="License"></a><h2>License</h2></p>
+
+<p>The MIT License (MIT)</p>
+
+<p>Copyright (c) 2016 Frans Bouma</p>
+
+<p>Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:</p>
+
+<p>The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.</p>
+
+<p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+
+                    </div>
+                </div>
+                <footer>
+                    <hr />
+                    <div role="contentinfo">
+Made with DocNet. Get your copy at: <a href='https://github.com/FransBouma/DocNet' target='_blank'>https://github.com/FransBouma/DocNet</a>.
+                    </div>
+                </footer>
+            </div>
+        </section>
+    </div>
+    <script src="js/jquery-2.1.1.min.js"></script>
+    <script src="js/modernizr-2.8.3.min.js"></script>
+    <script src="js/highlight.pack.js"></script>
+    <script src="js/theme.js"></script>
+{{ExtraScript}}
+</body>
+</html>
