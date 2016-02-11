@@ -103,7 +103,6 @@ namespace Docnet
 			sb.Replace("{{Name}}", activeConfig.Name);
 			sb.Replace("{{Footer}}", activeConfig.Footer);
 			sb.Replace("{{TopicTitle}}", this.Name);
-			sb.Replace("{{Content}}", content);
 			var relativePathToRoot = Utils.MakeRelativePath(Path.GetDirectoryName(destinationFile), activeConfig.Destination).Replace(@"\", @"/");
 			sb.Replace("{{Path}}", relativePathToRoot);
 			sb.Replace("{{Breadcrumbs}}", activePath.CreateBreadCrumbsHTML(relativePathToRoot));
@@ -112,6 +111,9 @@ namespace Docnet
 			{
 				sb.Replace("{{ExtraScript}}", this.ExtraScriptProducerFunc(this));
 			}
+
+			// the last action has to be replacing the content marker, so markers in the content which we have in the template as well aren't replaced 
+			sb.Replace("{{Content}}", content);
 			Utils.CreateFoldersIfRequired(destinationFile);
 			File.WriteAllText(destinationFile, sb.ToString());
 			if(!this.IsIndexElement)
