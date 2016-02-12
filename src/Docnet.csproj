@@ -51,7 +51,6 @@
   <ItemGroup>
     <Compile Include="CliInput.cs" />
     <Compile Include="Config.cs" />
-    <Compile Include="Constants.cs" />
     <Compile Include="Engine.cs" />
     <Compile Include="INavigationElement.cs" />
     <Compile Include="MarkdownSharp.cs" />
