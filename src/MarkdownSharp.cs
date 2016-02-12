@@ -1386,7 +1386,7 @@ namespace Docnet
 		}
 
 		private static Regex _tabsBlock = new Regex(@"(@tabs)\s*([\s\S]+?)\s(@endtabs)", RegexOptions.Compiled);
-		private static Regex _tabBlock = new Regex(@"(@tab) (\S+)\s*([\s\S]+?)\s(@end)", RegexOptions.Compiled);
+		private static Regex _tabBlock = new Regex(@"(@tab)[\t| ]+([\S+| ]+)\n([\s\S]+?)\s(@end)", RegexOptions.Compiled);
 		private string DoTabsBlocks(string text)
 		{
 			_tabIdCounter = 0;
