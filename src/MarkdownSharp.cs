@@ -390,11 +390,9 @@ namespace Docnet
 			text = DoHeaders(text);
             text = DoHorizontalRules(text);
             text = DoLists(text);
-			text = DoAlertBlocks(text);
             text = DoGithubCodeBlocks(text);
             text = DoCodeBlocks(text);
             text = DoBlockQuotes(text);
-			text = DoTabsBlocks(text);
 
 			// We already ran HashHTMLBlocks() before, in Markdown(), but that
 			// was to escape raw HTML in the original Markdown source. This time,
@@ -404,6 +402,8 @@ namespace Docnet
 
             text = FormParagraphs(text, unhash: unhash);
 
+			text = DoAlertBlocks(text);
+			text = DoTabsBlocks(text);
 			return text;
         }
 
@@ -1760,7 +1760,8 @@ namespace Docnet
             return sb.ToString();
         }
 
-        private static Regex _codeEncoder = new Regex(@"&|<|>|\\|\*|_|\{|\}|\[|\]", RegexOptions.Compiled);
+		// all characters you want to encode in a codeblock to this regexp.
+        private static Regex _codeEncoder = new Regex(@"&|<|>|@|\\|\*|_|\{|\}|\[|\]", RegexOptions.Compiled);
 
         /// <summary>
         /// Encode/escape certain Markdown characters inside code blocks and spans where they are literals
@@ -1782,6 +1783,8 @@ namespace Docnet
                     return "&lt;";
                 case ">":
                     return "&gt;";
+				case "@":
+		            return "&#64;";	// this is necessary so our extensions to markdown which start with @ are left alone in a code block.
                 // escape characters that are magic in Markdown
                 default:
                     return _escapeTable[match.Value];
