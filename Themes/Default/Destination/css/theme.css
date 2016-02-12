@@ -678,7 +678,6 @@ td {
 	-webkit-transform: translateY(0px);
 	-ms-transform: translateY(0px);
 	transform: translateY(0px);
-	text-shadow: 0 0 0;
 }
 
 .tab:checked:nth-of-type(2) ~ .tab-content:nth-of-type(2) {
@@ -691,7 +690,6 @@ td {
 	-webkit-transform: translateY(0px);
 	-ms-transform: translateY(0px);
 	transform: translateY(0px);
-	text-shadow: 0 0 0;
 }
 
 .tab:checked:nth-of-type(3) ~ .tab-content:nth-of-type(3) {
@@ -704,7 +702,6 @@ td {
 	-webkit-transform: translateY(0px);
 	-ms-transform: translateY(0px);
 	transform: translateY(0px);
-	text-shadow: 0 0 0;
 }
 
 .tab:checked:nth-of-type(4) ~ .tab-content:nth-of-type(4) {
@@ -717,7 +714,6 @@ td {
 	-webkit-transform: translateY(0px);
 	-ms-transform: translateY(0px);
 	transform: translateY(0px);
-	text-shadow: 0 0 0;
 }
 
 .tab:checked:nth-of-type(5) ~ .tab-content:nth-of-type(5) {
@@ -730,7 +726,6 @@ td {
 	-webkit-transform: translateY(0px);
 	-ms-transform: translateY(0px);
 	transform: translateY(0px);
-	text-shadow: 0 0 0;
 }
 
 .tab:checked:nth-of-type(6) ~ .tab-content:nth-of-type(6) {
@@ -743,7 +738,6 @@ td {
 	-webkit-transform: translateY(0px);
 	-ms-transform: translateY(0px);
 	transform: translateY(0px);
-	text-shadow: 0 0 0;
 }
 
 .tab:checked:nth-of-type(7) ~ .tab-content:nth-of-type(7) {
@@ -756,7 +750,6 @@ td {
 	-webkit-transform: translateY(0px);
 	-ms-transform: translateY(0px);
 	transform: translateY(0px);
-	text-shadow: 0 0 0;
 }
 
 .tab:checked:nth-of-type(8) ~ .tab-content:nth-of-type(8) {
@@ -769,7 +762,6 @@ td {
 	-webkit-transform: translateY(0px);
 	-ms-transform: translateY(0px);
 	transform: translateY(0px);
-	text-shadow: 0 0 0;
 }
 
 /* 

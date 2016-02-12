@@ -1,6 +1,6 @@
 #DocNet
 
-DocNet is a simple static documentation generator, using markdown files to build the content. 
+DocNet is a static site generator, mainly meant for user documentation, using markdown files to build the content.
 
 To learn more about DocNet, please visit its own documentation site, created with `Docnet` itself at:
 [http://fransbouma.github.io/DocNet/](http://fransbouma.github.io/DocNet/)
