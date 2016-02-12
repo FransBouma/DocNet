@@ -22,6 +22,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -87,7 +88,7 @@ namespace Docnet
 
 		private static void DisplayHeader()
 		{
-			Console.WriteLine("Docnet v{0}. (c)2016 Frans Bouma", Constants.Version);
+			Console.WriteLine("Docnet v{0}. (c)2016 Frans Bouma", FileVersionInfo.GetVersionInfo(typeof(Program).Assembly.Location).FileVersion);
 			Console.WriteLine("Get your copy at: https://github.com/FransBouma/Docnet \n");
 		}
 
