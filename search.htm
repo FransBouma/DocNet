@@ -8,7 +8,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Authoring content - DocNet Documentation</title>
+    <title>Search - DocNet Documentation</title>
     <link rel="shortcut icon" href="favicon.ico">
     <link rel="stylesheet" href="css/theme.css" type="text/css" />
     <link rel="stylesheet" href="css/theme_colors.css" type="text/css" />
@@ -37,17 +37,9 @@
 <span class="navigationgroup"><i class="fa fa-caret-right"></i> <a href="Configuration.htm">Configuration</a></span>
 </li>
 <li class="tocentry">
-<ul class="current">
-<li><span class="navigationgroup"><i class="fa fa-caret-down"></i> <a href="Authoringcontent.htm">Authoring content</a></span></li>
-<li class="tocentry"><a href="themes.htm">Themes</a>
+<span class="navigationgroup"><i class="fa fa-caret-right"></i> <a href="Authoringcontent.htm">Authoring content</a></span>
 </li>
-<li class="tocentry">
-<span class="navigationgroup"><i class="fa fa-caret-right"></i> <a href="WritingcontentusingMarkdown.htm">Writing content using Markdown</a></span>
-</li>
-
-</ul>
-</li>
-<li class="tocentry"><a href="search.htm">Search</a>
+<li class="tocentry current"><a class="current" href="search.htm">Search</a>
 </li>
 <li class="tocentry"><a href="acknowledgements.htm">Acknowledgements</a>
 </li>
@@ -71,21 +63,18 @@
             <div class="nav-content">
                 <div role="navigation" aria-label="breadcrumbs navigation">
                     <div class="breadcrumbs">
-<ul><li><a href="index.htm">Home</a></li> / <li><a href="Authoringcontent.htm">Authoring content</a></li></ul>
+<ul><li><a href="index.htm">Home</a></li> / <li><a href="search.htm">Search</a></li></ul>
 					
                     </div>
                     <hr />
                 </div>
                 <div role="main">
                     <div class="section">
-<p><h1>Authoring content</h1></p>
+<p><h1>Search</h1></p>
 
-<p>Please select one of the topic in this section:</p>
+<p><code>Docnet</code> will generate a search_data.json file in the root of the destination folder which is used with the javascript based search. It's a simple text search which can locate pages based on the word/sentence specified and will list them in first come first served order. For general purposes of locating a general piece of documentation regarding a topic it's good enough.</p>
 
-<p><ul>
-<li><a href="themes.htm">Themes</a></li>
-<li><a href="WritingcontentusingMarkdown.htm">Writing content using Markdown</a></li>
-</ul></p>
+<p><em>NOTE</em>: Search locally on a file:/// served site won't work in Chrome, due to cross-origin protection because the search loads the search index and a template from disk in javascript. Either use Firefox or use the site with a server.</p>
 
                     </div>
                 </div>

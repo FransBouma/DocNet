@@ -16,7 +16,14 @@
         "Authoring content" : 
         {
             "Themes" : "themes.md",
-            "Writing content using Markdown" : "markdownextensions.md"
-        }
+            "Writing content using Markdown" : 
+            {
+                "Markdown support": "markdownsupport.md",
+                "Markdown extensions" : "markdownextensions.md"
+            }
+        },
+        "Search" : "search.md",
+        "Acknowledgements" : "acknowledgements.md",
+        "License": "license.md"
     }
 }

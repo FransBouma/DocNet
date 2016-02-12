@@ -8,7 +8,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Authoring content - DocNet Documentation</title>
+    <title>Markdown support - DocNet Documentation</title>
     <link rel="shortcut icon" href="favicon.ico">
     <link rel="stylesheet" href="css/theme.css" type="text/css" />
     <link rel="stylesheet" href="css/theme_colors.css" type="text/css" />
@@ -37,12 +37,22 @@
 <span class="navigationgroup"><i class="fa fa-caret-right"></i> <a href="Configuration.htm">Configuration</a></span>
 </li>
 <li class="tocentry">
-<ul class="current">
+<ul>
 <li><span class="navigationgroup"><i class="fa fa-caret-down"></i> <a href="Authoringcontent.htm">Authoring content</a></span></li>
 <li class="tocentry"><a href="themes.htm">Themes</a>
 </li>
 <li class="tocentry">
-<span class="navigationgroup"><i class="fa fa-caret-right"></i> <a href="WritingcontentusingMarkdown.htm">Writing content using Markdown</a></span>
+<ul>
+<li><span class="navigationgroup"><i class="fa fa-caret-down"></i> <a href="WritingcontentusingMarkdown.htm">Writing content using Markdown</a></span></li>
+<li class="tocentry current"><a class="current" href="markdownsupport.htm">Markdown support</a>
+<ul class="currentrelative">
+<li class="tocentry"><a href="#Highlightingcode">Highlighting code</a></li>
+<li class="tocentry"><a href="#Linking">Linking</a></li>
+</ul>
+<li class="tocentry"><a href="markdownextensions.htm">Markdown extensions</a>
+</li>
+
+</ul>
 </li>
 
 </ul>
@@ -71,21 +81,34 @@
             <div class="nav-content">
                 <div role="navigation" aria-label="breadcrumbs navigation">
                     <div class="breadcrumbs">
-<ul><li><a href="index.htm">Home</a></li> / <li><a href="Authoringcontent.htm">Authoring content</a></li></ul>
+<ul><li><a href="index.htm">Home</a></li> / <li><a href="Authoringcontent.htm">Authoring content</a></li> / <li><a href="WritingcontentusingMarkdown.htm">Writing content using Markdown</a></li> / <li><a href="markdownsupport.htm">Markdown support</a></li></ul>
 					
                     </div>
                     <hr />
                 </div>
                 <div role="main">
                     <div class="section">
-<p><h1>Authoring content</h1></p>
+<p><h1>Markdown support</h1></p>
 
-<p>Please select one of the topic in this section:</p>
+<p><code>DocNet</code> uses markdown files as input. The markdown is parsed with the markdown parser from StackExchange (called '<a href="https://github.com/KyleGobel/MarkdownSharp-GithubCodeBlocks">MarkdownSharp</a>'). It supports the default markdown statements as well as github style code block markers and specific extensions for writing documentation, which are described below. </p>
 
-<p><ul>
-<li><a href="themes.htm">Themes</a></li>
-<li><a href="WritingcontentusingMarkdown.htm">Writing content using Markdown</a></li>
-</ul></p>
+<p><a name="Highlightingcode"></a><h2>Highlighting code</h2></p>
+
+<p>The markdown parser has been extended with GitHub code specifications, so it's easy to specify a specific code beautifying based on a language. This feature uses the <a href="https://highlightjs.org/">Highlight.js</a> javascript library and most popular languages are included. </p>
+
+<p>Example: to specify a codeblock as C#, append <code>cs</code> after the first <code>```</code> marker:</p>
+
+<p><pre><code class="cs">var i=42;
+</code></pre></p>
+
+<p>To specify a block of text in a fixed sized font but not specify any language highlighting, specify <code>nohighlight</code> as language name:</p>
+
+<p><pre class="nocode">this is a simple &lt;pre&gt; block
+</pre></p>
+
+<p><a name="Linking"></a><h2>Linking</h2></p>
+
+<p><code>Docnet</code> doesn't transform links. This means that any link to any document in your documentation has to use the url it will get in the destination folder. Example: you want to link to the file <code>How to\AddEntity.md</code> from a page. In the result site this should be the link <code>How%20to/AddEntity.htm</code>, which you should specify in your markdown. In the future it might be <code>docnet</code> will be updated with link transformation, at the moment it doesn't convert any links besides the usual markdown ones. The markdown parser also doesn't allow spaces to be present in the urls. If you need a space in the url, escape it with <code>%20</code>. </p>
 
                     </div>
                 </div>
