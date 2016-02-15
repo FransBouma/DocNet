@@ -385,7 +385,7 @@ namespace Docnet
         /// <summary>
         /// Perform transformations that form block-level tags like paragraphs, headers, and list items.
         /// </summary>
-        private string RunBlockGamut(string text, bool unhash = true)
+        private string RunBlockGamut(string text, bool unhash = true, bool createParagraphs = true)
         {
 			text = DoHeaders(text);
             text = DoHorizontalRules(text);
@@ -400,7 +400,7 @@ namespace Docnet
 			// <p> tags around block-level tags.
 			text = HashHTMLBlocks(text);
 
-            text = FormParagraphs(text, unhash: unhash);
+            text = FormParagraphs(text, unhash: unhash, createParagraphs: createParagraphs);
 
 			text = DoAlertBlocks(text);
 			text = DoTabsBlocks(text);
@@ -445,7 +445,7 @@ namespace Docnet
         /// splits on two or more newlines, to form "paragraphs";    
         /// each paragraph is then unhashed (if it is a hash and unhashing isn't turned off) or wrapped in HTML p tag
         /// </summary>
-        private string FormParagraphs(string text, bool unhash = true)
+        private string FormParagraphs(string text, bool unhash = true, bool createParagraphs = true)
         {
             // split on two or more newlines
             string[] grafs = _newlinesMultiple.Split(_newlinesLeadingTrailing.Replace(text, ""));
@@ -467,7 +467,7 @@ namespace Docnet
 
                 if (skipGraphs) { continue; }
 
-                if (grafs[i].StartsWith("\x1AH"))
+                if (grafs[i].Contains("\x1AH"))
                 {
                     // unhashify HTML blocks
                     if (unhash)
@@ -495,8 +495,8 @@ namespace Docnet
                 else
                 {
                     // do span level processing inside the block, then wrap result in <p> tags
-                    grafs[i] = _leadingWhitespace.Replace(RunSpanGamut(grafs[i]), "<p>") + "</p>";
-                }
+                    grafs[i] = _leadingWhitespace.Replace(RunSpanGamut(grafs[i]), createParagraphs ? "<p>" : "") + (createParagraphs ? "</p>" : "");
+				}
             }
 
             return string.Join("\n\n", grafs);
@@ -868,8 +868,13 @@ namespace Docnet
         /// </remarks>
         private string DoAnchors(string text)
         {
-            // First, handle reference-style links: [link text] [id]
-            text = _anchorRef.Replace(text, new MatchEvaluator(AnchorRefEvaluator));
+	        if(!text.Contains("["))
+	        {
+		        return text;
+	        }
+
+			// First, handle reference-style links: [link text] [id]
+			text = _anchorRef.Replace(text, new MatchEvaluator(AnchorRefEvaluator));
 
             // Next, inline-style links: [link text](url "optional title") or [link text](url "optional title")
             text = _anchorInline.Replace(text, new MatchEvaluator(AnchorInlineEvaluator));
@@ -1022,8 +1027,12 @@ namespace Docnet
         /// </remarks>
         private string DoImages(string text)
         {
-            // First, handle reference-style labeled images: ![alt text][id]
-            text = _imagesRef.Replace(text, new MatchEvaluator(ImageReferenceEvaluator));
+	        if(!text.Contains("!["))
+	        {
+		        return text;
+	        }
+			// First, handle reference-style labeled images: ![alt text][id]
+			text = _imagesRef.Replace(text, new MatchEvaluator(ImageReferenceEvaluator));
 
             // Next, handle inline images:  ![alt text](url "optional title")
             // Don't forget: encode * and _
@@ -1221,38 +1230,42 @@ namespace Docnet
         /// <summary>
         /// Turn Markdown lists into HTML ul and ol and li tags
         /// </summary>
-        private string DoLists(string text, bool isInsideParagraphlessListItem = false)
+        private string DoLists(string text)
         {
             // We use a different prefix before nested lists than top-level lists.
             // See extended comment in _ProcessListItems().
             if (_listLevel > 0)
-                text = _listNested.Replace(text, GetListEvaluator(isInsideParagraphlessListItem));
-            else
-                text = _listTopLevel.Replace(text, GetListEvaluator(false));
+				text = _listNested.Replace(text, new MatchEvaluator(ListEvaluator));
+			else
+				text = _listTopLevel.Replace(text, new MatchEvaluator(ListEvaluator));
 
-            return text;
+			return text;
         }
 
-        private MatchEvaluator GetListEvaluator(bool isInsideParagraphlessListItem = false)
-        {
-            return new MatchEvaluator(match =>
-            {
-                string list = match.Groups[1].Value;
-                string listType = Regex.IsMatch(match.Groups[3].Value, _markerUL) ? "ul" : "ol";
-                string result;
-
-                result = ProcessListItems(list, listType == "ul" ? _markerUL : _markerOL, isInsideParagraphlessListItem);
-
-                result = string.Format("<{0}>\n{1}</{0}>\n", listType, result);
-                return result;
-            });
+		private string ListEvaluator(Match match)
+		{
+			string list = match.Groups[1].Value;
+			string marker = match.Groups[3].Value;
+			string listType = Regex.IsMatch(marker, _markerUL) ? "ul" : "ol";
+			string start = "";
+			if(listType == "ol")
+			{
+				var firstNumber = int.Parse(marker.Substring(0, marker.Length - 1));
+				if(firstNumber != 1 && firstNumber != 0)
+				{
+					start = " start=\"" + firstNumber + "\"";
+				}
+			}
+			var result = ProcessListItems(list, listType == "ul" ? _markerUL : _markerOL);
+			result = string.Format("<{0}{1}>\n{2}</{0}>\n", listType, start, result);
+			return result;
         }
 
         /// <summary>
         /// Process the contents of a single ordered or unordered list, splitting it
         /// into individual list items.
         /// </summary>
-        private string ProcessListItems(string list, string marker, bool isInsideParagraphlessListItem = false)
+        private string ProcessListItems(string list, string marker)
         {
             // The listLevel global keeps track of when we're inside a list.
             // Each time we enter a list, we increment it; when we leave a list,
@@ -1297,18 +1310,11 @@ namespace Docnet
                 bool endsWithDoubleNewline = item.EndsWith("\n\n");
                 bool containsDoubleNewline = endsWithDoubleNewline || item.Contains("\n\n");
 
-                if (containsDoubleNewline || lastItemHadADoubleNewline)
-                    // we could correct any bad indentation here..
-                    item = RunBlockGamut(Outdent(item) + "\n", unhash: false);
-                else
-                {
-                    // recursion for sub-lists
-                    item = DoLists(Outdent(item), isInsideParagraphlessListItem: true);
-                    item = item.TrimEnd('\n');
-                    if (!isInsideParagraphlessListItem) // only the outer-most item should run this, otherwise it's run multiple times for the inner ones
-                        item = RunSpanGamut(item);
-                }
-                lastItemHadADoubleNewline = endsWithDoubleNewline;
+				var loose = containsDoubleNewline || lastItemHadADoubleNewline;
+				// we could correct any bad indentation here..
+				item = RunBlockGamut(Outdent(item) + "\n", unhash: false, createParagraphs: loose);
+
+				lastItemHadADoubleNewline = endsWithDoubleNewline;
                 return string.Format("<li>{0}</li>\n", item);
             };
 
@@ -1348,124 +1354,14 @@ namespace Docnet
             return string.Concat("\n\n<pre><code>\n", codeBlock, "\n</code></pre>\n\n");
         }
 
-        private static Regex _githubCodeBlock = new Regex(@"(?<!\\)(`{3,}) *(\S+)? *\n([\s\S]+?)\s*\1 *(?:\n+|$)", RegexOptions.Compiled);
-
-        private string DoGithubCodeBlocks(string text)
-        {
-            return _githubCodeBlock.Replace(text, new MatchEvaluator(GithubCodeEvaluator));
-        }
-
-        private string GithubCodeEvaluator(Match match)
-        {
-            string codeBlock = match.Groups[3].Value;
-            string typeBlock = match.Groups[2].Value;
-
-            //removed Outdent on the codeblock
-            codeBlock = EncodeCode(codeBlock);
-            codeBlock = _newlinesLeadingTrailing.Replace(codeBlock, "");
-
-	        if(typeBlock == "nohighlight")
-	        {
-				return string.Concat("\n\n<pre class=\"nocode\">", codeBlock, "\n</pre>\n\n");
-			}
-			return string.Concat("\n\n<pre><code class=\"", typeBlock, "\">", codeBlock, "\n</code></pre>\n\n");
-        }
-
-
-		private static Regex _faIcon = new Regex(@"(@fa-)(\S+)", RegexOptions.Compiled | RegexOptions.Singleline);
-
-		private string DoFaIconsBlocks(string text)
-		{
-			return _faIcon.Replace(text, new MatchEvaluator(FaIconEvaluator));
-		}
-
-		private string FaIconEvaluator(Match match)
-		{
-			string iconName = match.Groups[2].Value.ToLowerInvariant();
-			return string.Concat("<i class=\"fa fa-", iconName, "\"></i>");
-		}
-
-		private static Regex _tabsBlock = new Regex(@"(@tabs)\s*([\s\S]+?)\s(@endtabs)", RegexOptions.Compiled);
-		private static Regex _tabBlock = new Regex(@"(@tab)[\t| ]+([\S+| ]+)\n([\s\S]+?)\s(@end)", RegexOptions.Compiled);
-		private string DoTabsBlocks(string text)
-		{
-			_tabIdCounter = 0;
-			return _tabsBlock.Replace(text, new MatchEvaluator(TabsEvaluator));
-		}
-
-		private string TabsEvaluator(Match match)
-		{
-			_tabIdCounter++;
-
-			string text = match.Groups[2].Value;
-			// 'text' is the markdown which contains the different tab definitions. We simply use another regex to collect the tab content - tab header pairs
-			// which we'll then use here to build the tab HTML. We'll use some global vars to make sure the tabs are unique on the page so the user can specify multiple tabs
-			// on them.
-			var tabsMatches = _tabBlock.Matches(text);
-			var headerSB = new StringBuilder();
-			var contentSB = new StringBuilder();
-			int tabCounter = 0;
-			var checkedAttribute = " checked";
-			foreach(Match m in tabsMatches)
-			{
-				// header
-				headerSB.AppendFormat("<input type=\"radio\" id=\"tab{0}_{1}\" name=\"tabGroup{1}\" class=\"tab\"{2}><label for=\"tab{0}_{1}\">{3}</label>", 
-										tabCounter, _tabIdCounter, checkedAttribute, m.Groups[2].Value);
-				// content
-				var contentText = m.Groups.Count < 2 ? string.Empty : _newlinesLeadingTrailing.Replace(m.Groups[3].Value, "");
-				contentSB.AppendFormat("<div class=\"tab-content\">{0}</div>", contentText);
-
-				// done
-				checkedAttribute = string.Empty;
-				tabCounter++;
-			}
-			return string.Concat("<div class=\"tab-wrap\">", headerSB.ToString(), contentSB.ToString(), "</div>");
-		}
-
-
-		private static Regex _alertBlock = new Regex(@"(@alert) (\S+)\s*([\s\S]+?)\s(@end)", RegexOptions.Compiled);
-
-		private string DoAlertBlocks(string text)
-		{
-			return _alertBlock.Replace(text, new MatchEvaluator(AlertEvaluator));
-		}
-
-		private string AlertEvaluator(Match match)
-		{
-			string text = match.Groups[3].Value;
-			string alertType = match.Groups[2].Value.ToLowerInvariant();
-			string title = string.Empty;
-			string faIconName = string.Empty;
-			switch(alertType)
-			{
-				case "danger":
-					title = "Danger!";
-					faIconName = "times-circle";
-					break;
-				case "warning":
-					title = "Warning!";
-					faIconName = "warning";
-					break;
-				case "neutral":
-				case "info":
-					title = "Info";
-					faIconName = "info-circle";
-					break;
-			}
-
-			//removed Outdent on the alert block
-			text = _newlinesLeadingTrailing.Replace(text, "");
-			return string.Concat("\n\n<div class=\"alert alert-", alertType, "\"><span class=\"alert-title\"><i class=\"fa fa-", faIconName, "\"></i> ", title, "</span>",
-								 text, "</div>");
-		}
-
 		private static Regex _codeSpan = new Regex(@"
-                (?<!\\)   # Character before opening ` can't be a backslash
-                (\`)      # $1 = Opening run of `
-                (.+?)     # $2 = The code block
-                (?<!`)
-                \1
-                (?!`)", RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline | RegexOptions.Compiled);
+               (?<![\\`])   # Character before opening ` can't be a backslash or backtick
+               (`+)      # $1 = Opening run of `
+               (?!`)     # and no more backticks -- match the full run
+               (.+?)     # $2 = The code block
+               (?<!`)
+               \1
+               (?!`)", RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline | RegexOptions.Compiled);
 
         /// <summary>
         /// Turn Markdown `code spans` into HTML code tags
@@ -1524,9 +1420,12 @@ namespace Docnet
         /// </summary>
         private string DoItalicsAndBold(string text)
         {
-
-            // <strong> must go first, then <em>
-            if (_strictBoldItalic)
+	        if(!(text.Contains("*") || text.Contains("_")))
+	        {
+		        return text;
+	        }
+			// <strong> must go first, then <em>
+			if (_strictBoldItalic)
             {
                 text = _strictBold.Replace(text, "$1<strong>$3</strong>");
                 text = _strictItalic.Replace(text, "$1<em>$3</em>");
@@ -1734,15 +1633,126 @@ namespace Docnet
         }
 
 
-        #region Encoding and Normalization
+		private static Regex _githubCodeBlock = new Regex(@"(?<!\\)(`{3,}) *(\S+)? *\n([\s\S]+?)\s*\1 *(?:\n+|$)", RegexOptions.Compiled);
+		private string DoGithubCodeBlocks(string text)
+		{
+			return _githubCodeBlock.Replace(text, new MatchEvaluator(GithubCodeEvaluator));
+		}
+
+		private string GithubCodeEvaluator(Match match)
+		{
+			string codeBlock = match.Groups[3].Value;
+			string typeBlock = match.Groups[2].Value;
+
+			//removed Outdent on the codeblock
+			codeBlock = EncodeCode(codeBlock);
+			codeBlock = _newlinesLeadingTrailing.Replace(codeBlock, "");
+
+			if(typeBlock == "nohighlight")
+			{
+				return string.Concat("\n\n<pre class=\"nocode\">", codeBlock, "\n</pre>\n\n");
+			}
+			return string.Concat("\n\n<pre><code class=\"", typeBlock, "\">", codeBlock, "\n</code></pre>\n\n");
+		}
 
 
-        /// <summary>
-        /// encodes email address randomly  
-        /// roughly 10% raw, 45% hex, 45% dec 
-        /// note that @ is always encoded and : never is
-        /// </summary>
-        private string EncodeEmailAddress(string addr)
+		private static Regex _faIcon = new Regex(@"(@fa-)(\S+)", RegexOptions.Compiled | RegexOptions.Singleline);
+		private string DoFaIconsBlocks(string text)
+		{
+			return _faIcon.Replace(text, new MatchEvaluator(FaIconEvaluator));
+		}
+
+		private string FaIconEvaluator(Match match)
+		{
+			string iconName = match.Groups[2].Value.ToLowerInvariant();
+			return string.Concat("<i class=\"fa fa-", iconName, "\"></i>");
+		}
+
+
+		private static Regex _tabsBlock = new Regex(@"(@tabs)\s*([\s\S]+?)\s(@endtabs)", RegexOptions.Compiled);
+		private static Regex _tabBlock = new Regex(@"(@tab)[\t| ]+([\S+| ]+)\n([\s\S]+?)\s(@end)", RegexOptions.Compiled);
+		private string DoTabsBlocks(string text)
+		{
+			_tabIdCounter = 0;
+			return _tabsBlock.Replace(text, new MatchEvaluator(TabsEvaluator));
+		}
+
+		private string TabsEvaluator(Match match)
+		{
+			_tabIdCounter++;
+
+			string text = match.Groups[2].Value;
+			// 'text' is the markdown which contains the different tab definitions. We simply use another regex to collect the tab content - tab header pairs
+			// which we'll then use here to build the tab HTML. We'll use some global vars to make sure the tabs are unique on the page so the user can specify multiple tabs
+			// on them.
+			var tabsMatches = _tabBlock.Matches(text);
+			var headerSB = new StringBuilder();
+			var contentSB = new StringBuilder();
+			int tabCounter = 0;
+			var checkedAttribute = " checked";
+			foreach(Match m in tabsMatches)
+			{
+				// header
+				headerSB.AppendFormat("<input type=\"radio\" id=\"tab{0}_{1}\" name=\"tabGroup{1}\" class=\"tab\"{2}><label for=\"tab{0}_{1}\">{3}</label>",
+										tabCounter, _tabIdCounter, checkedAttribute, m.Groups[2].Value);
+				// content
+				var contentText = m.Groups.Count < 2 ? string.Empty : _newlinesLeadingTrailing.Replace(m.Groups[3].Value, "");
+				contentSB.AppendFormat("<div class=\"tab-content\">{0}</div>", contentText);
+
+				// done
+				checkedAttribute = string.Empty;
+				tabCounter++;
+			}
+			return string.Concat("<div class=\"tab-wrap\">", headerSB.ToString(), contentSB.ToString(), "</div>");
+		}
+
+
+		private static Regex _alertBlock = new Regex(@"(@alert) (\S+)\s*([\s\S]+?)\s(@end)", RegexOptions.Compiled);
+		private string DoAlertBlocks(string text)
+		{
+			return _alertBlock.Replace(text, new MatchEvaluator(AlertEvaluator));
+		}
+
+		private string AlertEvaluator(Match match)
+		{
+			string text = match.Groups[3].Value;
+			string alertType = match.Groups[2].Value.ToLowerInvariant();
+			string title = string.Empty;
+			string faIconName = string.Empty;
+			switch(alertType)
+			{
+				case "danger":
+					title = "Danger!";
+					faIconName = "times-circle";
+					break;
+				case "warning":
+					title = "Warning!";
+					faIconName = "warning";
+					break;
+				case "neutral":
+				case "info":
+					title = "Info";
+					faIconName = "info-circle";
+					break;
+			}
+
+			//removed Outdent on the alert block
+			text = _newlinesLeadingTrailing.Replace(text, "");
+			return string.Concat("\n\n<div class=\"alert alert-", alertType, "\"><span class=\"alert-title\"><i class=\"fa fa-", faIconName, "\"></i> ", title, "</span>",
+								 text, "</div>");
+		}
+
+
+
+		#region Encoding and Normalization
+
+
+		/// <summary>
+		/// encodes email address randomly  
+		/// roughly 10% raw, 45% hex, 45% dec 
+		/// note that @ is always encoded and : never is
+		/// </summary>
+		private string EncodeEmailAddress(string addr)
         {
             var sb = new StringBuilder(addr.Length * 5);
             var rand = new Random();

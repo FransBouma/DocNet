@@ -127,14 +127,14 @@ a {
 	text-decoration: none;
 }
 
-	a .icon {
-		display: inline-block;
-		text-decoration: inherit;
-	}
+a .icon {
+	display: inline-block;
+	text-decoration: inherit;
+}
 
-	a:hover, a:active {
-		outline: 0;
-	}
+a:hover, a:active {
+	outline: 0;
+}
 
 abbr[title] {
 	border-bottom: 1px dotted;
@@ -152,18 +152,18 @@ blockquote {
 	quotes: "\201C""\201D""\2018""\2019";
 }
 
-	blockquote:before {
-		color: #ccc;
-		content: open-quote;
-		font-size: 4em;
-		line-height: 0.1em;
-		margin-right: 10px;
-		vertical-align: -0.4em;
-	}
+blockquote:before {
+	color: #ccc;
+	content: open-quote;
+	font-size: 4em;
+	line-height: 0.1em;
+	margin-right: 10px;
+	vertical-align: -0.4em;
+}
 
-	blockquote p {
-		display: inline;
-	}
+blockquote p {
+	display: inline;
+}
 
 
 body {
@@ -186,14 +186,14 @@ button, input {
 	*vertical-align: middle;
 }
 
-	button[disabled], input[disabled] {
-		cursor: default;
-	}
+button[disabled], input[disabled] {
+	cursor: default;
+}
 
-	button::-moz-focus-inner, input::-moz-focus-inner {
-		border: 0;
-		padding: 0;
-	}
+button::-moz-focus-inner, input::-moz-focus-inner {
+	border: 0;
+	padding: 0;
+}
 
 button {
 	font-size: 100%;
@@ -216,9 +216,9 @@ code, pre.nocode {
 	overflow-x: auto;
 }
 
-	code.code-large {
-		font-size: 90%;
-	}
+code.code-large {
+	font-size: 90%;
+}
 
 dd {
 	margin: 0;
@@ -249,7 +249,6 @@ form {
 h1, h2, h3, h4, h5, h6 {
 	margin-top: 0;
 	font-weight: lighter;
-	margin-bottom: -10px;
 }
 
 h1 {
@@ -268,9 +267,9 @@ h4 {
 	font-size: 130%;
 }
 
-	h4.searchresulttitle {
-		margin-bottom: -5px;
-	}
+h4.searchresulttitle {
+	margin-bottom: -5px;
+}
 
 h5 {
 	font-size: 115%;
