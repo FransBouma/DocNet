@@ -53,7 +53,6 @@
     <Compile Include="Config.cs" />
     <Compile Include="Engine.cs" />
     <Compile Include="INavigationElement.cs" />
-    <Compile Include="MarkdownSharp.cs" />
     <Compile Include="NavigatedPath.cs" />
     <Compile Include="NavigationElement.cs" />
     <Compile Include="NavigationLevel.cs" />
