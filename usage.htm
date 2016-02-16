@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en">
+<!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Usage - DocNet Documentation</title>
+    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="stylesheet" href="css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="css/theme_colors.css" type="text/css" />
+    <link rel="stylesheet" href="css/styles/vs.css">
+    <link rel="stylesheet" href="css/font-awesome.4.5.0.min.css">
+</head>
+<body role="document">
+    <div class="grid-for-nav">
+        <nav data-toggle="nav-shift" class="nav-side stickynav">
+            <div class="side-nav-search">
+                <a href="index.htm"><i class="fa fa-home"></i> DocNet Documentation</a>
+                <div role="search">
+                    <form id="search-form" class="form" action="Docnet_search.htm" method="get">
+                        <input type="text" name="q" placeholder="Search docs" />
+                    </form>
+                </div>
+            </div>
+            <div class="menu menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+<ul>
+<li class="tocentry"><a href="index.htm">Home</a>
+</li>
+
+<li class="tocentry current"><a class="current" href="usage.htm">Usage</a>
+<ul class="currentrelativeroot">
+<li class="tocentry"><a href="#Requirements">Requirements</a></li>
+</ul>
+<li class="tocentry">
+<span class="navigationgroup"><i class="fa fa-caret-right"></i> <a href="Configuration.htm">Configuration</a></span>
+</li>
+<li class="tocentry">
+<span class="navigationgroup"><i class="fa fa-caret-right"></i> <a href="Authoringcontent.htm">Authoring content</a></span>
+</li>
+<li class="tocentry"><a href="search.htm">Search</a>
+</li>
+<li class="tocentry"><a href="acknowledgements.htm">Acknowledgements</a>
+</li>
+<li class="tocentry"><a href="license.htm">License</a>
+</li>
+</ul>
+				<div class="toc-footer">
+					<span class="text-small">
+						<hr/>
+						<a href="https://github.com/FransBouma/DocNet" target="_blank">Made with <i class="fa fa-github"></i> DocNet</a>
+					</span>
+				</div>	
+			</div>
+            &nbsp;
+        </nav>
+        <section data-toggle="nav-shift" class="nav-content-wrap">
+            <nav class="nav-top" role="navigation" aria-label="top navigation">
+                <i data-toggle="nav-top" class="fa fa-bars"></i>
+                <a href="index.htm">DocNet Documentation</a>
+            </nav>
+            <div class="nav-content">
+                <div role="navigation" aria-label="breadcrumbs navigation">
+                    <div class="breadcrumbs">
+<ul><li><a href="index.htm">Home</a></li> / <li><a href="usage.htm">Usage</a></li></ul>
+					
+                    </div>
+                    <hr />
+                </div>
+                <div role="main">
+                    <div class="section">
+<p><h1>Usage</h1></p>
+
+<p>The usage is simple:</p>
+
+<p>docnet <em>options</em> <em>folder</em></p>
+
+<p><em>options</em> can be:</p>
+
+<p><ul>
+<li>-c : clear destination folder. </li>
+</ul>
+By default <code>docnet</code> doesn't remove any file in the destination folder. When specified it will remove all files and folders recursively in the specified <code>Destination</code> folder in the found docnet.json. So use this option with caution, as it won't check whether this is the folder your family photos or precious sourcecode are located! </p>
+
+<p><em>folder</em> is the folder where a docnet.json file is expected to be present. </p>
+
+<p><a name="Requirements"></a><h2>Requirements</h2></p>
+
+<p><code>Docnet</code> is a .NET full application (using .NET 4.6.1) and requires .NET full to run. Not tested on Mono but it's highly likely it works on Mono without a problem. The code uses .NET 4.6.1 but it can be compiled against lower versions of .NET full, it doesn't use .NET 4.6 specific features but as Microsoft supports only the latest .NET 4.x versions, it was a logical choice to use .NET 4.6.1.</p>
+
+                    </div>
+                </div>
+                <footer>
+                    <hr />
+                    <div role="contentinfo">
+Made with DocNet. Get your copy at: <a href='https://github.com/FransBouma/DocNet' target='_blank'>https://github.com/FransBouma/DocNet</a>.
+                    </div>
+                </footer>
+            </div>
+        </section>
+    </div>
+    <script src="js/jquery-2.1.1.min.js"></script>
+    <script src="js/modernizr-2.8.3.min.js"></script>
+    <script src="js/highlight.pack.js"></script>
+    <script src="js/theme.js"></script>
+{{ExtraScript}}
+</body>
+</html>

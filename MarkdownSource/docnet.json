@@ -1,0 +1,29 @@
+{
+    "Name" : "DocNet Documentation",
+    "Source" : ".",
+    "Destination" : "..\\",
+    "Theme" : "Default",
+    "Footer" : "Made with DocNet. Get your copy at: <a href='https://github.com/FransBouma/DocNet' target='_blank'>https://github.com/FransBouma/DocNet</a>.",
+    "Pages" : 
+    {
+        "__index" : "index.md",
+        "Usage" : "usage.md",
+        "Configuration" :
+        {
+            "Site configuration with the docnet.json file" : "docnetjson.md",
+            "Automatic H2 level ToC entry discovery" : "h2leveldiscovery.md"
+        },
+        "Authoring content" : 
+        {
+            "Themes" : "themes.md",
+            "Writing content using Markdown" : 
+            {
+                "Markdown support": "markdownsupport.md",
+                "Markdown extensions" : "markdownextensions.md"
+            }
+        },
+        "Search" : "search.md",
+        "Acknowledgements" : "acknowledgements.md",
+        "License": "license.md"
+    }
+}
