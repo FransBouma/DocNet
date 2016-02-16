@@ -467,6 +467,12 @@
   <ItemGroup>
     <EmbeddedResource Include="testfiles\docnetmode\Alert%28DocNetMode%29.html" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="testfiles\docnetmode\Tabs%28DocNetMode%29.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="testfiles\docnetmode\Tabs%28DocNetMode%29.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

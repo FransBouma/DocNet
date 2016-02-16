@@ -1268,9 +1268,14 @@ namespace MarkdownDeep
 			{
 				return HandleFontAwesomeExtension(b);
 			}
+			// first match @tabs, and then @tab, as both are handled by this processor.
 			if(DoesMatch("@tabs"))
 			{
 				return HandleTabsExtension(b);
+			}
+			if(DoesMatch("@tab"))
+			{
+				return HandleTabForTabsExtension(b);
 			}
 			if(DoesMatch("@alert"))
 			{
@@ -1278,6 +1283,7 @@ namespace MarkdownDeep
 			}
 			return false;
 		}
+
 
 
 		/// <summary>
@@ -1327,21 +1333,7 @@ namespace MarkdownDeep
 			}
 
 			// Remove the trailing line end
-			if(Input[endContent - 1] == '\r' && Input[endContent - 2] == '\n')
-			{
-				endContent -= 2;
-			}
-			else
-			{
-				if(Input[endContent - 1] == '\n' && Input[endContent - 2] == '\r')
-				{
-					endContent -= 2;
-				}
-				else
-				{
-					endContent--;
-				}
-			}
+			endContent = UnskipCRLFBeforePos(endContent);
 			b.BlockType = BlockType.alert;
 			b.Data = alertType;
 			// scan the content, as it can contain markdown statements.
@@ -1350,10 +1342,101 @@ namespace MarkdownDeep
 			return true;
 		}
 
+
 		private bool HandleTabsExtension(Block b)
 		{
-#warning IMPLEMENT
-			return false;
+			// skip '@tabs'
+			if(!SkipString("@tabs"))
+			{
+				return false;
+			}
+			// ignore what's specified behind @tabs
+			SkipToNextLine();
+			int startContent = this.Position;
+			// find @end.
+			if(!Find("@endtabs"))
+			{
+				return false;
+			}
+			// Character before must be a eol char
+			if(!IsLineEnd(CharAtOffset(-1)))
+			{
+				return false;
+			}
+			int endContent = Position;
+			// skip @end
+			SkipString("@endtabs");
+			SkipLinespace();
+			if(!Eol)
+			{
+				return false;
+			}
+			// Remove the trailing line end
+			endContent = UnskipCRLFBeforePos(endContent);
+			b.BlockType = BlockType.tabs;
+			// scan the content, as it can contain markdown statements.
+			var contentProcessor = new BlockProcessor(m_markdown, m_markdown.MarkdownInHtml);
+			var scanLines = contentProcessor.ScanLines(this.Input, startContent, endContent - startContent);
+			// check whether the content is solely tab blocks. If not, we ignore this tabs specification.
+			if(scanLines.Any(x=>x.BlockType != BlockType.tab))
+			{
+				return false;
+			}
+			b.Children = scanLines;
+			return true;
+		}
+
+
+		/// <summary>
+		/// Handles the tab for tabs extension. This is a docnet extension and it handles:
+		/// @tab tab head text
+		/// tab content
+		/// @end
+		/// </summary>
+		/// <param name="b">The current block.</param>
+		/// <returns></returns>
+		private bool HandleTabForTabsExtension(Block b)
+		{
+			// skip '@tab'
+			if(!SkipString("@tab"))
+			{
+				return false;
+			}
+			SkipLinespace();
+			var tabHeaderTextStart = this.Position;
+			// skip to eol, then grab the content between positions.
+			SkipToEol();
+			var tabHeaderText = this.Input.Substring(tabHeaderTextStart, this.Position - tabHeaderTextStart);
+			SkipToNextLine();
+			int startContent = this.Position;
+
+			// find @end.
+			if(!Find("@end"))
+			{
+				return false;
+			}
+			// Character before must be a eol char
+			if(!IsLineEnd(CharAtOffset(-1)))
+			{
+				return false;
+			}
+			int endContent = Position;
+			// skip @end
+			SkipString("@end");
+			SkipLinespace();
+			if(!Eol)
+			{
+				return false;
+			}
+
+			// Remove the trailing line end
+			endContent = UnskipCRLFBeforePos(endContent);
+			b.BlockType = BlockType.tab;
+			b.Data = tabHeaderText;
+			// scan the content, as it can contain markdown statements.
+			var contentProcessor = new BlockProcessor(m_markdown, m_markdown.MarkdownInHtml);
+			b.Children = contentProcessor.ScanLines(Input, startContent, endContent - startContent);
+			return true;
 		}
 
 

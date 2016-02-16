@@ -1,0 +1,15 @@
+﻿pre
+
+This is some text
+@tabs
+@tab First Tab
+This is the text for the first tab. It's nothing special
+
+As you can see, it can deal with newlines as well. 
+@end
+@tab Second Tab
+Now, the second tab however is very interesting. At least let's pretend it is!
+@end
+@endtabs
+
+post

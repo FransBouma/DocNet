@@ -537,5 +537,33 @@ namespace MarkdownDeep
 		int pos;
 		int end;
 		int mark;
+
+
+		/// <summary>
+		/// Unskips the CRLF before position. This simply means it returns the new position calculated from the specified position if before the specified
+		/// position a CRLF is present.
+		/// </summary>
+		/// <param name="position">The position.</param>
+		/// <returns>position minus 0, 1 or 2 depending on whether a CRLF is present right before position: if so, it returns position - the length of the CRLF
+		/// which can be 1 or 2 depending on the fact whether it's \r or \n or both.</returns>
+		protected int UnskipCRLFBeforePos(int position)
+		{
+			if(this.Input[position - 1] == '\r' && this.Input[position - 2] == '\n')
+			{
+				position -= 2;
+			}
+			else
+			{
+				if(this.Input[position - 1] == '\n' && this.Input[position - 2] == '\r')
+				{
+					position -= 2;
+				}
+				else
+				{
+					position--;
+				}
+			}
+			return position;
+		}
 	}
 }

@@ -42,6 +42,7 @@ namespace MarkdownDeep
 		private Dictionary<string, bool> m_UsedHeaderIDs;
 		private Dictionary<string, Abbreviation> m_AbbreviationMap;
 		private List<Abbreviation> m_AbbreviationList;
+		private int _tabIdCounter;
 		#endregion
 
 		// Constructor
@@ -57,6 +58,7 @@ namespace MarkdownDeep
 			m_UsedFootnotes = new List<Block>();
 			m_UsedHeaderIDs = new Dictionary<string, bool>();
 			this.CreatedH2IdCollector = new List<Tuple<string, string>>();
+			_tabIdCounter = 0;
 		}
 
 		internal List<Block> ProcessBlocks(string str)
@@ -551,6 +553,16 @@ namespace MarkdownDeep
 			return sb.ToString();
 		}
 
+		/// <summary>
+		/// Gets the new tab identifier, which is a unique number within the markdown parsing pass.
+		/// </summary>
+		/// <returns></returns>
+		internal int GetNewTabId()
+		{
+			_tabIdCounter++;
+			return _tabIdCounter;
+		}
+
 		// Add a link definition
 		internal void AddLinkDefinition(LinkDefinition link)
 		{
@@ -1019,7 +1031,6 @@ namespace MarkdownDeep
 			get;
 			set;
 		}
-
 		#endregion
 
 	}

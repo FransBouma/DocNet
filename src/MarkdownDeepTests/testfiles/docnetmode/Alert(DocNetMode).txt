@@ -17,6 +17,10 @@ This is an info text, it will be displayed in an info alert box!
 This is an info text, it will be displayed in an info alert box!
 @end
 
+@alert info
+This is an **info text**, it will be displayed in an info alert box!
+@end
+
 @alert
 This is an info text, it will be displayed in an info alert box!
 @end

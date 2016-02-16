@@ -59,6 +59,8 @@ namespace MarkdownDeep
 		// DocNet extensions
 		font_awesome,	// Data is icon name
 		alert,			// Data is the alert type specified.
+		tab,			// Data is the tab header text.
+		tabs,			// children are the tabs.
 	}
 
 	class Block
@@ -385,7 +387,12 @@ namespace MarkdownDeep
 						RenderAlert(m, b);
 					}
 					break;
-
+				case BlockType.tabs:
+					if(m.DocNetMode)
+					{
+						RenderTabs(m, b);
+					}
+					break;
 // End DocNet Extensions
 				default:
 					b.Append("<" + BlockType.ToString() + ">");
@@ -394,7 +401,6 @@ namespace MarkdownDeep
 					break;
 			}
 		}
-
 
 		internal void RenderPlain(Markdown m, StringBuilder b)
 		{
@@ -513,12 +519,59 @@ namespace MarkdownDeep
 			b.Append(alertType);
 			b.Append("\"><span class=\"alert-title\"><i class=\"fa fa-");
 			b.Append(faIconName);
-			b.Append("\"></i>");
+			b.Append("\"></i> ");
 			b.Append(title);
 			b.Append("</span>");
 			RenderChildren(m, b);
 			b.Append("</div>");
 		}
+
+
+		private void RenderTabs(Markdown m, StringBuilder b)
+		{
+			var tabId = m.GetNewTabId();
+			var headerSB = new StringBuilder();
+			var contentSB = new StringBuilder();
+			var tabCounter = 0;
+			var checkedAttribute = " checked";
+			foreach(var tabBlock in this.Children)
+			{
+				if(tabBlock.BlockType != BlockType.tab)
+				{
+					return;
+				}
+				var tabHeaderText = tabBlock.Data as string ?? "Tab";
+				// header
+				string tabIdSuffix = tabCounter + "_" + tabId;
+				headerSB.Append("<input type=\"radio\" id=\"tab");
+				headerSB.Append(tabIdSuffix);
+				headerSB.Append("\" name=\"tabGroup");
+				headerSB.Append(tabId);
+				headerSB.Append("\" class=\"tab\"");
+				headerSB.Append(checkedAttribute);
+				headerSB.Append("><label for=\"tab");
+				headerSB.Append(tabIdSuffix);
+				headerSB.Append("\">");
+				headerSB.Append(tabHeaderText);
+				headerSB.Append("</label>");
+
+				// content
+				var tabContentSB = new StringBuilder();
+				tabBlock.RenderChildren(m, tabContentSB);
+				contentSB.Append("<div class=\"tab-content\">");
+				contentSB.Append(tabContentSB.ToString());
+				contentSB.Append("</div>");
+
+				// done
+				checkedAttribute = string.Empty;
+				tabCounter++;
+			}
+			b.Append("<div class=\"tab-wrap\">");
+			b.Append(headerSB.ToString());
+			b.Append(contentSB.ToString());
+			b.Append("</div>");
+		}
+
 
 		#region Properties
 		public int ContentEnd
