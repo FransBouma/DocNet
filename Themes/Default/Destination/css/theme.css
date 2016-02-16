@@ -253,18 +253,22 @@ h1, h2, h3, h4, h5, h6 {
 
 h1 {
 	font-size: 220%;
+	margin-bottom:25px;
 }
 
 h2 {
 	font-size: 190%;
+	margin-bottom:18px;
 }
 
 h3 {
 	font-size: 155%;
+	margin-bottom:15px;
 }
 
 h4 {
 	font-size: 130%;
+	margin-bottom: 13px;
 }
 
 h4.searchresulttitle {
@@ -273,10 +277,12 @@ h4.searchresulttitle {
 
 h5 {
 	font-size: 115%;
+	margin-bottom: 10px;
 }
 
 h6 {
 	font-size: 105%;
+	margin-bottom: 7px;
 }
 
 hr {

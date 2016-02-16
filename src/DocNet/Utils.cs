@@ -33,12 +33,17 @@ namespace Docnet
 	{
 		public static string ConvertMarkdownToHtml(string toConvert, List<Tuple<string, string>> createdAnchorCollector)
 		{
-			var parser = new Markdown(new MarkdownOptions() { EmptyElementSuffix = ">"});
+			//var parser = new Markdown(new MarkdownOptions() { EmptyElementSuffix = ">"});
+			//var toReturn = parser.Transform(toConvert);
+			//if(createdAnchorCollector != null)
+			//{
+			//	createdAnchorCollector.AddRange(parser.CollectedH2AnchorNameTuples);
+			//}
+
+			var parser = new MarkdownDeep.Markdown();
+			parser.ExtraMode = true;
+			parser.GitHubCodeBlocks = true;
 			var toReturn = parser.Transform(toConvert);
-			if(createdAnchorCollector != null)
-			{
-				createdAnchorCollector.AddRange(parser.CollectedH2AnchorNameTuples);
-			}
 			return toReturn;
 		}
 

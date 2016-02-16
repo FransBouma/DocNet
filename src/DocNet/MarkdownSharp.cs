@@ -1163,18 +1163,6 @@ namespace Docnet
         }
 
 
-	    private string CreateAndManageAnchorHtmlIfRequired(int headerLevel, string headerText)
-	    {
-		    if(headerLevel != 2)
-		    {
-			    return string.Empty;
-		    }
-			// create an anchor and collect it for ToC generation.
-		    var anchorText = HttpUtility.HtmlEncode(headerText.Replace(" ", "").Replace("\\", "").Replace("/", "").Replace(".", "").Replace(":", "").Replace(";", ""));
-			this.CollectedH2AnchorNameTuples.Add(new Tuple<string, string>(anchorText, headerText));
-		    return string.Format("<a name=\"{0}\"></a>", anchorText);
-	    }
-
 
         private static Regex _horizontalRules = new Regex(@"
         ^[ ]{0,3}         # Leading space
@@ -1633,6 +1621,7 @@ namespace Docnet
         }
 
 
+		#region MarkdownSharp extensions
 		private static Regex _githubCodeBlock = new Regex(@"(?<!\\)(`{3,}) *(\S+)? *\n([\s\S]+?)\s*\1 *(?:\n+|$)", RegexOptions.Compiled);
 		private string DoGithubCodeBlocks(string text)
 		{
@@ -1741,7 +1730,19 @@ namespace Docnet
 			return string.Concat("\n\n<div class=\"alert alert-", alertType, "\"><span class=\"alert-title\"><i class=\"fa fa-", faIconName, "\"></i> ", title, "</span>",
 								 text, "</div>");
 		}
-
+		
+		private string CreateAndManageAnchorHtmlIfRequired(int headerLevel, string headerText)
+		{
+			if(headerLevel != 2)
+			{
+				return string.Empty;
+			}
+			// create an anchor and collect it for ToC generation.
+			var anchorText = HttpUtility.HtmlEncode(headerText.Replace(" ", "").Replace("\\", "").Replace("/", "").Replace(".", "").Replace(":", "").Replace(";", ""));
+			this.CollectedH2AnchorNameTuples.Add(new Tuple<string, string>(anchorText, headerText));
+			return string.Format("<a name=\"{0}\"></a>", anchorText);
+		}
+		#endregion
 
 
 		#region Encoding and Normalization
