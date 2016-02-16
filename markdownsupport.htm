@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en">
+<!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Markdown support - DocNet Documentation</title>
+    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="stylesheet" href="css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="css/theme_colors.css" type="text/css" />
+    <link rel="stylesheet" href="css/styles/vs.css">
+    <link rel="stylesheet" href="css/font-awesome.4.5.0.min.css">
+</head>
+<body role="document">
+    <div class="grid-for-nav">
+        <nav data-toggle="nav-shift" class="nav-side stickynav">
+            <div class="side-nav-search">
+                <a href="index.htm"><i class="fa fa-home"></i> DocNet Documentation</a>
+                <div role="search">
+                    <form id="search-form" class="form" action="Docnet_search.htm" method="get">
+                        <input type="text" name="q" placeholder="Search docs" />
+                    </form>
+                </div>
+            </div>
+            <div class="menu menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+<ul>
+<li class="tocentry"><a href="index.htm">Home</a>
+</li>
+
+<li class="tocentry"><a href="usage.htm">Usage</a>
+</li>
+<li class="tocentry">
+<span class="navigationgroup"><i class="fa fa-caret-right"></i> <a href="Configuration.htm">Configuration</a></span>
+</li>
+<li class="tocentry">
+<ul>
+<li><span class="navigationgroup"><i class="fa fa-caret-down"></i> <a href="Authoringcontent.htm">Authoring content</a></span></li>
+<li class="tocentry"><a href="themes.htm">Themes</a>
+</li>
+<li class="tocentry">
+<ul>
+<li><span class="navigationgroup"><i class="fa fa-caret-down"></i> <a href="WritingcontentusingMarkdown.htm">Writing content using Markdown</a></span></li>
+<li class="tocentry current"><a class="current" href="markdownsupport.htm">Markdown support</a>
+<ul class="currentrelative">
+<li class="tocentry"><a href="#Highlightingcode">Highlighting code</a></li>
+<li class="tocentry"><a href="#Linking">Linking</a></li>
+</ul>
+<li class="tocentry"><a href="markdownextensions.htm">Markdown extensions</a>
+</li>
+
+</ul>
+</li>
+
+</ul>
+</li>
+<li class="tocentry"><a href="search.htm">Search</a>
+</li>
+<li class="tocentry"><a href="acknowledgements.htm">Acknowledgements</a>
+</li>
+<li class="tocentry"><a href="license.htm">License</a>
+</li>
+</ul>
+				<div class="toc-footer">
+					<span class="text-small">
+						<hr/>
+						<a href="https://github.com/FransBouma/DocNet" target="_blank">Made with <i class="fa fa-github"></i> DocNet</a>
+					</span>
+				</div>	
+			</div>
+            &nbsp;
+        </nav>
+        <section data-toggle="nav-shift" class="nav-content-wrap">
+            <nav class="nav-top" role="navigation" aria-label="top navigation">
+                <i data-toggle="nav-top" class="fa fa-bars"></i>
+                <a href="index.htm">DocNet Documentation</a>
+            </nav>
+            <div class="nav-content">
+                <div role="navigation" aria-label="breadcrumbs navigation">
+                    <div class="breadcrumbs">
+<ul><li><a href="index.htm">Home</a></li> / <li><a href="Authoringcontent.htm">Authoring content</a></li> / <li><a href="WritingcontentusingMarkdown.htm">Writing content using Markdown</a></li> / <li><a href="markdownsupport.htm">Markdown support</a></li></ul>
+					
+                    </div>
+                    <hr />
+                </div>
+                <div role="main">
+                    <div class="section">
+<p><h1>Markdown support</h1></p>
+
+<p><code>DocNet</code> uses markdown files as input. The markdown is parsed with the markdown parser from StackExchange (called '<a href="https://github.com/KyleGobel/MarkdownSharp-GithubCodeBlocks">MarkdownSharp</a>'). It supports the default markdown statements as well as github style code block markers and specific extensions for writing documentation, which are described below. </p>
+
+<p><a name="Highlightingcode"></a><h2>Highlighting code</h2></p>
+
+<p>The markdown parser has been extended with GitHub code specifications, so it's easy to specify a specific code beautifying based on a language. This feature uses the <a href="https://highlightjs.org/">Highlight.js</a> javascript library and most popular languages are included. </p>
+
+<p>Example: to specify a codeblock as C#, append <code>cs</code> after the first <code>```</code> marker:</p>
+
+<p><pre><code class="cs">var i=42;
+</code></pre></p>
+
+<p>To specify a block of text in a fixed sized font but not specify any language highlighting, specify <code>nohighlight</code> as language name:</p>
+
+<p><pre class="nocode">this is a simple &lt;pre&gt; block
+</pre></p>
+
+<p><a name="Linking"></a><h2>Linking</h2></p>
+
+<p><code>Docnet</code> doesn't transform links. This means that any link to any document in your documentation has to use the url it will get in the destination folder. Example: you want to link to the file <code>How to\AddEntity.md</code> from a page. In the result site this should be the link <code>How%20to/AddEntity.htm</code>, which you should specify in your markdown. In the future it might be <code>docnet</code> will be updated with link transformation, at the moment it doesn't convert any links besides the usual markdown ones. The markdown parser also doesn't allow spaces to be present in the urls. If you need a space in the url, escape it with <code>%20</code>. </p>
+
+                    </div>
+                </div>
+                <footer>
+                    <hr />
+                    <div role="contentinfo">
+Made with DocNet. Get your copy at: <a href='https://github.com/FransBouma/DocNet' target='_blank'>https://github.com/FransBouma/DocNet</a>.
+                    </div>
+                </footer>
+            </div>
+        </section>
+    </div>
+    <script src="js/jquery-2.1.1.min.js"></script>
+    <script src="js/modernizr-2.8.3.min.js"></script>
+    <script src="js/highlight.pack.js"></script>
+    <script src="js/theme.js"></script>
+{{ExtraScript}}
+</body>
+</html>

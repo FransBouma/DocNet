@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js" lang="en">
+<!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Site configuration with the docnet.json file - DocNet Documentation</title>
+    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="stylesheet" href="css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="css/theme_colors.css" type="text/css" />
+    <link rel="stylesheet" href="css/styles/vs.css">
+    <link rel="stylesheet" href="css/font-awesome.4.5.0.min.css">
+</head>
+<body role="document">
+    <div class="grid-for-nav">
+        <nav data-toggle="nav-shift" class="nav-side stickynav">
+            <div class="side-nav-search">
+                <a href="index.htm"><i class="fa fa-home"></i> DocNet Documentation</a>
+                <div role="search">
+                    <form id="search-form" class="form" action="Docnet_search.htm" method="get">
+                        <input type="text" name="q" placeholder="Search docs" />
+                    </form>
+                </div>
+            </div>
+            <div class="menu menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+<ul>
+<li class="tocentry"><a href="index.htm">Home</a>
+</li>
+
+<li class="tocentry"><a href="usage.htm">Usage</a>
+</li>
+<li class="tocentry">
+<ul>
+<li><span class="navigationgroup"><i class="fa fa-caret-down"></i> <a href="Configuration.htm">Configuration</a></span></li>
+<li class="tocentry current"><a class="current" href="docnetjson.htm">Site configuration with the docnet.json file</a>
+<ul class="currentrelative">
+<li class="tocentry"><a href="#Levelswithout__indexdefined">Levels without __index defined</a></li>
+</ul>
+<li class="tocentry"><a href="h2leveldiscovery.htm">Automatic H2 level ToC entry discovery</a>
+</li>
+
+</ul>
+</li>
+<li class="tocentry">
+<span class="navigationgroup"><i class="fa fa-caret-right"></i> <a href="Authoringcontent.htm">Authoring content</a></span>
+</li>
+<li class="tocentry"><a href="search.htm">Search</a>
+</li>
+<li class="tocentry"><a href="acknowledgements.htm">Acknowledgements</a>
+</li>
+<li class="tocentry"><a href="license.htm">License</a>
+</li>
+</ul>
+				<div class="toc-footer">
+					<span class="text-small">
+						<hr/>
+						<a href="https://github.com/FransBouma/DocNet" target="_blank">Made with <i class="fa fa-github"></i> DocNet</a>
+					</span>
+				</div>	
+			</div>
+            &nbsp;
+        </nav>
+        <section data-toggle="nav-shift" class="nav-content-wrap">
+            <nav class="nav-top" role="navigation" aria-label="top navigation">
+                <i data-toggle="nav-top" class="fa fa-bars"></i>
+                <a href="index.htm">DocNet Documentation</a>
+            </nav>
+            <div class="nav-content">
+                <div role="navigation" aria-label="breadcrumbs navigation">
+                    <div class="breadcrumbs">
+<ul><li><a href="index.htm">Home</a></li> / <li><a href="Configuration.htm">Configuration</a></li> / <li><a href="docnetjson.htm">Site configuration with the docnet.json file</a></li></ul>
+					
+                    </div>
+                    <hr />
+                </div>
+                <div role="main">
+                    <div class="section">
+<p><h1>The configuration file: 'docnet.json'</h1></p>
+
+<p>DocNet uses a json file to determine what to do in what form. The format is straight forward and described below</p>
+
+<p><pre><code class="json">{
+    "Name" : "name of site",
+    "Source" : "sourcefolder",
+    "Destination" : "destinationfolder",
+    "Theme" : "themefolder",
+    "SourceFoldersToCopy" : ["folder1", "foldern"],
+    "Footer" : "footer text or HTML",
+    "Pages" : 
+    {
+        "__index" : "index.md",
+        "Title Page 1": "filename_page1.md", 
+        "Title Page 2": "filename_page2.md",
+        "Sub Header 1": 
+        {
+            "__index" : "index.md",
+            "Title Page 3" : "filename_page3.md",
+            "Title Page 4" : "filename_page4.md"
+        }
+    }
+}
+</code></pre></p>
+
+<p>The order in which the pages are specified is the order in which they'll appear in the navigation. </p>
+
+<ul>
+<li><code>Name</code> specifies the name of the site to generate. </li>
+<li><code>Source</code> specifies the root of the tree of folders in which markdown files are expected. <code>sourcefolder</code> can be a relative path or an absolute path and is used as the root folder for filenames specified in <code>Pages</code>. </li>
+<li><code>Destination</code> specifies the folder where the output will be written to (.htm files). The output will be written to this folder only, all files from subfolders in <code>Source</code> will be written to the folder specified in <code>Destination</code>. with the same structure as the <em>navigation</em> in <code>Pages</code>. <code>destinationfolder</code> can be a relative path or an absolute path.</li>
+<li><code>Theme</code> specifies the folder within the <code>Themes</code> folder in the folder the <code>docnet</code> executable is located which is used as the theme for the pages to generate. <code>Docnet</code> expects a file called <code>PageTemplate.htm</code> within the specified <code>Theme</code> folder, which contains the HTML which is used as the wrapper file for the HTML generated from the markdown. It has to contain a couple of marker, which are described later in this document. If <code>Theme</code> isn't specified, <code>Default</code> is assumed.</li>
+<li><code>SourceFoldersToCopy</code>. This is an optional directive with, if specified, one or more folder names relative to <code>Source</code>, which contain files to copy to the <code>Destination</code> folder. E.g. image files used in the markdown files, located in an <code>Images</code> folder can be copied this way to the output folder reliably. All folders specified are copied recursively.</li>
+<li><code>Footer</code>. This is text and/or HTML which is placed in the footer of each page, using a <em>marker</em> (see below).</li>
+<li><code>Pages</code> contains the pages to generate into the output, in the order and structure in which you want them to appear in the navigation. The name given is the value used in the navigation tree and has to be unique per level. The value specified with each name is the markdown file to load, parse and generate as .htm file in the output. The markdown file is relative to the path specified in <code>Source</code>. A file <code>foo.md</code> will be generated as <code>foo.htm</code> in the output. </li>
+</ul>
+Paths are expected to use `\` characters, and as it's json, you have to escape them, so the path `.\foo` becomes `.\\foo`.
+
+<p>Each level, starting with the root, has a special page defined, <code>__index</code>. This page is the page shown when the level header (in the example above this is e.g. <em>Sub Header 1</em>) is clicked in the navigation. If <code>__index</code> is specified in the root level, it's assigned to the navigation name <code>Home</code>. If there's no <code>__index</code> specified, there will still be a page generated but it will have default content (See below). The names of the elements are case sensitive.</p>
+
+<p><a name="Levelswithout__indexdefined"></a><h2>Levels without __index defined</h2></p>
+
+<p>If a level has no <code>__index</code> defined, <code>DocNet</code> will create a <code>__index</code> entry for the level and will specify as target <code>&lt;path to index of parent&gt;/nameoflevel.md</code>. If the page exists it will be loaded as the content for the index of the level, if it doesn't exist, the HTML will simply contain the topictitle and a list of all the sub topics in the level. This guarantees the tree can always be navigated in full.  </p>
+
+                    </div>
+                </div>
+                <footer>
+                    <hr />
+                    <div role="contentinfo">
+Made with DocNet. Get your copy at: <a href='https://github.com/FransBouma/DocNet' target='_blank'>https://github.com/FransBouma/DocNet</a>.
+                    </div>
+                </footer>
+            </div>
+        </section>
+    </div>
+    <script src="js/jquery-2.1.1.min.js"></script>
+    <script src="js/modernizr-2.8.3.min.js"></script>
+    <script src="js/highlight.pack.js"></script>
+    <script src="js/theme.js"></script>
+{{ExtraScript}}
+</body>
+</html>
