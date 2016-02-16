@@ -40,10 +40,18 @@ namespace Docnet
 			//	createdAnchorCollector.AddRange(parser.CollectedH2AnchorNameTuples);
 			//}
 
-			var parser = new MarkdownDeep.Markdown();
-			parser.ExtraMode = true;
-			parser.GitHubCodeBlocks = true;
+			var parser = new MarkdownDeep.Markdown
+						 {
+							 ExtraMode = true,
+							 GitHubCodeBlocks = true,
+							 AutoHeadingIDs = true,
+							 NewWindowForExternalLinks = true
+						 };
+
+#warning SET DocumentRoot and DocumentLocation for image features.
+
 			var toReturn = parser.Transform(toConvert);
+			createdAnchorCollector.AddRange(parser.CreatedH2IdCollector);
 			return toReturn;
 		}
 

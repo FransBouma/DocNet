@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Web.UI;
 
 namespace MarkdownDeep
 {
@@ -162,10 +163,11 @@ namespace MarkdownDeep
 				case BlockType.h4:
 				case BlockType.h5:
 				case BlockType.h6:
+					string id = string.Empty;
 					if (m.ExtraMode && !m.SafeMode)
 					{
 						b.Append("<" + blockType.ToString());
-						string id = ResolveHeaderID(m);
+						id = ResolveHeaderID(m);
 						if (!String.IsNullOrEmpty(id))
 						{
 							b.Append(" id=\"");
@@ -181,7 +183,19 @@ namespace MarkdownDeep
 					{
 						b.Append("<" + blockType.ToString() + ">");
 					}
-					m.SpanFormatter.Format(b, buf, contentStart, contentLen);
+					if(blockType == BlockType.h2 && !string.IsNullOrWhiteSpace(id))
+					{
+						// collect h2 id + text in collector
+						var h2ContentSb = new StringBuilder();
+						m.SpanFormatter.Format(h2ContentSb, buf, contentStart, contentLen);
+						var h2ContentAsString = h2ContentSb.ToString();
+						b.Append(h2ContentAsString);
+						m.CreatedH2IdCollector.Add(new Tuple<string, string>(id, h2ContentAsString));
+					}
+					else
+					{
+						m.SpanFormatter.Format(b, buf, contentStart, contentLen);
+					}
 					b.Append("</" + blockType.ToString() + ">\n");
 					break;
 
@@ -246,7 +260,7 @@ namespace MarkdownDeep
 					return;
 
 				case BlockType.codeblock:
-					if(m.FormatCodeBlock == null)
+					if(m.FormatCodeBlockFunc == null)
 					{
 						var dataArgument = this.data as string ?? string.Empty;
 						if(m.GitHubCodeBlocks && !string.IsNullOrWhiteSpace(dataArgument))
@@ -272,7 +286,7 @@ namespace MarkdownDeep
 							m.HtmlEncodeAndConvertTabsToSpaces(sb, line.buf, line.contentStart, line.contentLen);
 							sb.Append("\n");
 						}
-						b.Append(m.FormatCodeBlock(m, sb.ToString()));
+						b.Append(m.FormatCodeBlockFunc(m, sb.ToString()));
 					}
 					return;
 

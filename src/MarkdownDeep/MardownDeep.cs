@@ -31,6 +31,19 @@ namespace MarkdownDeep
 
 	public class Markdown
 	{
+		#region Members
+		private StringBuilder m_StringBuilder;
+		private StringBuilder m_StringBuilderFinal;
+		private StringScanner m_StringScanner;
+		private SpanFormatter m_SpanFormatter;
+		private Dictionary<string, LinkDefinition> m_LinkDefinitions;
+		private Dictionary<string, Block> m_Footnotes;
+		private List<Block> m_UsedFootnotes;
+		private Dictionary<string, bool> m_UsedHeaderIDs;
+		private Dictionary<string, Abbreviation> m_AbbreviationMap;
+		private List<Abbreviation> m_AbbreviationList;
+		#endregion
+
 		// Constructor
 		public Markdown()
 		{
@@ -43,6 +56,7 @@ namespace MarkdownDeep
 			m_Footnotes = new Dictionary<string, Block>();
 			m_UsedFootnotes = new List<Block>();
 			m_UsedHeaderIDs = new Dictionary<string, bool>();
+			this.CreatedH2IdCollector = new List<Tuple<string, string>>();
 		}
 
 		internal List<Block> ProcessBlocks(string str)
@@ -58,6 +72,8 @@ namespace MarkdownDeep
 			// Process blocks
 			return new BlockProcessor(this, MarkdownInHtml).Process(str);
 		}
+
+
 		public string Transform(string str)
 		{
 			Dictionary<string, LinkDefinition> defs;
@@ -201,150 +217,13 @@ namespace MarkdownDeep
 			// Done
 			return sb.ToString();
 		}
-
-		public int SummaryLength
-		{
-			get;
-			set;
-		}
-
-
-		/// <summary>
-		/// Set to true to enable GitHub style codeblocks, which enables GitHub style codeblocks:
-		/// ```cs
-		/// code
-		/// ```
-		/// will result in specifying the specified name after the first ``` as the class in the code element. Which can then be used with highlight.js.
-		/// </summary>
-		public bool GitHubCodeBlocks { get; set; }
-
-		// Set to true to only allow whitelisted safe html tags
-		public bool SafeMode
-		{
-			get;
-			set;
-		}
-
-		// Set to true to enable ExtraMode, which enables the same set of 
-		// features as implemented by PHP Markdown Extra.
-		//  - Markdown in html (eg: <div markdown="1"> or <div markdown="deep"> )
-		//  - Header ID attributes
-		//  - Fenced code blocks
-		//  - Definition lists
-		//  - Footnotes
-		//  - Abbreviations
-		//  - Simple tables
-		public bool ExtraMode
-		{
-			get;
-			set;
-		}
-
-		// When set, all html block level elements automatically support
-		// markdown syntax within them.  
-		// (Similar to Pandoc's handling of markdown in html)
-		public bool MarkdownInHtml
-		{
-			get;
-			set;
-		}
-
-		// When set, all headings will have an auto generated ID attribute
-		// based on the heading text (uses the same algorithm as Pandoc)
-		public bool AutoHeadingIDs
-		{
-			get;
-			set;
-		}
-
-		// When set, all non-qualified urls (links and images) will
-		// be qualified using this location as the base.
-		// Useful when rendering RSS feeds that require fully qualified urls.
-		public string UrlBaseLocation
-		{
-			get;
-			set;
-		}
-
-		// When set, all non-qualified urls (links and images) begining with a slash
-		// will qualified by prefixing with this string.
-		// Useful when rendering RSS feeds that require fully qualified urls.
-		public string UrlRootLocation
-		{
-			get;
-			set;
-		}
-
-		// When true, all fully qualified urls will be give `target="_blank"' attribute
-		// causing them to appear in a separate browser window/tab
-		// ie: relative links open in same window, qualified links open externally
-		public bool NewWindowForExternalLinks
-		{
-			get;
-			set;
-		}
-
-		// When true, all urls (qualified or not) will get target="_blank" attribute
-		// (useful for preview mode on posts)
-		public bool NewWindowForLocalLinks
-		{
-			get;
-			set;
-		}
-
-		// When set, will try to determine the width/height for local images by searching
-		// for an appropriately named file relative to the specified location
-		// Local file system location of the document root.  Used to locate image
-		// files that start with slash.
-		// Typical value: c:\inetpub\www\wwwroot
-		public string DocumentRoot
-		{
-			get;
-			set;
-		}
-
-		// Local file system location of the current document.  Used to locate relative
-		// path images for image size.
-		// Typical value: c:\inetpub\www\wwwroot\subfolder
-		public string DocumentLocation
-		{
-			get;
-			set;
-		}
-
-		// Limit the width of images (0 for no limit)
-		public int MaxImageWidth
-		{
-			get;
-			set;
-		}
-
-		// Set rel="nofollow" on all links
-		public bool NoFollowLinks
-		{
-			get;
-			set;
-		}
-
-        /// <summary>
-        /// Add the NoFollow attribute to all external links.
-        /// </summary>
-        public bool NoFollowExternalLinks
-        {
-            get;
-            set;
-        }
-
-
-
-		public Func<string, string> QualifyUrl;
-
+		
 		// Override to qualify non-local image and link urls
 		public virtual string OnQualifyUrl(string url)
 		{
-			if (QualifyUrl != null)
+			if (QualifyUrlFunc != null)
 			{
-				var q = QualifyUrl(url);
+				var q = QualifyUrlFunc(url);
 				if (q != null)
 					return q;
 			}
@@ -392,20 +271,17 @@ namespace MarkdownDeep
 
 				if (!UrlBaseLocation.EndsWith("/"))
 					return UrlBaseLocation + "/" + url;
-				else
-					return UrlBaseLocation + url;
+				return UrlBaseLocation + url;
 			}
 		}
-
-		public Func<ImageInfo, bool> GetImageSize;
 
 		// Override to supply the size of an image
 		public virtual bool OnGetImageSize(string url, bool TitledImage, out int width, out int height)
 		{
-			if (GetImageSize != null)
+			if (GetImageSizeFunc != null)
 			{
 				var info = new ImageInfo() { url = url, titled_image=TitledImage };
-				if (GetImageSize(info))
+				if (GetImageSizeFunc(info))
 				{
 					width = info.width;
 					height = info.height;
@@ -461,15 +337,13 @@ namespace MarkdownDeep
 			}
 		}
 
-
-		public Func<HtmlTag, bool> PrepareLink;
 		
 		// Override to modify the attributes of a link
 		public virtual void OnPrepareLink(HtmlTag tag)
 		{
-			if (PrepareLink != null)
+			if (PrepareLinkFunc != null)
 			{
-				if (PrepareLink(tag))
+				if (PrepareLinkFunc(tag))
 					return;
 			}
 
@@ -488,8 +362,6 @@ namespace MarkdownDeep
                     tag.attributes["rel"] = "nofollow";
             }
  		
-
-
 			// New window?
 			if ( (NewWindowForExternalLinks && Utils.IsUrlFullyQualified(url)) ||
 				 (NewWindowForLocalLinks && !Utils.IsUrlFullyQualified(url)) )
@@ -501,16 +373,12 @@ namespace MarkdownDeep
 			tag.attributes["href"] = OnQualifyUrl(url);
 		}
 
-		public Func<HtmlTag, bool, bool> PrepareImage;
-
-		internal bool RenderingTitledImage = false;
-
 		// Override to modify the attributes of an image
 		public virtual void OnPrepareImage(HtmlTag tag, bool TitledImage)
 		{
-			if (PrepareImage != null)
+			if (PrepareImageFunc != null)
 			{
-				if (PrepareImage(tag, TitledImage))
+				if (PrepareImageFunc(tag, TitledImage))
 					return;
 			}
 
@@ -524,86 +392,6 @@ namespace MarkdownDeep
 
 			// Now qualify the url
 			tag.attributes["src"] = OnQualifyUrl(tag.attributes["src"]);
-		}
-
-		// Set the html class for the footnotes div
-		// (defaults to "footnotes")
-		// btw fyi: you can use css to disable the footnotes horizontal rule. eg:
-		// div.footnotes hr { display:none }
-		public string HtmlClassFootnotes
-		{
-			get;
-			set;
-		}
-
-		// Callback to format a code block (ie: apply syntax highlighting)
-		// string FormatCodeBlock(code)
-		// Code = code block content (ie: the code to format)
-		// Return the formatted code, including <pre> and <code> tags
-		public Func<Markdown, string, string> FormatCodeBlock;
-
-		// when set to true, will remove head blocks and make content available
-		// as HeadBlockContent
-		public bool ExtractHeadBlocks
-		{
-			get;
-			set;
-		}
-
-		// Retrieve extracted head block content
-		public string HeadBlockContent
-		{
-			get;
-			internal set;
-		}
-
-		// Treats "===" as a user section break
-		public bool UserBreaks
-		{
-			get;
-			set;
-		}
-
-		// Set the classname for titled images
-		// A titled image is defined as a paragraph that contains an image and nothing else.
-		// If not set (the default), this features is disabled, otherwise the output is:
-		// 
-		// <div class="<%=this.HtmlClassTitledImags%>">
-		//	<img src="image.png" />
-		//	<p>Alt text goes here</p>
-		// </div>
-		//
-		// Use CSS to style the figure and the caption
-		public string HtmlClassTitledImages
-		{
-			// TODO:
-			get;
-			set;
-		}
-
-		// Set a format string to be rendered before headings
-		// {0} = section number
-		// (useful for rendering links that can lead to a page that edits that section)
-		// (eg: "<a href=/edit/page?section={0}>"
-		public string SectionHeader
-		{
-			get;
-			set;
-		}
-
-		// Set a format string to be rendered after each section heading
-		public string SectionHeadingSuffix
-		{
-			get;
-			set;
-		}
-
-		// Set a format string to be rendered after the section content (ie: before
-		// the next section heading, or at the end of the document).
-		public string SectionFooter
-		{
-			get;
-			set;
 		}
 
 		public virtual void OnSectionHeader(StringBuilder dest, int Index)
@@ -630,13 +418,12 @@ namespace MarkdownDeep
 			}
 		}
 
-		bool IsSectionHeader(Block b)
+		private bool IsSectionHeader(Block b)
 		{
 			return b.blockType >= BlockType.h1 && b.blockType <= BlockType.h3;
 		}
 
-
-
+		
 		// Split the markdown into sections, one section for each
 		// top level heading
 		public static List<string> SplitUserSections(string markdown)
@@ -967,14 +754,6 @@ namespace MarkdownDeep
 		}
 
 
-		internal SpanFormatter SpanFormatter
-		{
-			get
-			{
-				return m_SpanFormatter;
-			}
-		}
-
 		#region Block Pooling
 
 		// We cache and re-use blocks for performance
@@ -996,19 +775,246 @@ namespace MarkdownDeep
 
 		#endregion
 
-		// Attributes
-		StringBuilder m_StringBuilder;
-		StringBuilder m_StringBuilderFinal;
-		StringScanner m_StringScanner;
-		SpanFormatter m_SpanFormatter;
-		Dictionary<string, LinkDefinition> m_LinkDefinitions;
-		Dictionary<string, Block> m_Footnotes;
-		List<Block> m_UsedFootnotes;
-		Dictionary<string, bool> m_UsedHeaderIDs;
-		Dictionary<string, Abbreviation> m_AbbreviationMap;
-		List<Abbreviation> m_AbbreviationList;
 
-	
+		#region Properties
+		internal bool RenderingTitledImage { get; set; }
+
+		internal SpanFormatter SpanFormatter
+		{
+			get
+			{
+				return m_SpanFormatter;
+			}
+		}
+
+
+		public int SummaryLength
+		{
+			get;
+			set;
+		}
+
+
+		/// <summary>
+		/// Set to true to enable GitHub style codeblocks, which enables GitHub style codeblocks:
+		/// ```cs
+		/// code
+		/// ```
+		/// will result in specifying the specified name after the first ``` as the class in the code element. Which can then be used with highlight.js.
+		/// </summary>
+		public bool GitHubCodeBlocks { get; set; }
+
+		// Set to true to only allow whitelisted safe html tags
+		public bool SafeMode
+		{
+			get;
+			set;
+		}
+
+		// Set to true to enable ExtraMode, which enables the same set of 
+		// features as implemented by PHP Markdown Extra.
+		//  - Markdown in html (eg: <div markdown="1"> or <div markdown="deep"> )
+		//  - Header ID attributes
+		//  - Fenced code blocks
+		//  - Definition lists
+		//  - Footnotes
+		//  - Abbreviations
+		//  - Simple tables
+		public bool ExtraMode
+		{
+			get;
+			set;
+		}
+
+		// When set, all html block level elements automatically support
+		// markdown syntax within them.  
+		// (Similar to Pandoc's handling of markdown in html)
+		public bool MarkdownInHtml
+		{
+			get;
+			set;
+		}
+
+		// When set, all headings will have an auto generated ID attribute
+		// based on the heading text (uses the same algorithm as Pandoc)
+		public bool AutoHeadingIDs
+		{
+			get;
+			set;
+		}
+
+		// When set, all non-qualified urls (links and images) will
+		// be qualified using this location as the base.
+		// Useful when rendering RSS feeds that require fully qualified urls.
+		public string UrlBaseLocation
+		{
+			get;
+			set;
+		}
+
+		// When set, all non-qualified urls (links and images) begining with a slash
+		// will qualified by prefixing with this string.
+		// Useful when rendering RSS feeds that require fully qualified urls.
+		public string UrlRootLocation
+		{
+			get;
+			set;
+		}
+
+		// When true, all fully qualified urls will be give `target="_blank"' attribute
+		// causing them to appear in a separate browser window/tab
+		// ie: relative links open in same window, qualified links open externally
+		public bool NewWindowForExternalLinks
+		{
+			get;
+			set;
+		}
+
+		// When true, all urls (qualified or not) will get target="_blank" attribute
+		// (useful for preview mode on posts)
+		public bool NewWindowForLocalLinks
+		{
+			get;
+			set;
+		}
+
+		// When set, will try to determine the width/height for local images by searching
+		// for an appropriately named file relative to the specified location
+		// Local file system location of the document root.  Used to locate image
+		// files that start with slash.
+		// Typical value: c:\inetpub\www\wwwroot
+		public string DocumentRoot
+		{
+			get;
+			set;
+		}
+
+		// Local file system location of the current document.  Used to locate relative
+		// path images for image size.
+		// Typical value: c:\inetpub\www\wwwroot\subfolder
+		public string DocumentLocation
+		{
+			get;
+			set;
+		}
+
+		// Limit the width of images (0 for no limit)
+		public int MaxImageWidth
+		{
+			get;
+			set;
+		}
+
+		// Set rel="nofollow" on all links
+		public bool NoFollowLinks
+		{
+			get;
+			set;
+		}
+
+		/// <summary>
+		/// Add the NoFollow attribute to all external links.
+		/// </summary>
+		public bool NoFollowExternalLinks
+		{
+			get;
+			set;
+		}
+
+
+		/// <summary>
+		/// Collector for the created id's for H2 headers. First element in Tuple is id name, second is name for ToC (the text for H2). Id's are generated
+		/// by the parser and use pandoc algorithm, as AutoHeadingId's is switched on.
+		/// </summary>
+		public List<Tuple<string, string>> CreatedH2IdCollector { get; private set; }
+
+
+		// Set the html class for the footnotes div
+		// (defaults to "footnotes")
+		// btw fyi: you can use css to disable the footnotes horizontal rule. eg:
+		// div.footnotes hr { display:none }
+		public string HtmlClassFootnotes
+		{
+			get;
+			set;
+		}
+
+		public Func<string, string> QualifyUrlFunc { get; set; }
+		public Func<ImageInfo, bool> GetImageSizeFunc { get; set; }
+		public Func<HtmlTag, bool> PrepareLinkFunc { get; set; }
+		public Func<HtmlTag, bool, bool> PrepareImageFunc { get; set; }
+		// Callback to format a code block (ie: apply syntax highlighting)
+		// string FormatCodeBlock(code)
+		// Code = code block content (ie: the code to format)
+		// Return the formatted code, including <pre> and <code> tags
+		public Func<Markdown, string, string> FormatCodeBlockFunc { get; set; }
+
+		// when set to true, will remove head blocks and make content available
+		// as HeadBlockContent
+		public bool ExtractHeadBlocks
+		{
+			get;
+			set;
+		}
+
+		// Retrieve extracted head block content
+		public string HeadBlockContent
+		{
+			get;
+			internal set;
+		}
+
+		// Treats "===" as a user section break
+		public bool UserBreaks
+		{
+			get;
+			set;
+		}
+
+		// Set the classname for titled images
+		// A titled image is defined as a paragraph that contains an image and nothing else.
+		// If not set (the default), this features is disabled, otherwise the output is:
+		// 
+		// <div class="<%=this.HtmlClassTitledImags%>">
+		//	<img src="image.png" />
+		//	<p>Alt text goes here</p>
+		// </div>
+		//
+		// Use CSS to style the figure and the caption
+		public string HtmlClassTitledImages
+		{
+			// TODO:
+			get;
+			set;
+		}
+
+		// Set a format string to be rendered before headings
+		// {0} = section number
+		// (useful for rendering links that can lead to a page that edits that section)
+		// (eg: "<a href=/edit/page?section={0}>"
+		public string SectionHeader
+		{
+			get;
+			set;
+		}
+
+		// Set a format string to be rendered after each section heading
+		public string SectionHeadingSuffix
+		{
+			get;
+			set;
+		}
+
+		// Set a format string to be rendered after the section content (ie: before
+		// the next section heading, or at the end of the document).
+		public string SectionFooter
+		{
+			get;
+			set;
+		}
+
+		#endregion
+
 	}
 
 }
