@@ -1,0 +1,24 @@
+﻿pre
+
+This is some text
+@alert danger
+This is a dangerous text, it will be displayed in a danger alert box!
+@end
+
+@alert warning
+This is a warning text, it will be displayed in a warning alert box!
+@end
+
+@alert info
+This is an info text, it will be displayed in an info alert box!
+@end
+
+@alert neutral
+This is an info text, it will be displayed in an info alert box!
+@end
+
+@alert
+This is an info text, it will be displayed in an info alert box!
+@end
+
+post

@@ -208,7 +208,7 @@ namespace MarkdownDeep
 
 			if (ret!=null)
 			{
-				pos = sp.position;
+				pos = sp.Position;
 				return ret;
 			}
 
@@ -218,7 +218,7 @@ namespace MarkdownDeep
 		public static HtmlTag Parse(StringScanner p)
 		{
 			// Save position
-			int savepos = p.position;
+			int savepos = p.Position;
 
 			// Parse it
 			var ret = ParseHelper(p);
@@ -226,14 +226,14 @@ namespace MarkdownDeep
 				return ret;
 
 			// Rewind if failed
-			p.position = savepos;
+			p.Position = savepos;
 			return null;
 		}
 
 		private static HtmlTag ParseHelper(StringScanner p)
 		{
 			// Does it look like a tag?
-			if (p.current != '<')
+			if (p.Current != '<')
 				return null;
 
 			// Skip '<'
@@ -270,7 +270,7 @@ namespace MarkdownDeep
 			// If it's a closing tag, no attributes
 			if (bClosing)
 			{
-				if (p.current != '>')
+				if (p.Current != '>')
 					return null;
 
 				p.SkipForward(1);
@@ -278,7 +278,7 @@ namespace MarkdownDeep
 			}
 
 
-			while (!p.eof)
+			while (!p.Eof)
 			{
 				// Skip whitespace
 				p.SkipWhitespace();
@@ -328,10 +328,10 @@ namespace MarkdownDeep
 					{
 						// Scan the value
 						p.Mark();
-						while (!p.eof && !char.IsWhiteSpace(p.current) && p.current != '>' && p.current != '/')
+						while (!p.Eof && !char.IsWhiteSpace(p.Current) && p.Current != '>' && p.Current != '/')
 							p.SkipForward(1);
 
-						if (!p.eof)
+						if (!p.Eof)
 						{
 							// Store the value
 							tag.m_attributes.Add(attributeName, p.Extract());

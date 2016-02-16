@@ -84,7 +84,7 @@ namespace MarkdownDeep
 		}
 
 		// Get the entire input string
-		public string input
+		public string Input
 		{
 			get
 			{
@@ -93,7 +93,7 @@ namespace MarkdownDeep
 		}
 
 		// Get the character at the current position
-		public char current
+		public char Current
 		{
 			get
 			{
@@ -105,7 +105,7 @@ namespace MarkdownDeep
 		}
 
 		// Get/set the current position
-		public int position
+		public int Position
 		{
 			get
 			{
@@ -119,11 +119,11 @@ namespace MarkdownDeep
 
 		// Get the remainder of the input 
 		// (use this in a watch window while debugging :)
-		public string remainder
+		public string Remainder
 		{
 			get
 			{
-				return Substring(position);
+				return Substring(Position);
 			}
 		}
 
@@ -201,7 +201,7 @@ namespace MarkdownDeep
 		// Skip a character if present
 		public bool SkipChar(char ch)
 		{
-			if (current == ch)
+			if (Current == ch)
 			{
 				SkipForward(1);
 				return true;
@@ -237,11 +237,11 @@ namespace MarkdownDeep
 		// Skip any whitespace
 		public bool SkipWhitespace()
 		{
-			if (!char.IsWhiteSpace(current))
+			if (!char.IsWhiteSpace(Current))
 				return false;
 			SkipForward(1);
 
-			while (char.IsWhiteSpace(current))
+			while (char.IsWhiteSpace(Current))
 				SkipForward(1);
 
 			return true;
@@ -256,11 +256,11 @@ namespace MarkdownDeep
 		// Skip spaces and tabs
 		public bool SkipLinespace()
 		{
-			if (!IsLineSpace(current))
+			if (!IsLineSpace(Current))
 				return false;
 			SkipForward(1);
 
-			while (IsLineSpace(current))
+			while (IsLineSpace(Current))
 				SkipForward(1);
 
 			return true;
@@ -269,7 +269,7 @@ namespace MarkdownDeep
 		// Does current character match something
 		public bool DoesMatch(char ch)
 		{
-			return current == ch;
+			return Current == ch;
 		}
 
 		// Does character at offset match a character
@@ -314,7 +314,7 @@ namespace MarkdownDeep
 		// Does current string position match a string
 		public bool DoesMatchI(string str)
 		{
-			return string.Compare(str, Substring(position, str.Length), true) == 0;
+			return string.Compare(str, Substring(Position, str.Length), true) == 0;
 		}
 
 		// Extract a substring
@@ -393,7 +393,7 @@ namespace MarkdownDeep
 		}
 
 		// Are we at eof?
-		public bool eof
+		public bool Eof
 		{
 			get
 			{
@@ -402,16 +402,16 @@ namespace MarkdownDeep
 		}
 
 		// Are we at eol?
-		public bool eol
+		public bool Eol
 		{
 			get
 			{
-				return IsLineEnd(current);
+				return IsLineEnd(Current);
 			}
 		}
 
 		// Are we at bof?
-		public bool bof
+		public bool Bof
 		{
 			get
 			{
@@ -437,7 +437,7 @@ namespace MarkdownDeep
 		// Skip an identifier
 		public bool SkipIdentifier(ref string identifier)
 		{
-			int savepos = position;
+			int savepos = Position;
 			if (!Utils.ParseIdentifier(this.str, ref pos, ref identifier))
 				return false;
 			if (pos >= end)
@@ -450,7 +450,7 @@ namespace MarkdownDeep
 
 		public bool SkipFootnoteID(out string id)
 		{
-			int savepos = position;
+			int savepos = Position;
 
 			SkipLinespace();
 
@@ -458,14 +458,14 @@ namespace MarkdownDeep
 
 			while (true)
 			{
-				char ch = current;
+				char ch = Current;
 				if (char.IsLetterOrDigit(ch) || ch == '-' || ch == '_' || ch == ':' || ch == '.' || ch == ' ')
 					SkipForward(1);
 				else
 					break;
 			}
 
-			if (position > mark)
+			if (Position > mark)
 			{
 				id = Extract().Trim();
 				if (!String.IsNullOrEmpty(id))
@@ -475,7 +475,7 @@ namespace MarkdownDeep
 				}
 			}
 
-			position = savepos;
+			Position = savepos;
 			id = null;
 			return false;
 		}
@@ -483,7 +483,7 @@ namespace MarkdownDeep
 		// Skip a Html entity (eg: &amp;)
 		public bool SkipHtmlEntity(ref string entity)
 		{
-			int savepos = position;
+			int savepos = Position;
 			if (!Utils.SkipHtmlEntity(this.str, ref pos, ref entity))
 				return false;
 			if (pos > end)

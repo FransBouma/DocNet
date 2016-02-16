@@ -146,10 +146,10 @@ namespace MarkdownDeep
 		// Parse a link definition
 		internal static LinkDefinition ParseLinkDefinition(StringScanner p, bool ExtraMode)
 		{
-			int savepos=p.position;
+			int savepos=p.Position;
 			var l = ParseLinkDefinitionInternal(p, ExtraMode);
 			if (l==null)
-				p.position = savepos;
+				p.Position = savepos;
 			return l;
 
 		}
@@ -180,7 +180,7 @@ namespace MarkdownDeep
 			p.SkipLinespace();
 
 			// Trailing crap, not a valid link reference...
-			if (!p.eol)
+			if (!p.Eol)
 				return null;
 
 			return link;
@@ -195,7 +195,7 @@ namespace MarkdownDeep
 			p.SkipWhitespace();
 
 			// End of string?
-			if (p.eol)
+			if (p.Eol)
 				return null;
 
 			// Create the link definition
@@ -208,9 +208,9 @@ namespace MarkdownDeep
 				p.Mark();
 
 				// Find end of the url
-				while (p.current != '>')
+				while (p.Current != '>')
 				{
-					if (p.eof)
+					if (p.Eof)
 						return null;
 					p.SkipEscapableChar(ExtraMode);
 				}
@@ -230,9 +230,9 @@ namespace MarkdownDeep
 				// Find end of the url
 				p.Mark();
 				int paren_depth = 1;
-				while (!p.eol)
+				while (!p.Eol)
 				{
-					char ch=p.current;
+					char ch=p.Current;
 					if (char.IsWhiteSpace(ch))
 						break;
 					if (id == null)
@@ -259,9 +259,9 @@ namespace MarkdownDeep
 			if (p.DoesMatch(')'))
 				return r;
 
-			bool bOnNewLine = p.eol;
-			int posLineEnd = p.position;
-			if (p.eol)
+			bool bOnNewLine = p.Eol;
+			int posLineEnd = p.Position;
+			if (p.Eol)
 			{
 				p.SkipEol();
 				p.SkipLinespace();
@@ -269,11 +269,11 @@ namespace MarkdownDeep
 
 			// Work out what the title is delimited with
 			char delim;
-			switch (p.current)
+			switch (p.Current)
 			{
 				case '\'':  
 				case '\"':
-					delim = p.current;
+					delim = p.Current;
 					break;
 
 				case '(':
@@ -283,7 +283,7 @@ namespace MarkdownDeep
 				default:
 					if (bOnNewLine)
 					{
-						p.position = posLineEnd;
+						p.Position = posLineEnd;
 						return r;
 					}
 					else
@@ -297,15 +297,15 @@ namespace MarkdownDeep
 			p.Mark();
 			while (true)
 			{
-				if (p.eol)
+				if (p.Eol)
 					return null;
 
-				if (p.current == delim)
+				if (p.Current == delim)
 				{
 
 					if (delim != ')')
 					{
-						int savepos = p.position;
+						int savepos = p.Position;
 
 						// Check for embedded quotes in title
 
@@ -315,13 +315,13 @@ namespace MarkdownDeep
 
 						// Next we expect either the end of the line for a link definition
 						// or the close bracket for an inline link
-						if ((id == null && p.current != ')') ||
-							(id != null && !p.eol))
+						if ((id == null && p.Current != ')') ||
+							(id != null && !p.Eol))
 						{
 							continue;
 						}
 
-						p.position = savepos;
+						p.Position = savepos;
 					}
 
 					// End of title

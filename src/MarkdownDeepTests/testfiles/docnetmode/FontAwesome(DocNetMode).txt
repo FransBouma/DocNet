@@ -1,0 +1,12 @@
+﻿pre
+
+This is some text with a @fa-github font awesome icon in it! `@fa-github`. 
+
+@fa-github
+
+ @fa-github
+  @fa-github
+
+a @fa-github
+		
+post

@@ -44,7 +44,7 @@ namespace MarkdownDeep
 		{
 			p.SkipLinespace();
 
-			if (p.eol)
+			if (p.Eol)
 				return null;		// Blank line ends the table
 
 			bool bAnyBars=LeadingBar;
@@ -58,11 +58,11 @@ namespace MarkdownDeep
 
 			// Parse all columns except the last
 
-			while (!p.eol)
+			while (!p.Eol)
 			{
 				// Find the next vertical bar
 				p.Mark();
-				while (!p.eol && p.current != '|')
+				while (!p.Eol && p.Current != '|')
 					p.SkipEscapableChar(true);
 
 				row.Add(p.Extract().Trim());
@@ -143,7 +143,7 @@ namespace MarkdownDeep
 			p.SkipLinespace();
 
 			// Quick check for typical case
-			if (p.current != '|' && p.current != ':' && p.current != '-')
+			if (p.Current != '|' && p.Current != ':' && p.Current != '-')
 				return null;
 
 			// Don't create the spec until it at least looks like one
@@ -164,11 +164,11 @@ namespace MarkdownDeep
 				p.SkipLinespace();
 
 				// Must have something in the spec
-				if (p.current == '|')
+				if (p.Current == '|')
 					return null;
 
 				bool AlignLeft = p.SkipChar(':');
-				while (p.current == '-')
+				while (p.Current == '-')
 					p.SkipForward(1);
 				bool AlignRight = p.SkipChar(':');
 				p.SkipLinespace();
@@ -182,7 +182,7 @@ namespace MarkdownDeep
 				else if (AlignRight)
 					col = ColumnAlignment.Right;
 
-				if (p.eol)
+				if (p.Eol)
 				{
 					// Not a spec?
 					if (spec == null)
@@ -206,7 +206,7 @@ namespace MarkdownDeep
 
 				// Check for trailing vertical bar
 				p.SkipLinespace();
-				if (p.eol)
+				if (p.Eol)
 				{
 					spec.TrailingBar = true;
 					return spec;

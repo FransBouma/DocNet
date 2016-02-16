@@ -16,11 +16,11 @@ namespace MarkdownDeepTests
 			var p = new StringScanner();
 
 			p.Reset("This is a string with something [bracketed]");
-			Assert.IsTrue(p.bof);
-			Assert.IsFalse(p.eof);
+			Assert.IsTrue(p.Bof);
+			Assert.IsFalse(p.Eof);
 			Assert.IsTrue(p.SkipString("This"));
-			Assert.IsFalse(p.bof);
-			Assert.IsFalse(p.eof);
+			Assert.IsFalse(p.Bof);
+			Assert.IsFalse(p.Eof);
 			Assert.IsFalse(p.SkipString("huh?"));
 			Assert.IsTrue(p.SkipLinespace());
 			Assert.IsTrue(p.SkipChar('i'));
@@ -37,7 +37,7 @@ namespace MarkdownDeepTests
 			Assert.IsTrue(p.Find(']'));
 			Assert.AreEqual("bracketed", p.Extract());
 			Assert.IsTrue(p.SkipChar(']'));
-			Assert.IsTrue(p.eof);
+			Assert.IsTrue(p.Eof);
 		}
 	}
 }

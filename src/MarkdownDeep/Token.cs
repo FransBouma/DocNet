@@ -52,6 +52,9 @@ namespace MarkdownDeep
 		opening_mark,	// opening '*' or '_'
 		closing_mark,	// closing '*' or '_'
 		internal_mark,	// internal '*' or '_'
+
+		// DocNet Extensions
+		font_awesome,	// <i class="fa fa-name"></i>
 	}
 
 	// Token

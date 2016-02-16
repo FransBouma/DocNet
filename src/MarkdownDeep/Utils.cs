@@ -87,7 +87,7 @@ namespace MarkdownDeep
 			identifer = str.Substring(startpos, pos - startpos);
 			return true;
 		}
-
+		
 		// Skip over anything that looks like a valid html entity (eg: &amp, &#123, &#nnn) etc...
 		// Updates `pos` to character after the entity if matched
 		public static bool SkipHtmlEntity(string str, ref int pos, ref string entity)
@@ -322,7 +322,7 @@ namespace MarkdownDeep
 		// Extension method.  Skip an escapable character, or one normal character
 		public static void SkipEscapableChar(this StringScanner p, bool ExtraMode)
 		{
-			if (p.current == '\\' && IsEscapableChar(p.CharAtOffset(1), ExtraMode))
+			if (p.Current == '\\' && IsEscapableChar(p.CharAtOffset(1), ExtraMode))
 			{
 				p.SkipForward(2);
 			}
@@ -367,16 +367,16 @@ namespace MarkdownDeep
 
 			StringBuilder sb = new StringBuilder();
 			StringScanner sp = new StringScanner(str);
-			while (!sp.eof)
+			while (!sp.Eof)
 			{
-				if (sp.eol)
+				if (sp.Eol)
 				{
 					sb.Append('\n');
 					sp.SkipEol();
 				}
 				else
 				{
-					sb.Append(sp.current);
+					sb.Append(sp.Current);
 					sp.SkipForward(1);
 				}
 			}
@@ -491,5 +491,49 @@ namespace MarkdownDeep
 			return url.Contains("://") || url.StartsWith("mailto:");
 		}
 
+
+		/// <summary>
+		/// Skips the font awesome specification at the current specified pos. Pos is inside str at the '@'. font awesome
+		/// directives are @fa-iconname. newPos is positioned to character after iconname if successful match. iconname scanned is specified in iconname.
+		/// </summary>
+		/// <param name="str">The string.</param>
+		/// <param name="currentPos">The current position.</param>
+		/// <param name="newPos">The new position.</param>
+		/// <param name="iconName">Name of the icon.</param>
+		/// <returns>
+		/// bool if match was found and properly skipped, otherwise false.
+		/// </returns>
+		public static bool SkipFontAwesome(string str, int currentPos, out int newPos, out string iconName)
+		{
+			newPos = currentPos;
+			iconName = string.Empty;
+			if(str[currentPos] != '@')
+			{
+				return false;
+			}
+
+			var scanner = new StringScanner(str, currentPos);
+			// skip '@'
+			scanner.SkipForward(1);
+			if(!scanner.DoesMatch("fa-"))
+			{
+				// not a font awesome specification
+				return false;
+			}
+			scanner.SkipForward(3);
+			iconName = string.Empty;
+			if(!scanner.SkipIdentifier(ref iconName))
+			{
+				// no icon name specified
+				return false;
+			}
+			if(string.IsNullOrWhiteSpace(iconName))
+			{
+				return false;
+			}
+			// matched a fontawesome specification
+			newPos = scanner.Position;
+			return true;
+		}
 	}
 }

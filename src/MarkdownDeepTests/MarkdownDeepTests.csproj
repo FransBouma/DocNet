@@ -70,6 +70,7 @@
     <Compile Include="CodeSpanTests.cs" />
     <Compile Include="AutoLinkTests.cs" />
     <Compile Include="AutoHeaderIDTests.cs" />
+    <Compile Include="DocNetMode.cs" />
     <Compile Include="GithubMode.cs" />
     <Compile Include="TableSpecTests.cs" />
     <Compile Include="ExtraMode.cs" />
@@ -453,6 +454,18 @@
       <Project>{1569ed47-c7c9-4261-b6f4-7445bd0f2c95}</Project>
       <Name>MarkdownDeep</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="testfiles\docnetmode\FontAwesome%28DocNetMode%29.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="testfiles\docnetmode\FontAwesome%28DocNetMode%29.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="testfiles\docnetmode\Alert%28DocNetMode%29.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="testfiles\docnetmode\Alert%28DocNetMode%29.html" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

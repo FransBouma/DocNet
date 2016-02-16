@@ -178,28 +178,28 @@ namespace MarkdownDeep
 						var fn = m_UsedFootnotes[i];
 
 						sb.Append("<li id=\"fn:");
-						sb.Append((string)fn.data);	// footnote id
+						sb.Append((string)fn.Data);	// footnote id
 						sb.Append("\">\n");
 
 
 						// We need to get the return link appended to the last paragraph
 						// in the footnote
-						string strReturnLink = string.Format("<a href=\"#fnref:{0}\" rev=\"footnote\">&#8617;</a>", (string)fn.data);
+						string strReturnLink = string.Format("<a href=\"#fnref:{0}\" rev=\"footnote\">&#8617;</a>", (string)fn.Data);
 
 						// Get the last child of the footnote
-						var child = fn.children[fn.children.Count - 1];
-						if (child.blockType == BlockType.p)
+						var child = fn.Children[fn.Children.Count - 1];
+						if (child.BlockType == BlockType.p)
 						{
-							child.blockType = BlockType.p_footnote;
-							child.data = strReturnLink;
+							child.BlockType = BlockType.p_footnote;
+							child.Data = strReturnLink;
 						}
 						else
 						{
 							child = CreateBlock();
-							child.contentLen = 0;
-							child.blockType = BlockType.p_footnote;
-							child.data = strReturnLink;
-							fn.children.Add(child);
+							child.ContentLen = 0;
+							child.BlockType = BlockType.p_footnote;
+							child.Data = strReturnLink;
+							fn.Children.Add(child);
 						}
 
 
@@ -420,7 +420,7 @@ namespace MarkdownDeep
 
 		private bool IsSectionHeader(Block b)
 		{
-			return b.blockType >= BlockType.h1 && b.blockType <= BlockType.h3;
+			return b.BlockType >= BlockType.h1 && b.BlockType <= BlockType.h3;
 		}
 
 		
@@ -441,10 +441,10 @@ namespace MarkdownDeep
 			for (int i = 0; i < blocks.Count; i++)
 			{
 				var b = blocks[i];
-				if (b.blockType==BlockType.user_break)
+				if (b.BlockType==BlockType.user_break)
 				{
 					// Get the offset of the section
-					int iSectionOffset = b.lineStart;
+					int iSectionOffset = b.LineStart;
 
 					// Add section
 					Sections.Add(markdown.Substring(iPrevSectionOffset, iSectionOffset - iPrevSectionOffset).Trim());
@@ -452,9 +452,9 @@ namespace MarkdownDeep
 					// Next section starts on next line
 					if (i + 1 < blocks.Count)
 					{
-						iPrevSectionOffset = blocks[i + 1].lineStart;
+						iPrevSectionOffset = blocks[i + 1].LineStart;
 						if (iPrevSectionOffset==0)
-							iPrevSectionOffset = blocks[i + 1].contentStart;
+							iPrevSectionOffset = blocks[i + 1].ContentStart;
 					}
 					else
 						iPrevSectionOffset = markdown.Length;
@@ -512,7 +512,7 @@ namespace MarkdownDeep
 				if (md.IsSectionHeader(b))
 				{
 					// Get the offset of the section
-					int iSectionOffset = b.lineStart;
+					int iSectionOffset = b.LineStart;
 
 					// Add section
 					Sections.Add(markdown.Substring(iPrevSectionOffset, iSectionOffset - iPrevSectionOffset));
@@ -560,7 +560,7 @@ namespace MarkdownDeep
 
 		internal void AddFootnote(Block footnote)
 		{
-			m_Footnotes[(string)footnote.data] = footnote;
+			m_Footnotes[(string)footnote.Data] = footnote;
 		}
 
 		// Look up a footnote, claim it and return it's index (or -1 if not found)
@@ -618,9 +618,9 @@ namespace MarkdownDeep
 		{
 			m_StringScanner.Reset(str, start, len);
 			var p = m_StringScanner;
-			while (!p.eof)
+			while (!p.Eof)
 			{
-				char ch = p.current;
+				char ch = p.Current;
 				switch (ch)
 				{
 					case '&':
@@ -654,9 +654,9 @@ namespace MarkdownDeep
 			m_StringScanner.Reset(str, start, len);
 			var p = m_StringScanner;
 			int pos = 0;
-			while (!p.eof)
+			while (!p.Eof)
 			{
-				char ch = p.current;
+				char ch = p.Current;
 				switch (ch)
 				{
 					case '\t':
@@ -826,6 +826,13 @@ namespace MarkdownDeep
 			set;
 		}
 
+
+		/// <summary>
+		/// Gets or sets a value indicating whether the parser is in DocNet mode. If set to true, it will handle '@' extensions added for DocNet as well as
+		/// collect H2 id elements. 
+		/// </summary>
+		public bool DocNetMode { get; set; }
+
 		// When set, all html block level elements automatically support
 		// markdown syntax within them.  
 		// (Similar to Pandoc's handling of markdown in html)
@@ -924,7 +931,7 @@ namespace MarkdownDeep
 
 		/// <summary>
 		/// Collector for the created id's for H2 headers. First element in Tuple is id name, second is name for ToC (the text for H2). Id's are generated
-		/// by the parser and use pandoc algorithm, as AutoHeadingId's is switched on.
+		/// by the parser and use pandoc algorithm, as AutoHeadingId's is switched on. Only in use if DocNetMode is set to true
 		/// </summary>
 		public List<Tuple<string, string>> CreatedH2IdCollector { get; private set; }
 

@@ -45,7 +45,8 @@ namespace Docnet
 							 ExtraMode = true,
 							 GitHubCodeBlocks = true,
 							 AutoHeadingIDs = true,
-							 NewWindowForExternalLinks = true
+							 NewWindowForExternalLinks = true,
+							 DocNetMode = true,
 						 };
 
 #warning SET DocumentRoot and DocumentLocation for image features.

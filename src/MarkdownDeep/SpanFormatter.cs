@@ -137,18 +137,18 @@ namespace MarkdownDeep
 			base.Reset(sb.ToString());
 
 			// Skip everything up to the first letter
-			while (!eof)
+			while (!Eof)
 			{
-				if (Char.IsLetter(current))
+				if (Char.IsLetter(Current))
 					break;
 				SkipForward(1);
 			}
 
 			// Process all characters
 			sb.Length = 0;
-			while (!eof)
+			while (!Eof)
 			{
-				char ch = current;
+				char ch = Current;
 				if (char.IsLetterOrDigit(ch) || ch=='_' || ch=='-' || ch=='.')
 					sb.Append(Char.ToLower(ch));
 				else if (ch == ' ')
@@ -262,6 +262,12 @@ namespace MarkdownDeep
 						sb.Append("</abbr>");
 						break;
 					}
+
+					case TokenType.font_awesome:
+						sb.Append("<i class=\"fa fa-");
+						sb.Append(str, t.startOffset, t.length);
+						sb.Append("\"></i>");
+						break;
 				}
 
 				FreeToken(t);
@@ -337,18 +343,18 @@ namespace MarkdownDeep
 			bool ExtraMode = m_Markdown.ExtraMode;
 
 			// Scan string
-			int start_text_token = position;
-			while (!eof)
+			int start_text_token = Position;
+			while (!Eof)
 			{
-				int end_text_token=position;
+				int end_text_token=Position;
 
 				// Work out token
 				Token token = null;
-				switch (current)
+				int positionSave = Position;
+				switch (Current)
 				{
 					case '*':
 					case '_':
-
 						// Create emphasis mark
 						token = CreateEmphasisMark();
 
@@ -376,64 +382,55 @@ namespace MarkdownDeep
 
 					case '[':
 					case '!':
-					{
 						// Process link reference
-						int linkpos = position;
+						int linkpos = Position;
 						token = ProcessLinkOrImageOrFootnote();
 
 						// Rewind if invalid syntax
 						// (the '[' or '!' will be treated as a regular character and processed below)
 						if (token == null)
-							position = linkpos;
+							Position = linkpos;
 						break;
-					}
 
 					case '<':
-					{
 						// Is it a valid html tag?
-						int save = position;
 						HtmlTag tag = HtmlTag.Parse(this);
 						if (tag != null)
 						{
 							if (!m_Markdown.SafeMode || tag.IsSafe())
 							{
 								// Yes, create a token for it
-								token = CreateToken(TokenType.HtmlTag, save, position - save);
+								token = CreateToken(TokenType.HtmlTag, positionSave, Position - positionSave);
 							}
 							else
 							{
 								// No, rewrite and encode it
-								position = save;
+								Position = positionSave;
 							}
 						}
 						else
 						{
 							// No, rewind and check if it's a valid autolink eg: <google.com>
-							position = save;
+							Position = positionSave;
 							token = ProcessAutoLink();
 
 							if (token == null)
-								position = save;
+								Position = positionSave;
 						}
 						break;
-					}
 
 					case '&':
-					{
 						// Is it a valid html entity
-						int save=position;
 						string unused=null;
 						if (SkipHtmlEntity(ref unused))
 						{
 							// Yes, create a token for it
-							token = CreateToken(TokenType.Html, save, position - save);
+							token = CreateToken(TokenType.Html, positionSave, Position - positionSave);
 						}
 
 						break;
-					}
 
 					case ' ':
-					{
 						// Check for double space at end of a line
 						if (CharAtOffset(1)==' ' && IsLineEnd(CharAtOffset(2)))
 						{
@@ -441,17 +438,15 @@ namespace MarkdownDeep
 							SkipForward(2);
 
 							// Don't put br's at the end of a paragraph
-							if (!eof)
+							if (!Eof)
 							{
 								SkipEol();
 								token = CreateToken(TokenType.br, end_text_token, 0);
 							}
 						}
 						break;
-					}
 
 					case '\\':
-					{
 						// Special handling for escaping <autolinks>
 						/*
 						if (CharAtOffset(1) == '<')
@@ -474,27 +469,44 @@ namespace MarkdownDeep
 							// Check followed by an escapable character
 							if (Utils.IsEscapableChar(CharAtOffset(1), ExtraMode))
 							{
-								token = CreateToken(TokenType.Text, position + 1, 1);
+								token = CreateToken(TokenType.Text, Position + 1, 1);
 								SkipForward(2);
 							}
 						}
 						break;
-					}
+
+					case '@':
+						if(m_Markdown.DocNetMode)
+						{
+							if(this.DoesMatch("@fa-"))
+							{
+								// expect FontAwesome.
+								string iconName = string.Empty;
+								int newPosition = 0;
+								if(Utils.SkipFontAwesome(this.Input, this.Position, out newPosition, out iconName))
+								{
+									// token should be just the iconname, so adjust position specification to that.
+									token = CreateToken(TokenType.font_awesome, newPosition - iconName.Length, iconName.Length);
+									this.Position = newPosition;
+								}
+							}
+						}
+						break;
 				}
 
 				// Look for abbreviations.
 				if (token == null && Abbreviations!=null && !Char.IsLetterOrDigit(CharAtOffset(-1)))
 				{
-					var savepos = position;
+					var savepos = Position;
 					foreach (var abbr in Abbreviations)
 					{
-						if (SkipString(abbr.Abbr) && !Char.IsLetterOrDigit(current))
+						if (SkipString(abbr.Abbr) && !Char.IsLetterOrDigit(Current))
 						{
 							token = CreateToken(TokenType.abbreviation, abbr);
 							break;
 						}
 
-						position = savepos;
+						Position = savepos;
 					}
 
 				}
@@ -512,7 +524,7 @@ namespace MarkdownDeep
 					m_Tokens.Add(token);
 
 					// Remember where the next text token starts
-					start_text_token=position;
+					start_text_token=Position;
 				}
 				else
 				{
@@ -522,9 +534,9 @@ namespace MarkdownDeep
 			}
 
 			// Append a token for any trailing text after the last token.
-			if (position > start_text_token)
+			if (Position > start_text_token)
 			{
-				m_Tokens.Add(CreateToken(TokenType.Text, start_text_token, position-start_text_token));
+				m_Tokens.Add(CreateToken(TokenType.Text, start_text_token, Position-start_text_token));
 			}
 
 			// Do we need to resolve and emphasis marks?
@@ -532,9 +544,6 @@ namespace MarkdownDeep
 			{
 				ResolveEmphasisMarks(m_Tokens, emphasis_marks);
 			}
-
-			// Done!
-			return;
 		}
 
 		static bool IsEmphasisChar(char ch)
@@ -559,61 +568,61 @@ namespace MarkdownDeep
 		public Token CreateEmphasisMark()
 		{
 			// Capture current state
-			char ch = current;
+			char ch = Current;
 			char altch = ch == '*' ? '_' : '*';
-			int savepos = position;
+			int savepos = Position;
 
 			// Check for a consecutive sequence of just '_' and '*'
-			if (bof || char.IsWhiteSpace(CharAtOffset(-1)))
+			if (Bof || char.IsWhiteSpace(CharAtOffset(-1)))
 			{
-				while (IsEmphasisChar(current))
+				while (IsEmphasisChar(Current))
 					SkipForward(1);
 
-				if (eof || char.IsWhiteSpace(current))
+				if (Eof || char.IsWhiteSpace(Current))
 				{
-					return new Token(TokenType.Html, savepos, position - savepos);
+					return new Token(TokenType.Html, savepos, Position - savepos);
 				}
 
 				// Rewind
-				position = savepos;
+				Position = savepos;
 			}
 
 			// Scan backwards and see if we have space before
 			while (IsEmphasisChar(CharAtOffset(-1)))
 				SkipForward(-1);
-			bool bSpaceBefore = bof || char.IsWhiteSpace(CharAtOffset(-1));
-			position = savepos;
+			bool bSpaceBefore = Bof || char.IsWhiteSpace(CharAtOffset(-1));
+			Position = savepos;
 
 			// Count how many matching emphasis characters
-			while (current == ch)
+			while (Current == ch)
 			{
 				SkipForward(1);
 			}
-			int count=position-savepos;
+			int count=Position-savepos;
 
 			// Scan forwards and see if we have space after
 			while (IsEmphasisChar(CharAtOffset(1)))
 				SkipForward(1);
-			bool bSpaceAfter = eof || char.IsWhiteSpace(current);
-			position = savepos + count;
+			bool bSpaceAfter = Eof || char.IsWhiteSpace(Current);
+			Position = savepos + count;
 
 			// This should have been stopped by check above
 			System.Diagnostics.Debug.Assert(!bSpaceBefore || !bSpaceAfter);
 
 			if (bSpaceBefore)
 			{
-				return CreateToken(TokenType.opening_mark, savepos, position - savepos);
+				return CreateToken(TokenType.opening_mark, savepos, Position - savepos);
 			}
 
 			if (bSpaceAfter)
 			{
-				return CreateToken(TokenType.closing_mark, savepos, position - savepos);
+				return CreateToken(TokenType.closing_mark, savepos, Position - savepos);
 			}
 
-			if (m_Markdown.ExtraMode && ch == '_' && (Char.IsLetterOrDigit(current)))
+			if (m_Markdown.ExtraMode && ch == '_' && (Char.IsLetterOrDigit(Current)))
 				return null;
 
-			return CreateToken(TokenType.internal_mark, savepos, position - savepos);
+			return CreateToken(TokenType.internal_mark, savepos, Position - savepos);
 		}
 
 		// Split mark token
@@ -656,7 +665,7 @@ namespace MarkdownDeep
 							break;
 
 						// Ignore if different type (ie: `*` vs `_`)
-						if (input[opening_mark.startOffset] != input[closing_mark.startOffset])
+						if (Input[opening_mark.startOffset] != Input[closing_mark.startOffset])
 							continue;
 
 						// strong or em?
@@ -718,7 +727,7 @@ namespace MarkdownDeep
 						continue;
 
 					// Ignore if different type (ie: `*` vs `_`)
-					if (input[opening_mark.startOffset] != input[closing_mark.startOffset])
+					if (Input[opening_mark.startOffset] != Input[closing_mark.startOffset])
 						continue;
 
 					// Must be at least two
@@ -764,7 +773,7 @@ namespace MarkdownDeep
 						continue;
 
 					// Ignore if different type (ie: `*` vs `_`)
-					if (input[opening_mark.startOffset] != input[closing_mark.startOffset])
+					if (Input[opening_mark.startOffset] != Input[closing_mark.startOffset])
 						continue;
 
 					// Split the opening mark, keeping the LHS
@@ -884,9 +893,9 @@ namespace MarkdownDeep
 			bool ExtraMode = m_Markdown.ExtraMode;
 
 			// Allow anything up to the closing angle, watch for escapable characters
-			while (!eof)
+			while (!Eof)
 			{
-				char ch = current;
+				char ch = Current;
 
 				// No whitespace allowed
 				if (char.IsWhiteSpace(ch))
@@ -945,7 +954,7 @@ namespace MarkdownDeep
 				return null;
 
 			// Is it a foonote?
-			var savepos=position;
+			var savepos=Position;
 			if (m_Markdown.ExtraMode && token_type==TokenType.link && SkipChar('^'))
 			{
 				SkipLinespace();
@@ -964,7 +973,7 @@ namespace MarkdownDeep
 				}
 
 				// Rewind
-				position = savepos;
+				Position = savepos;
 			}
 
 			if (DisableLinks && token_type==TokenType.link)
@@ -976,9 +985,9 @@ namespace MarkdownDeep
 			// escapable characters
 			Mark();
 			int depth = 1;
-			while (!eof)
+			while (!Eof)
 			{
-				char ch = current;
+				char ch = Current;
 				if (ch == '[')
 				{
 					depth++;
@@ -994,7 +1003,7 @@ namespace MarkdownDeep
 			}
 
 			// Quit if end
-			if (eof)
+			if (Eof)
 				return null;
 
 			// Get the link text and unescape it
@@ -1004,7 +1013,7 @@ namespace MarkdownDeep
 			SkipForward(1);
 
 			// Save position in case we need to rewind
-			savepos = position;
+			savepos = Position;
 
 			// Inline links must follow immediately
 			if (SkipChar('('))
@@ -1029,7 +1038,7 @@ namespace MarkdownDeep
 
 			// If there's line end, we're allow it and as must line space as we want
 			// before the link id.
-			if (eol)
+			if (Eol)
 			{
 				SkipEol();
 				SkipLinespace();
@@ -1037,7 +1046,7 @@ namespace MarkdownDeep
 
 			// Reference link?
 			string link_id = null;
-			if (current == '[')
+			if (Current == '[')
 			{
 				// Skip the opening '['
 				SkipForward(1);
@@ -1056,7 +1065,7 @@ namespace MarkdownDeep
 			else
 			{
 				// Rewind to just after the closing ']'
-				position = savepos;
+				Position = savepos;
 			}
 
 			// Link id not specified?
@@ -1087,7 +1096,7 @@ namespace MarkdownDeep
 		// Process a ``` code span ```
 		Token ProcessCodeSpan()
 		{
-			int start = position;
+			int start = Position;
 
 			// Count leading ticks
 			int tickcount = 0;
@@ -1100,23 +1109,23 @@ namespace MarkdownDeep
 			SkipWhitespace();
 
 			// End?
-			if (eof)
-				return CreateToken(TokenType.Text, start, position - start);
+			if (Eof)
+				return CreateToken(TokenType.Text, start, Position - start);
 
-			int startofcode = position;
+			int startofcode = Position;
 
 			// Find closing ticks
 			if (!Find(Substring(start, tickcount)))
-				return CreateToken(TokenType.Text, start, position - start);
+				return CreateToken(TokenType.Text, start, Position - start);
 
 			// Save end position before backing up over trailing whitespace
-			int endpos = position + tickcount;
+			int endpos = Position + tickcount;
 			while (char.IsWhiteSpace(CharAtOffset(-1)))
 				SkipForward(-1);
 
 			// Create the token, move back to the end and we're done
-			var ret = CreateToken(TokenType.code_span, startofcode, position - startofcode);
-			position = endpos;
+			var ret = CreateToken(TokenType.code_span, startofcode, Position - startofcode);
+			Position = endpos;
 			return ret;
 		}
 

@@ -87,7 +87,7 @@ namespace MarkdownDeepTests
 		{
 			StringScanner p = new StringScanner(input);
 
-			while (!p.eof)
+			while (!p.Eof)
 			{
 				HtmlTag tag=HtmlTag.Parse(p);
 				if (tag!=null)
@@ -117,7 +117,7 @@ namespace MarkdownDeepTests
 		{
 			StringScanner p = new StringScanner(input);
 
-			while (!p.eof)
+			while (!p.Eof)
 			{
 				HtmlTag tag = HtmlTag.Parse(p);
 				if (tag != null)

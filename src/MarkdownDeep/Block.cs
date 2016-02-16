@@ -44,7 +44,7 @@ namespace MarkdownDeep
 		unsafe_html,	// unsafe html that should be encoded
 		span,			// an undecorated span of text (used for simple list items 
 						//			where content is not wrapped in paragraph tags
-		codeblock,		// a code block (render only). If in github mode, `Data` contains the language name specified after the leading ```. 
+		codeblock,		// a code block (render only). If in githubcodeblocks mode, `Data` contains the language name specified after the leading ```. 
 		li,				// a list item (render only)
 		ol,				// ordered list (render only)
 		ul,				// unordered list (render only)
@@ -56,6 +56,9 @@ namespace MarkdownDeep
 		dl,				// render only
 		footnote,		// footnote definition  eg: [^id]   `data` holds the footnote id
 		p_footnote,		// paragraph with footnote return link append.  Return link string is in `data`.
+		// DocNet extensions
+		font_awesome,	// Data is icon name
+		alert,			// Data is the alert type specified.
 	}
 
 	class Block
@@ -67,18 +70,18 @@ namespace MarkdownDeep
 
 		internal Block(BlockType type)
 		{
-			blockType = type;
+			BlockType = type;
 		}
 
 		public string Content
 		{
 			get
 			{
-				switch (blockType)
+				switch (BlockType)
 				{
 					case BlockType.codeblock:
 						StringBuilder s = new StringBuilder();
-						foreach (var line in children)
+						foreach (var line in Children)
 						{
 							s.Append(line.Content);
 							s.Append('\n');
@@ -87,24 +90,27 @@ namespace MarkdownDeep
 				}
 
 
-				if (buf==null)
+				if (Buf==null)
 					return null;
 				else
-					return contentStart == -1 ? buf : buf.Substring(contentStart, contentLen);
+					return ContentStart == -1 ? Buf : Buf.Substring(ContentStart, ContentLen);
 			}
 		}
 
-		public int LineStart
+		/// <summary>
+		/// Gets the absolute line start: if line start is 0, it's returning the content start.
+		/// </summary>
+		public int LineStartAbsolute
 		{
 			get
 			{
-				return lineStart == 0 ? contentStart : lineStart;
+				return LineStart == 0 ? ContentStart : LineStart;
 			}
 		}
 
 		internal void RenderChildren(Markdown m, StringBuilder b)
 		{
-			foreach (var block in children)
+			foreach (var block in Children)
 			{
 				block.Render(m, b);
 			}
@@ -112,7 +118,7 @@ namespace MarkdownDeep
 
 		internal void RenderChildrenPlain(Markdown m, StringBuilder b)
 		{
-			foreach (var block in children)
+			foreach (var block in Children)
 			{
 				block.RenderPlain(m, b);
 			}
@@ -121,39 +127,39 @@ namespace MarkdownDeep
 		internal string ResolveHeaderID(Markdown m)
 		{
 			// Already resolved?
-			if (this.data!=null && this.data is string)
-				return (string)this.data;
+			if (this.Data!=null && this.Data is string)
+				return (string)this.Data;
 
 			// Approach 1 - PHP Markdown Extra style header id
-			int end=contentEnd;
-			string id = Utils.StripHtmlID(buf, contentStart, ref end);
+			int end=ContentEnd;
+			string id = Utils.StripHtmlID(Buf, ContentStart, ref end);
 			if (id != null)
 			{
-				contentEnd = end;
+				ContentEnd = end;
 			}
 			else
 			{
 				// Approach 2 - pandoc style header id
-				id = m.MakeUniqueHeaderID(buf, contentStart, contentLen);
+				id = m.MakeUniqueHeaderID(Buf, ContentStart, ContentLen);
 			}
 
-			this.data = id;
+			this.Data = id;
 			return id;
 		}
 
 		internal void Render(Markdown m, StringBuilder b)
 		{
-			switch (blockType)
+			switch (BlockType)
 			{
 				case BlockType.Blank:
 					return;
 
 				case BlockType.p:
-					m.SpanFormatter.FormatParagraph(b, buf, contentStart, contentLen);
+					m.SpanFormatter.FormatParagraph(b, Buf, ContentStart, ContentLen);
 					break;
 
 				case BlockType.span:
-					m.SpanFormatter.Format(b, buf, contentStart, contentLen);
+					m.SpanFormatter.Format(b, Buf, ContentStart, ContentLen);
 					b.Append("\n");
 					break;
 
@@ -166,7 +172,7 @@ namespace MarkdownDeep
 					string id = string.Empty;
 					if (m.ExtraMode && !m.SafeMode)
 					{
-						b.Append("<" + blockType.ToString());
+						b.Append("<" + BlockType.ToString());
 						id = ResolveHeaderID(m);
 						if (!String.IsNullOrEmpty(id))
 						{
@@ -181,53 +187,53 @@ namespace MarkdownDeep
 					}
 					else
 					{
-						b.Append("<" + blockType.ToString() + ">");
+						b.Append("<" + BlockType.ToString() + ">");
 					}
-					if(blockType == BlockType.h2 && !string.IsNullOrWhiteSpace(id))
+					if(m.DocNetMode && BlockType == BlockType.h2 && !string.IsNullOrWhiteSpace(id))
 					{
 						// collect h2 id + text in collector
 						var h2ContentSb = new StringBuilder();
-						m.SpanFormatter.Format(h2ContentSb, buf, contentStart, contentLen);
+						m.SpanFormatter.Format(h2ContentSb, Buf, ContentStart, ContentLen);
 						var h2ContentAsString = h2ContentSb.ToString();
 						b.Append(h2ContentAsString);
 						m.CreatedH2IdCollector.Add(new Tuple<string, string>(id, h2ContentAsString));
 					}
 					else
 					{
-						m.SpanFormatter.Format(b, buf, contentStart, contentLen);
+						m.SpanFormatter.Format(b, Buf, ContentStart, ContentLen);
 					}
-					b.Append("</" + blockType.ToString() + ">\n");
+					b.Append("</" + BlockType.ToString() + ">\n");
 					break;
 
 				case BlockType.hr:
 					b.Append("<hr />\n");
 					return;
-
+				
 				case BlockType.user_break:
 					return;
 
 				case BlockType.ol_li:
 				case BlockType.ul_li:
 					b.Append("<li>");
-					m.SpanFormatter.Format(b, buf, contentStart, contentLen);
+					m.SpanFormatter.Format(b, Buf, ContentStart, ContentLen);
 					b.Append("</li>\n");
 					break;
 
 				case BlockType.dd:
 					b.Append("<dd>");
-					if (children != null)
+					if (Children != null)
 					{
 						b.Append("\n");
 						RenderChildren(m, b);
 					}
 					else
-						m.SpanFormatter.Format(b, buf, contentStart, contentLen);
+						m.SpanFormatter.Format(b, Buf, ContentStart, ContentLen);
 					b.Append("</dd>\n");
 					break;
 
 				case BlockType.dt:
 				{
-					if (children == null)
+					if (Children == null)
 					{
 						foreach (var l in Content.Split('\n'))
 						{
@@ -252,38 +258,48 @@ namespace MarkdownDeep
 					return;
 
 				case BlockType.html:
-					b.Append(buf, contentStart, contentLen);
+					b.Append(Buf, ContentStart, ContentLen);
 					return;
 
 				case BlockType.unsafe_html:
-					m.HtmlEncode(b, buf, contentStart, contentLen);
+					m.HtmlEncode(b, Buf, ContentStart, ContentLen);
 					return;
 
 				case BlockType.codeblock:
 					if(m.FormatCodeBlockFunc == null)
 					{
-						var dataArgument = this.data as string ?? string.Empty;
+						var dataArgument = this.Data as string ?? string.Empty;
+						string tagSuffix = "</code></pre>\n\n";
+
 						if(m.GitHubCodeBlocks && !string.IsNullOrWhiteSpace(dataArgument))
 						{
-							b.AppendFormat("<pre><code class=\"{0}\">", dataArgument);
+							if(dataArgument == "nohighlight")
+							{
+								b.Append("<pre class=\"nocode\">");
+								tagSuffix = "</pre>";
+							}
+							else
+							{
+								b.AppendFormat("<pre><code class=\"{0}\">", dataArgument);
+							}
 						}
 						else
 						{
 							b.Append("<pre><code>");
 						}
-						foreach(var line in children)
+						foreach(var line in Children)
 						{
-							m.HtmlEncodeAndConvertTabsToSpaces(b, line.buf, line.contentStart, line.contentLen);
+							m.HtmlEncodeAndConvertTabsToSpaces(b, line.Buf, line.ContentStart, line.ContentLen);
 							b.Append("\n");
 						}
-						b.Append("</code></pre>\n\n");
+						b.Append(tagSuffix);
 					}
 					else
 					{
 						var sb = new StringBuilder();
-						foreach(var line in children)
+						foreach(var line in Children)
 						{
-							m.HtmlEncodeAndConvertTabsToSpaces(sb, line.buf, line.contentStart, line.contentLen);
+							m.HtmlEncodeAndConvertTabsToSpaces(sb, line.Buf, line.ContentStart, line.ContentLen);
 							sb.Append("\n");
 						}
 						b.Append(m.FormatCodeBlockFunc(m, sb.ToString()));
@@ -315,7 +331,7 @@ namespace MarkdownDeep
 					return;
 
 				case BlockType.HtmlTag:
-					var tag = (HtmlTag)data;
+					var tag = (HtmlTag)Data;
 
 					// Prepare special tags
 					var name=tag.name.ToLowerInvariant();
@@ -341,38 +357,55 @@ namespace MarkdownDeep
 					return;
 
 				case BlockType.table_spec:
-					((TableSpec)data).Render(m, b);
+					((TableSpec)Data).Render(m, b);
 					break;
 
 				case BlockType.p_footnote:
 					b.Append("<p>");
-					if (contentLen > 0)
+					if (ContentLen > 0)
 					{
-						m.SpanFormatter.Format(b, buf, contentStart, contentLen);
+						m.SpanFormatter.Format(b, Buf, ContentStart, ContentLen);
 						b.Append("&nbsp;");
 					}
-					b.Append((string)data);
+					b.Append((string)Data);
 					b.Append("</p>\n");
 					break;
+// DocNet Extensions
+				case BlockType.font_awesome:
+					if(m.DocNetMode)
+					{
+						b.Append("<i class=\"fa fa-");
+						b.Append(this.Data as string ?? string.Empty);
+						b.Append("\"></i>");
+					}
+					break;
+				case BlockType.alert:
+					if(m.DocNetMode)
+					{
+						RenderAlert(m, b);
+					}
+					break;
 
+// End DocNet Extensions
 				default:
-					b.Append("<" + blockType.ToString() + ">");
-					m.SpanFormatter.Format(b, buf, contentStart, contentLen);
-					b.Append("</" + blockType.ToString() + ">\n");
+					b.Append("<" + BlockType.ToString() + ">");
+					m.SpanFormatter.Format(b, Buf, ContentStart, ContentLen);
+					b.Append("</" + BlockType.ToString() + ">\n");
 					break;
 			}
 		}
 
+
 		internal void RenderPlain(Markdown m, StringBuilder b)
 		{
-			switch (blockType)
+			switch (BlockType)
 			{
 				case BlockType.Blank:
 					return;
 
 				case BlockType.p:
 				case BlockType.span:
-					m.SpanFormatter.FormatPlain(b, buf, contentStart, contentLen);
+					m.SpanFormatter.FormatPlain(b, Buf, ContentStart, ContentLen);
 					b.Append(" ");
 					break;
 
@@ -382,7 +415,7 @@ namespace MarkdownDeep
 				case BlockType.h4:
 				case BlockType.h5:
 				case BlockType.h6:
-					m.SpanFormatter.FormatPlain(b, buf, contentStart, contentLen);
+					m.SpanFormatter.FormatPlain(b, Buf, ContentStart, ContentLen);
 					b.Append(" - ");
 					break;
 
@@ -390,23 +423,23 @@ namespace MarkdownDeep
 				case BlockType.ol_li:
 				case BlockType.ul_li:
 					b.Append("* ");
-					m.SpanFormatter.FormatPlain(b, buf, contentStart, contentLen);
+					m.SpanFormatter.FormatPlain(b, Buf, ContentStart, ContentLen);
 					b.Append(" ");
 					break;
 
 				case BlockType.dd:
-					if (children != null)
+					if (Children != null)
 					{
 						b.Append("\n");
 						RenderChildrenPlain(m, b);
 					}
 					else
-						m.SpanFormatter.FormatPlain(b, buf, contentStart, contentLen);
+						m.SpanFormatter.FormatPlain(b, Buf, ContentStart, ContentLen);
 					break;
 
 				case BlockType.dt:
 					{
-						if (children == null)
+						if (Children == null)
 						{
 							foreach (var l in Content.Split('\n'))
 							{
@@ -426,9 +459,9 @@ namespace MarkdownDeep
 					return;
 
 				case BlockType.codeblock:
-					foreach (var line in children)
+					foreach (var line in Children)
 					{
-						b.Append(line.buf, line.contentStart, line.contentLen);
+						b.Append(line.Buf, line.ContentStart, line.ContentLen);
 						b.Append(" ");
 					}
 					return;
@@ -445,34 +478,72 @@ namespace MarkdownDeep
 
 		public void RevertToPlain()
 		{
-			blockType = BlockType.p;
-			contentStart = lineStart;
-			contentLen = lineLen;
+			BlockType = BlockType.p;
+			ContentStart = LineStart;
+			ContentLen = LineLen;
 		}
 
-		public int contentEnd
+
+		private void RenderAlert(Markdown m, StringBuilder b)
+		{
+			var alertType = this.Data as string;
+			if(string.IsNullOrWhiteSpace(alertType))
+			{
+				alertType = "info";
+			}
+			string title = string.Empty;
+			string faIconName = string.Empty;
+			switch(alertType)
+			{
+				case "danger":
+					title = "Danger!";
+					faIconName = "times-circle";
+					break;
+				case "warning":
+					title = "Warning!";
+					faIconName = "warning";
+					break;
+				case "neutral":
+				case "info":
+					title = "Info";
+					faIconName = "info-circle";
+					break;
+			}
+			b.Append("<div class=\"alert alert-");
+			b.Append(alertType);
+			b.Append("\"><span class=\"alert-title\"><i class=\"fa fa-");
+			b.Append(faIconName);
+			b.Append("\"></i>");
+			b.Append(title);
+			b.Append("</span>");
+			RenderChildren(m, b);
+			b.Append("</div>");
+		}
+
+		#region Properties
+		public int ContentEnd
 		{
 			get
 			{
-				return contentStart + contentLen;
+				return ContentStart + ContentLen;
 			}
 			set
 			{
-				contentLen = value - contentStart;
+				ContentLen = value - ContentStart;
 			}
 		}
 
 		// Count the leading spaces on a block
 		// Used by list item evaluation to determine indent levels
 		// irrespective of indent line type.
-		public int leadingSpaces
+		public int LeadingSpaces
 		{
 			get
 			{
 				int count = 0;
-				for (int i = lineStart; i < lineStart + lineLen; i++)
+				for (int i = LineStart; i < LineStart + LineLen; i++)
 				{
-					if (buf[i] == ' ')
+					if (Buf[i] == ' ')
 					{
 						count++;
 					}
@@ -488,27 +559,30 @@ namespace MarkdownDeep
 		public override string ToString()
 		{
 			string c = Content;
-			return blockType.ToString() + " - " + (c==null ? "<null>" : c);
+			return BlockType.ToString() + " - " + (c==null ? "<null>" : c);
 		}
 
 		public Block CopyFrom(Block other)
 		{
-			blockType = other.blockType;
-			buf = other.buf;
-			contentStart = other.contentStart;
-			contentLen = other.contentLen;
-			lineStart = other.lineStart;
-			lineLen = other.lineLen;
+			BlockType = other.BlockType;
+			Buf = other.Buf;
+			ContentStart = other.ContentStart;
+			ContentLen = other.ContentLen;
+			LineStart = other.LineStart;
+			LineLen = other.LineLen;
 			return this;
 		}
 
-		internal BlockType blockType;
-		internal string buf;
-		internal int contentStart;
-		internal int contentLen;
-		internal int lineStart;
-		internal int lineLen;
-		internal object data;			// content depends on block type
-		internal List<Block> children;
+
+		internal BlockType BlockType { get; set; }
+		internal string Buf { get; set; }
+		internal int ContentStart { get; set; }
+		internal int ContentLen { get; set; }
+		internal int LineStart { get; set; }
+		internal int LineLen { get; set; }
+		internal object Data { get; set; }			// content depends on block type
+		internal List<Block> Children { get; set; }
+
+		#endregion
 	}
 }
