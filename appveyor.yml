@@ -1,0 +1,7 @@
+version: 1.0.{build}
+configuration: Debug
+before_build:
+- cmd: nuget restore
+build:
+  project: DocNet.sln
+  verbosity: minimal
