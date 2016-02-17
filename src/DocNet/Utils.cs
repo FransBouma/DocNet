@@ -31,15 +31,16 @@ namespace Docnet
 {
 	public static class Utils
 	{
-		public static string ConvertMarkdownToHtml(string toConvert, List<Tuple<string, string>> createdAnchorCollector)
+		/// <summary>
+		/// Converts the markdown to HTML.
+		/// </summary>
+		/// <param name="toConvert">The markdown string to convert.</param>
+		/// <param name="documentPath">The document path (without the document filename).</param>
+		/// <param name="siteRoot">The site root.</param>
+		/// <param name="createdAnchorCollector">The created anchor collector, for ToC sublinks for H2 headers.</param>
+		/// <returns></returns>
+		public static string ConvertMarkdownToHtml(string toConvert, string documentPath, string siteRoot, List<Tuple<string, string>> createdAnchorCollector)
 		{
-			//var parser = new Markdown(new MarkdownOptions() { EmptyElementSuffix = ">"});
-			//var toReturn = parser.Transform(toConvert);
-			//if(createdAnchorCollector != null)
-			//{
-			//	createdAnchorCollector.AddRange(parser.CollectedH2AnchorNameTuples);
-			//}
-
 			var parser = new MarkdownDeep.Markdown
 						 {
 							 ExtraMode = true,
@@ -47,9 +48,9 @@ namespace Docnet
 							 AutoHeadingIDs = true,
 							 NewWindowForExternalLinks = true,
 							 DocNetMode = true,
+							 DocumentLocation = documentPath,
+							 DocumentRoot = siteRoot,
 						 };
-
-#warning SET DocumentRoot and DocumentLocation for image features.
 
 			var toReturn = parser.Transform(toConvert);
 			createdAnchorCollector.AddRange(parser.CreatedH2IdCollector);

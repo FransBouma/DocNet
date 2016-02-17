@@ -117,7 +117,7 @@ namespace MarkdownDeep
 	
 		public void Render(Markdown m, StringBuilder b)
 		{
-			b.Append("<table>\n");
+			b.Append("<table class=\"table table-bordered-all table-responsive\">\n");
 			if (Headers != null)
 			{
 				b.Append("<thead>\n<tr>\n");

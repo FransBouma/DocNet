@@ -220,13 +220,30 @@ code.code-large {
 	font-size: 90%;
 }
 
-dd {
-	margin: 0;
-}
-
 dfn {
 	font-style: italic;
 }
+
+dl {
+	margin-bottom: 24px;
+}
+
+dl dt {
+	font-weight: bold;
+}
+
+dl p, dl table, dl ul, dl ol {
+	margin-bottom: 12px !important;
+}
+
+dl dd {
+	margin: 0 0 12px 24px;
+}
+
+dl:not(.docutils) {
+	margin-bottom: 24px;
+}
+
 
 figure {
 	margin: 0;
@@ -317,23 +334,23 @@ input {
 	*vertical-align: middle;
 }
 
-	input[type="text"] {
-		-webkit-appearance: none;
-		padding: 6px;
-		display: inline-block;
-		border: 1px solid;
-		font-size: 80%;
-		box-shadow: inset 0 1px 3px #ddd;
-		border-radius: 0;
-		-webkit-transition: border 0.3s linear;
-		-moz-transition: border 0.3s linear;
-		transition: border 0.3s linear;
-	}
+input[type="text"] {
+	-webkit-appearance: none;
+	padding: 6px;
+	display: inline-block;
+	border: 1px solid;
+	font-size: 80%;
+	box-shadow: inset 0 1px 3px #ddd;
+	border-radius: 0;
+	-webkit-transition: border 0.3s linear;
+	-moz-transition: border 0.3s linear;
+	transition: border 0.3s linear;
+}
 
-	/* For chrome, to avoid ugly bar around search box*/
-	input:focus {
-		outline: none;
-	}
+/* For chrome, to avoid ugly bar around search box*/
+input:focus {
+	outline: none;
+}
 
 ins {
 	text-decoration: none;
@@ -496,17 +513,21 @@ td {
 	text-align: center;
 }
 
-	.toc-footer hr {
-		width: 100%;
-		display: block;
-		height: 1px;
-		border: 0;
-		border-top: 1px solid;
-		margin-left: auto;
-		margin-right: auto;
-		padding-bottom: 0;
-		margin-bottom: 5px;
-	}
+.toc-footer hr {
+	width: 100%;
+	display: block;
+	height: 1px;
+	border: 0;
+	border-top: 1px solid;
+	margin-left: auto;
+	margin-right: auto;
+	padding-bottom: 0;
+	margin-bottom: 5px;
+}
+
+.footnotes {
+	font-size:smaller;
+}
 
 /* #endregion */
 
@@ -538,52 +559,51 @@ td {
 	margin-bottom: 24px;
 }
 
-	.table caption {
-		font-size: 85%;
-		font-style: italic;
-		padding: 1em 0;
-		text-align: center;
-	}
+.table caption {
+	font-size: 85%;
+	font-style: italic;
+	padding: 1em 0;
+	text-align: center;
+}
 
-	.table td, .table th {
-		font-size: 90%;
-		margin: 0;
-		overflow: visible;
-		padding: 8px 16px;
-	}
+.table td, .table th {
+	font-size: 90%;
+	margin: 0;
+	overflow: visible;
+	padding: 8px 16px;
+}
 
-		.table td:first-child, .table th:first-child {
-			border-left-width: 0;
-		}
+.table td:first-child, .table th:first-child {
+	border-left-width: 0;
+}
 
-	.table thead {
-		text-align: left;
-		vertical-align: bottom;
-		white-space: nowrap;
-	}
+.table thead {
+	text-align: left;
+	vertical-align: bottom;
+	white-space: nowrap;
+}
 
-		.table thead th {
-			font-weight: bold;
-			border-bottom: solid 2px;
-		}
+.table thead th {
+	font-weight: bold;
+	border-bottom: solid 2px;
+}
 
-	.table td {
-		background-color: transparent;
-		vertical-align: middle;
-	}
+.table td {
+	background-color: transparent;
+}
 
-		.table td p {
-			line-height: 18px;
-		}
+.table td p {
+	line-height: 18px;
+}
 
-			.table td p:last-child {
-				margin-bottom: 0;
-			}
+.table td p:last-child {
+	margin-bottom: 0;
+}
 
-	.table .table-cell-min {
-		width: 1%;
-		padding-right: 0;
-	}
+.table .table-cell-min {
+	width: 1%;
+	padding-right: 0;
+}
 
 .table-secondary {
 	font-size: 90%;
@@ -597,14 +617,14 @@ td {
 	border: 1px solid;
 }
 
-	.table-bordered-all td {
-		border-bottom: 1px solid;
-		border-left: 1px solid;
-	}
+.table-bordered-all td {
+	border-bottom: 1px solid;
+	border-left: 1px solid;
+}
 
-	.table-bordered-all tbody > tr:last-child td {
-		border-bottom-width: 0;
-	}
+.table-bordered-all tbody > tr:last-child td {
+	border-bottom-width: 0;
+}
 
 .table-bordered {
 	border: 1px solid;
@@ -637,13 +657,13 @@ td {
 	overflow: auto;
 }
 
-	.table-responsive table {
-		margin-bottom: 0 !important;
-	}
+.table-responsive table {
+	margin-bottom: 0 !important;
+}
 
-		.table-responsive table td, .table-responsive table th {
-			white-space: nowrap;
-		}
+.table-responsive table td, .table-responsive table th {
+	white-space: nowrap;
+}
 /* #endregion*/
 
 /* #region Tabs*/

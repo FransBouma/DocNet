@@ -65,7 +65,7 @@ namespace Docnet
 			if(File.Exists(sourceFile))
 			{
 				this.MarkdownFromFile = File.ReadAllText(sourceFile);
-				content = Utils.ConvertMarkdownToHtml(this.MarkdownFromFile, _relativeH2LinksOnPage);
+				content = Utils.ConvertMarkdownToHtml(this.MarkdownFromFile, Path.GetDirectoryName(destinationFile), activeConfig.Destination, _relativeH2LinksOnPage);
 			}
 			else
 			{
@@ -87,7 +87,7 @@ namespace Docnet
 						defaultMarkdown.AppendFormat("* [{0}]({1}){2}", sibling.Name, HttpUtility.UrlPathEncode(sibling.TargetURL), Environment.NewLine);
 					}
 					defaultMarkdown.Append(Environment.NewLine);
-					content = Utils.ConvertMarkdownToHtml(defaultMarkdown.ToString(), _relativeH2LinksOnPage);
+					content = Utils.ConvertMarkdownToHtml(defaultMarkdown.ToString(), Path.GetDirectoryName(destinationFile), activeConfig.Destination, _relativeH2LinksOnPage);
 				}
 				else
 				{
