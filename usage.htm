@@ -33,7 +33,7 @@
 
 <li class="tocentry current"><a class="current" href="usage.htm">Usage</a>
 <ul class="currentrelativeroot">
-<li class="tocentry"><a href="#Requirements">Requirements</a></li>
+<li class="tocentry"><a href="#requirements">Requirements</a></li>
 </ul>
 <li class="tocentry">
 <span class="navigationgroup"><i class="fa fa-caret-right"></i> <a href="Configuration.htm">Configuration</a></span>
@@ -72,23 +72,16 @@
                 </div>
                 <div role="main">
                     <div class="section">
-<p><h1>Usage</h1></p>
-
+<h1 id="usage">Usage</h1>
 <p>The usage is simple:</p>
-
 <p>docnet <em>options</em> <em>folder</em></p>
-
 <p><em>options</em> can be:</p>
-
-<p><ul>
+<ul>
 <li>-c : clear destination folder. </li>
 </ul>
-By default <code>docnet</code> doesn't remove any file in the destination folder. When specified it will remove all files and folders recursively in the specified <code>Destination</code> folder in the found docnet.json. So use this option with caution, as it won't check whether this is the folder your family photos or precious sourcecode are located! </p>
-
+<p>By default <code>docnet</code> doesn't remove any file in the destination folder. When specified it will remove all files and folders recursively in the specified <code>Destination</code> folder in the found docnet.json. So use this option with caution, as it won't check whether this is the folder your family photos or precious sourcecode are located! </p>
 <p><em>folder</em> is the folder where a docnet.json file is expected to be present. </p>
-
-<p><a name="Requirements"></a><h2>Requirements</h2></p>
-
+<h2 id="requirements">Requirements</h2>
 <p><code>Docnet</code> is a .NET full application (using .NET 4.6.1) and requires .NET full to run. Not tested on Mono but it's highly likely it works on Mono without a problem. The code uses .NET 4.6.1 but it can be compiled against lower versions of .NET full, it doesn't use .NET 4.6 specific features but as Microsoft supports only the latest .NET 4.x versions, it was a logical choice to use .NET 4.6.1.</p>
 
                     </div>

@@ -46,10 +46,12 @@
 <li><span class="navigationgroup"><i class="fa fa-caret-down"></i> <a href="WritingcontentusingMarkdown.htm">Writing content using Markdown</a></span></li>
 <li class="tocentry current"><a class="current" href="markdownsupport.htm">Markdown support</a>
 <ul class="currentrelative">
-<li class="tocentry"><a href="#Highlightingcode">Highlighting code</a></li>
-<li class="tocentry"><a href="#Linking">Linking</a></li>
+<li class="tocentry"><a href="#standard-markdown">Standard Markdown</a></li>
+<li class="tocentry"><a href="#php-markdown-extra">Php Markdown Extra</a></li>
+<li class="tocentry"><a href="#highlighting-code">Highlighting code</a></li>
+<li class="tocentry"><a href="#linking">Linking</a></li>
 </ul>
-<li class="tocentry"><a href="markdownextensions.htm">Markdown extensions</a>
+<li class="tocentry"><a href="markdownextensions.htm">DocNet Markdown extensions</a>
 </li>
 
 </ul>
@@ -88,27 +90,90 @@
                 </div>
                 <div role="main">
                     <div class="section">
-<p><h1>Markdown support</h1></p>
+<h1 id="markdown-support">Markdown support</h1>
+<p><code>DocNet</code> uses markdown files as input. The markdown is parsed with the markdown parser from topten software (called '<a href="http://www.toptensoftware.com/markdowndeep/" target="_blank">MarkdownDeep</a>'). It supports the default markdown statements as well as github style code block markers and specific extensions for writing documentation, which are described below.</p>
+<h2 id="standard-markdown">Standard Markdown</h2>
+<p>The standard markdown syntax as defined by <a href="https://daringfireball.net/projects/markdown/" target="_blank">John Gruber</a> is supported in full. </p>
+<h2 id="php-markdown-extra">Php Markdown Extra</h2>
+<p>MarkdownDeep supports <a href="https://michelf.ca/projects/php-markdown/extra/" target="_blank">PHP Markdown Extra</a>. PHP Markdown Extra comes with a set of neat extensions for markdown to define e.g. tables, footnotes and more. Please see the link above for all the syntax examples. Additionally, you can look at the <a href="https://github.com/FransBouma/DocNet/tree/master/src/MarkdownDeepTests/testfiles/extramode" target="_blank">unit test files</a> for MarkdownDeep in the <a href="https://github.com/FransBouma/DocNet" target="_blank">DocNet respository at GitHub</a>.  </p>
+<p>A couple of examples are given below</p>
+<h3 id="footnotes">Footnotes</h3>
+<p>MarkdownDeep supports Footnotes, which can be added through the following system: To specify a footnote marker, specify <code>[^1]</code>, which will result in:<sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup></p>
+<p>The actual footnote text is then specified with <code>[^1]:</code> following the text of the actual footnote. Click on the superscript <code>1</code> link above to go to the footnote rendered at the bottom of this page. </p>
+<h3 id="definition-lists">Definition lists</h3>
+<p>To specify simple definition lists, simply do:</p>
+<pre class="nocode">Item one
+:   this is the description of item one
 
-<p><code>DocNet</code> uses markdown files as input. The markdown is parsed with the markdown parser from StackExchange (called '<a href="https://github.com/KyleGobel/MarkdownSharp-GithubCodeBlocks">MarkdownSharp</a>'). It supports the default markdown statements as well as github style code block markers and specific extensions for writing documentation, which are described below. </p>
-
-<p><a name="Highlightingcode"></a><h2>Highlighting code</h2></p>
-
-<p>The markdown parser has been extended with GitHub code specifications, so it's easy to specify a specific code beautifying based on a language. This feature uses the <a href="https://highlightjs.org/">Highlight.js</a> javascript library and most popular languages are included. </p>
-
-<p>Example: to specify a codeblock as C#, append <code>cs</code> after the first <code>```</code> marker:</p>
-
-<p><pre><code class="cs">var i=42;
-</code></pre></p>
+Item Two
+:   this is the text of item 2
+</pre><p>which results in: </p>
+<dl>
+<dt>Item one</dt>
+<dd>this is the description of item one</dd>
+<dt>Item Two</dt>
+<dd>this is the text of item 2</dd>
+</dl>
+<h3 id="tables">Tables</h3>
+<p>There's basic support for defining tables. </p>
+<p>Specifying: </p>
+<pre class="nocode">Fruit|Color
+--|--
+Apples|Red
+Pears|Green
+Bananas|Yellow
+Bongo|Bongo... it's a strange color, do you have a minute? It's a bit like the sea, but also a bit like the beach. You know how it is... oh and a bit like the wind too? You see it? Hey! Where're you going?! 
+</pre><p>results in:</p>
+<table class="table table-bordered-all table-responsive">
+<thead>
+<tr>
+	<th>Fruit</th>
+	<th>Color</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+	<td>Apples</td>
+	<td>Red</td>
+</tr>
+<tr>
+	<td>Pears</td>
+	<td>Green</td>
+</tr>
+<tr>
+	<td>Bananas</td>
+	<td>Yellow</td>
+</tr>
+<tr>
+	<td>Bongo</td>
+	<td>Bongo... it's a strange color, do you have a minute? It's a bit like the sea, but also a bit like the beach. You know how it is... oh and a bit like the wind too? You see it? Hey! Where're you going?!</td>
+</tr>
+</tbody>
+</table>
+<h3 id="abbreviations">Abbreviations</h3>
+<p>There's also support for abbreviations, using the <code>&lt;abbr&gt;</code> HTML tag. </p>
+<p>Specifying:</p>
+<pre class="nocode">*[FuBar]: F**ked Up Beyond Any Repair.
+</pre><p>gives an abbreviation link in the following sentence: This is a test for abbreviations: <abbr title="F**ked Up Beyond Any Repair.">FuBar</abbr>.</p>
+<h2 id="highlighting-code">Highlighting code</h2>
+<p>The markdown parser has been extended with GitHub code specifications, so it's easy to specify a specific code beautifying based on a language. This feature uses the <a href="https://highlightjs.org/" target="_blank">Highlight.js</a> javascript library and most popular languages are included. </p>
+<p>Example: to specify a codeblock as C#, append <code>cs</code> after the first ``` marker:</p>
+<pre><code class="cs">var i=42;
+</code></pre>
 
 <p>To specify a block of text in a fixed sized font but not specify any language highlighting, specify <code>nohighlight</code> as language name:</p>
-
-<p><pre class="nocode">this is a simple &lt;pre&gt; block
-</pre></p>
-
-<p><a name="Linking"></a><h2>Linking</h2></p>
-
+<pre class="nocode">this is a simple &lt;pre&gt; block
+</pre><h2 id="linking">Linking</h2>
 <p><code>Docnet</code> doesn't transform links. This means that any link to any document in your documentation has to use the url it will get in the destination folder. Example: you want to link to the file <code>How to\AddEntity.md</code> from a page. In the result site this should be the link <code>How%20to/AddEntity.htm</code>, which you should specify in your markdown. In the future it might be <code>docnet</code> will be updated with link transformation, at the moment it doesn't convert any links besides the usual markdown ones. The markdown parser also doesn't allow spaces to be present in the urls. If you need a space in the url, escape it with <code>%20</code>. </p>
+
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn:1">
+<p>And this is the footnote related to the example above.&nbsp;<a href="#fnref:1" rev="footnote">&#8617;</a></p>
+</li>
+</ol>
+</div>
 
                     </div>
                 </div>

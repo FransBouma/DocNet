@@ -1,7 +1,7 @@
-Markdown extensions
-===================
+DocNet Markdown extensions
+==========================
 
-`Docnet` defines the following markdown extensions to make writing  
+`Docnet` defines the following markdown extensions to make writing documentation easier. 
 
 ## Alert boxes
 To quickly define alert boxes, `Docnet` defines the `@alert` element. Three types of alerts are defined: *danger* (displayed in red), *warning* (displayed in yellow) and *info* or *neutral*, which is displayed in blue. You specify the type of the alert after the `@alert` statement using &#64;alert *name*. Close the `@alert` with `@end`. 

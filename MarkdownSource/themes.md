@@ -20,8 +20,7 @@ The `PageTemplate.htm` file is a simple HTML file, located in each `theme` folde
 * `{{Breadcrumbs}}`. This is replaced with a / delimited list of names making up the bread crumbs representing the navigation through the ToC to reach the current page. 
 * `{{ExtraScript}}`. This is replaced with extra script definitions / references required by some pages, like the search page. It's `docnet` specific and if this marker isn't present, search won't work.
 * `{{Path}}`. This is used to fill in the relative path to reach css/js files in hard-coded URLs in the `PageTemplate` file. This means that specifying a css URL in `PageTemplate` should look like:
-
-```HTML
-<link rel="stylesheet" href="{{Path}}css/theme.css" type="text/css" />
-```
+    ```HTML
+    <link rel="stylesheet" href="{{Path}}css/theme.css" type="text/css" />
+    ```
 `Docnet` will then replace `{{Path}}` with e.g. '../../' to get to the css file from the location of the .htm file loaded.

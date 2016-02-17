@@ -38,7 +38,7 @@
 <li><span class="navigationgroup"><i class="fa fa-caret-down"></i> <a href="Configuration.htm">Configuration</a></span></li>
 <li class="tocentry current"><a class="current" href="docnetjson.htm">Site configuration with the docnet.json file</a>
 <ul class="currentrelative">
-<li class="tocentry"><a href="#Levelswithout__indexdefined">Levels without __index defined</a></li>
+<li class="tocentry"><a href="#levels-without-index-defined">Levels without __index defined</a></li>
 </ul>
 <li class="tocentry"><a href="h2leveldiscovery.htm">Automatic H2 level ToC entry discovery</a>
 </li>
@@ -79,34 +79,31 @@
                 </div>
                 <div role="main">
                     <div class="section">
-<p><h1>The configuration file: 'docnet.json'</h1></p>
-
+<h1 id="the-configuration-file-docnet.json">The configuration file: 'docnet.json'</h1>
 <p>DocNet uses a json file to determine what to do in what form. The format is straight forward and described below</p>
-
-<p><pre><code class="json">{
-    "Name" : "name of site",
-    "Source" : "sourcefolder",
-    "Destination" : "destinationfolder",
-    "Theme" : "themefolder",
-    "SourceFoldersToCopy" : ["folder1", "foldern"],
-    "Footer" : "footer text or HTML",
-    "Pages" : 
+<pre><code class="json">{
+    &quot;Name&quot; : &quot;name of site&quot;,
+    &quot;Source&quot; : &quot;sourcefolder&quot;,
+    &quot;Destination&quot; : &quot;destinationfolder&quot;,
+    &quot;Theme&quot; : &quot;themefolder&quot;,
+    &quot;SourceFoldersToCopy&quot; : [&quot;folder1&quot;, &quot;foldern&quot;],
+    &quot;Footer&quot; : &quot;footer text or HTML&quot;,
+    &quot;Pages&quot; : 
     {
-        "__index" : "index.md",
-        "Title Page 1": "filename_page1.md", 
-        "Title Page 2": "filename_page2.md",
-        "Sub Header 1": 
+        &quot;__index&quot; : &quot;index.md&quot;,
+        &quot;Title Page 1&quot;: &quot;filename_page1.md&quot;, 
+        &quot;Title Page 2&quot;: &quot;filename_page2.md&quot;,
+        &quot;Sub Header 1&quot;: 
         {
-            "__index" : "index.md",
-            "Title Page 3" : "filename_page3.md",
-            "Title Page 4" : "filename_page4.md"
+            &quot;__index&quot; : &quot;index.md&quot;,
+            &quot;Title Page 3&quot; : &quot;filename_page3.md&quot;,
+            &quot;Title Page 4&quot; : &quot;filename_page4.md&quot;
         }
     }
 }
-</code></pre></p>
+</code></pre>
 
 <p>The order in which the pages are specified is the order in which they'll appear in the navigation. </p>
-
 <ul>
 <li><code>Name</code> specifies the name of the site to generate. </li>
 <li><code>Source</code> specifies the root of the tree of folders in which markdown files are expected. <code>sourcefolder</code> can be a relative path or an absolute path and is used as the root folder for filenames specified in <code>Pages</code>. </li>
@@ -116,13 +113,10 @@
 <li><code>Footer</code>. This is text and/or HTML which is placed in the footer of each page, using a <em>marker</em> (see below).</li>
 <li><code>Pages</code> contains the pages to generate into the output, in the order and structure in which you want them to appear in the navigation. The name given is the value used in the navigation tree and has to be unique per level. The value specified with each name is the markdown file to load, parse and generate as .htm file in the output. The markdown file is relative to the path specified in <code>Source</code>. A file <code>foo.md</code> will be generated as <code>foo.htm</code> in the output. </li>
 </ul>
-Paths are expected to use `\` characters, and as it's json, you have to escape them, so the path `.\foo` becomes `.\\foo`.
-
+<p>Paths are expected to use <code>\</code> characters, and as it's json, you have to escape them, so the path <code>.\foo</code> becomes <code>.\\foo</code>.</p>
 <p>Each level, starting with the root, has a special page defined, <code>__index</code>. This page is the page shown when the level header (in the example above this is e.g. <em>Sub Header 1</em>) is clicked in the navigation. If <code>__index</code> is specified in the root level, it's assigned to the navigation name <code>Home</code>. If there's no <code>__index</code> specified, there will still be a page generated but it will have default content (See below). The names of the elements are case sensitive.</p>
-
-<p><a name="Levelswithout__indexdefined"></a><h2>Levels without __index defined</h2></p>
-
-<p>If a level has no <code>__index</code> defined, <code>DocNet</code> will create a <code>__index</code> entry for the level and will specify as target <code>&lt;path to index of parent&gt;/nameoflevel.md</code>. If the page exists it will be loaded as the content for the index of the level, if it doesn't exist, the HTML will simply contain the topictitle and a list of all the sub topics in the level. This guarantees the tree can always be navigated in full.  </p>
+<h2 id="levels-without-index-defined">Levels without __index defined</h2>
+<p>If a level has no <code>__index</code> defined, <code>DocNet</code> will create a <code>__index</code> entry for the level and will specify as target <code>&lt;path to index of parent&gt;/nameoflevel.md</code>. If the page exists it will be loaded as the content for the index of the level, if it doesn't exist, the HTML will simply contain the topictitle and a list of all the sub topics in the level. This guarantees the tree can always be navigated in full.  </p>
 
                     </div>
                 </div>

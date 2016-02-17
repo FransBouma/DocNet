@@ -19,7 +19,7 @@
             "Writing content using Markdown" : 
             {
                 "Markdown support": "markdownsupport.md",
-                "Markdown extensions" : "markdownextensions.md"
+                "DocNet Markdown extensions" : "markdownextensions.md"
             }
         },
         "Search" : "search.md",
