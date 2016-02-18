@@ -405,6 +405,11 @@ pre > code {
 	box-shadow: 0px 0px 8px rgba(10,10,10,0.1);
 }
 
+pre.nocode {
+	box-shadow: 0px 0px 8px rgba(10,10,10,0.1);
+}
+
+
 q {
 	quotes: none;
 }
