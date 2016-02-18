@@ -396,6 +396,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
+    <EmbeddedResource Include="testfiles\mdtest11\Images%28Titled%29.text" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="testfiles\githubmode\FencedCodeBlocksAlt%28GitHubMode%29.html" />
@@ -472,6 +473,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="testfiles\docnetmode\Tabs%28DocNetMode%29.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="testfiles\mdtest11\Images%28Titled%29.html" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

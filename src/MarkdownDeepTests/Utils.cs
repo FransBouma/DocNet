@@ -128,6 +128,10 @@ namespace MarkdownDeepTests
 			md.DocNetMode = resourceName.IndexOf("(DocNetMode") >= 0;
 			md.MarkdownInHtml = resourceName.IndexOf("(MarkdownInHtml)") >= 0;
 			md.AutoHeadingIDs = resourceName.IndexOf("(AutoHeadingIDs)") >= 0;
+			if(resourceName.IndexOf("(Titled)") >= 0)
+			{
+				md.HtmlClassTitledImages = "Figure";
+			}
 
 			string actual = md.Transform(input);
 			string actual_clean = Utils.strip_redundant_whitespace(actual);
