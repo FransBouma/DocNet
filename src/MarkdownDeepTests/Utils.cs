@@ -130,7 +130,7 @@ namespace MarkdownDeepTests
 			md.AutoHeadingIDs = resourceName.IndexOf("(AutoHeadingIDs)") >= 0;
 			if(resourceName.IndexOf("(Titled)") >= 0)
 			{
-				md.HtmlClassTitledImages = "Figure";
+				md.HtmlClassTitledImages = "figure";
 			}
 
 			string actual = md.Transform(input);
