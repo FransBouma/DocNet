@@ -1002,7 +1002,6 @@ namespace MarkdownDeep
 		// Use CSS to style the figure and the caption
 		public string HtmlClassTitledImages
 		{
-			// TODO:
 			get;
 			set;
 		}

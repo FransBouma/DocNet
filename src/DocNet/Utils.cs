@@ -50,6 +50,7 @@ namespace Docnet
 							 DocNetMode = true,
 							 DocumentLocation = documentPath,
 							 DocumentRoot = siteRoot,
+							 HtmlClassTitledImages = "Figure",
 						 };
 
 			var toReturn = parser.Transform(toConvert);

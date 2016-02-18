@@ -35,8 +35,10 @@ namespace MarkdownDeep
 			// Parse the string into a list of tokens
 			Tokenize(str, start, len);
 
-			// Titled image?
-			if (m_Tokens.Count == 1 && m_Markdown.HtmlClassTitledImages != null && m_Tokens[0].type == TokenType.img)
+			// If the image is a titled image and there's a class defined for titled images, we'll render it using special markup, otherwise we'll render
+			// the image as-is. 
+			if (m_Tokens.Count == 1 && !string.IsNullOrWhiteSpace(m_Markdown.HtmlClassTitledImages) && m_Tokens[0].type == TokenType.img &&
+				m_Tokens[0].data is LinkInfo && !string.IsNullOrWhiteSpace(((LinkInfo)m_Tokens[0].data).def.title))
 			{
 				// Grab the link info
 				LinkInfo li = (LinkInfo)m_Tokens[0].data;
