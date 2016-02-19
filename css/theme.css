@@ -238,7 +238,8 @@ dl p, dl table, dl ul, dl ol {
 }
 
 dl dd {
-	margin: 0 0 12px 24px;
+	margin: 0 0 12px 35px;
+	line-height: 24px;
 }
 
 dl:not(.docutils) {
