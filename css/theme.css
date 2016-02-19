@@ -555,6 +555,7 @@ div.figure p {
 	padding: 12px;
 	line-height: 24px;
 	margin-bottom: 24px;
+	box-shadow: 0px 0px 8px rgba(10,10,10,0.1);
 }
 
 .alert-title {
@@ -701,7 +702,7 @@ div.figure p {
 	position: relative;
 	list-style: none;
 	margin: 30px 0;
-	box-shadow: 0 2px 3px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.14);
+	box-shadow: 0px 0px 8px rgba(10,10,10,0.1);
 }
 
 .tab-wrap:hover {
