@@ -211,7 +211,8 @@ code, pre.nocode {
 	max-width: 100%;
 	border: solid 1px;
 	font-size: 90%;
-	padding: 0 5px;
+	padding: 0 2px;
+	margin: 0 3px;
 	font-family: Consolas, "Andale Mono WT","Andale Mono","Lucida Sans Typewriter","DejaVu Sans Mono","Bitstream Vera Sans Mono","Liberation Mono","Nimbus Mono L",Monaco,"Courier New",Courier,monospace;
 	overflow-x: auto;
 }
