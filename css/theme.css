@@ -410,6 +410,7 @@ pre > code {
 pre.nocode {
 	box-shadow: 0px 0px 8px rgba(10,10,10,0.1);
 	margin-bottom: 20px;
+	padding: 4px 4px;
 }
 
 
