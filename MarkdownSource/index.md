@@ -1,8 +1,8 @@
 #DocNet
 
-DocNet is a static site generator, mainly meant for user documentation, using markdown files to build the content. This site is generated with DocNet and is meant both as a showcase what you can do with the application and also contains the documentation for DocNet.  
+DocNet is a static site generator, mainly meant for user documentation, using markdown files to build the content. This site is generated with DocNet and is meant both as a showcase what you can do with the application and also contains the documentation for DocNet.
 
-To see the source of this site, look at the [gh-pages branch in the DocNet repository at @fa-github GitHub](https://github.com/FransBouma/DocNet/tree/gh-pages).
+To see the markdown source of this site, look at the [MarkdownSource folder](https://github.com/FransBouma/DocNet/tree/gh-pages/MarkdownSource) in the [gh-pages branch in the DocNet repository at @fa-github GitHub](https://github.com/FransBouma/DocNet/tree/gh-pages)
 
 ## Get DocNet
 
