@@ -1335,7 +1335,7 @@ namespace MarkdownDeep
 			// Remove the trailing line end
 			endContent = UnskipCRLFBeforePos(endContent);
 			b.BlockType = BlockType.alert;
-			b.Data = alertType;
+			b.Data = alertType.ToLowerInvariant();
 			// scan the content, as it can contain markdown statements.
 			var contentProcessor = new BlockProcessor(m_markdown, m_markdown.MarkdownInHtml);
 			b.Children = contentProcessor.ScanLines(Input, startContent, endContent - startContent);
