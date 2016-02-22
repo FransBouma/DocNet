@@ -880,6 +880,23 @@ div.figure p {
 	transform: translateY(-3px);
 }
 
+.tab-content > p:last-child {
+	margin-bottom:0;
+}
+
+.tab-content > pre {
+	margin-top: -12px;
+	margin-left: -15px;
+	margin-right: -15px;
+	margin-bottom: -8px;
+}
+
+.tab-content > pre > code {
+	box-shadow: initial;
+	border: 0;
+}
+
+
 /* #endregion*/
 
 /* #region Breadcrumbs*/
