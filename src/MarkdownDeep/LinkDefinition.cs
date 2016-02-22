@@ -221,9 +221,6 @@ namespace MarkdownDeep
 
 				// Unescape it
 				r.url = Utils.UnescapeString(url.Trim(), ExtraMode);
-
-				// Skip whitespace
-				p.SkipWhitespace();
 			}
 			else
 			{
