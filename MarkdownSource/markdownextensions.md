@@ -4,11 +4,11 @@ DocNet Markdown extensions
 `Docnet` defines the following markdown extensions to make writing documentation easier. 
 
 ## Alert boxes
-To quickly define alert boxes, `Docnet` defines the `@alert` element. Three types of alerts are defined: *danger* (displayed in red), *warning* (displayed in yellow) and *info* or *neutral*, which is displayed in blue. You specify the type of the alert after the `@alert` statement using &#64;alert *name*. Close the `@alert` with `@end`. 
+To quickly define alert boxes, `Docnet` defines the `@alert` element. Three types of alerts are defined: *danger* (displayed in red), *warning* or *important* (displayed in yellow) and *info* or *neutral*, which is displayed in blue. You specify the type of the alert after the `@alert` statement using &#64;alert *name*. Close the `@alert` with `@end`.
 
 Below are examples for each alert box and the markdown used to create them. 
 
-The markdown: 
+The markdown:
 
 ```nohighlight
 @alert danger
@@ -22,7 +22,7 @@ results in
 This is a dangerous text, it will be displayed in a danger alert box!
 @end
 
-The markdown: 
+The markdown:
 
 ```nohighlight
 @alert warning
@@ -36,7 +36,21 @@ results in
 This is a warning text, it will be displayed in a warning alert box!
 @end
 
-The markdown: 
+The markdown:
+
+```nohighlight
+@alert important
+This is an important text, it will be displayed in a warning/important alert box!
+@end
+```
+
+results in
+
+@alert important
+This is an important text, it will be displayed in a warning/important alert box!
+@end
+
+The markdown:
 
 ```nohighlight
 @alert info
@@ -45,7 +59,7 @@ This is an info text, it will be displayed in an info alert box!
 ```
 
 Results in
-  
+
 @alert info
 This is an info text, it will be displayed in an info alert box!
 @end
@@ -53,7 +67,7 @@ This is an info text, it will be displayed in an info alert box!
 ## Font Awesome icons
 To specify a font-awesome icon, use `@fa-iconname`, where _iconname_ is the name of the font-awesome icon.
 
-Example: To specify the font awesome icon for GitHub, use `@fa-github`, which will result in: @fa-github  
+Example: To specify the font awesome icon for GitHub, use `@fa-github`, which will result in: @fa-github
 
 ## Tabs
 It's very easy with `Docnet` to add a tab control with one or more tabs to the HTML with a simple set of markdown statements. The tab statements are converted into pure CSS3/HTML tabs, based on the work of [Joseph Fusco](http://codepen.io/fusco/pen/Wvzjrm).
