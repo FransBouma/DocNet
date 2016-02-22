@@ -189,22 +189,23 @@ namespace MarkdownDeep
 						string strReturnLink = string.Format("<a href=\"#fnref:{0}\" rev=\"footnote\">&#8617;</a>", (string)fn.Data);
 
 						// Get the last child of the footnote
-						var child = fn.Children[fn.Children.Count - 1];
-						if (child.BlockType == BlockType.p)
+						if(fn.Children.Count > 0)
 						{
-							child.BlockType = BlockType.p_footnote;
-							child.Data = strReturnLink;
+							var child = fn.Children[fn.Children.Count - 1];
+							if(child.BlockType == BlockType.p)
+							{
+								child.BlockType = BlockType.p_footnote;
+								child.Data = strReturnLink;
+							}
+							else
+							{
+								child = CreateBlock();
+								child.ContentLen = 0;
+								child.BlockType = BlockType.p_footnote;
+								child.Data = strReturnLink;
+								fn.Children.Add(child);
+							}
 						}
-						else
-						{
-							child = CreateBlock();
-							child.ContentLen = 0;
-							child.BlockType = BlockType.p_footnote;
-							child.Data = strReturnLink;
-							fn.Children.Add(child);
-						}
-
-
 						fn.Render(this, sb);
 
 						sb.Append("</li>\n");
