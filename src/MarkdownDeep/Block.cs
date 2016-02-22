@@ -499,6 +499,7 @@ namespace MarkdownDeep
 			}
 			string title = string.Empty;
 			string faIconName = string.Empty;
+			string alertTypeClass = alertType;
 			switch(alertType)
 			{
 				case "danger":
@@ -509,6 +510,11 @@ namespace MarkdownDeep
 					title = "Warning!";
 					faIconName = "warning";
 					break;
+				case "important":
+					title = "Important!";
+					faIconName = "warning";
+					alertTypeClass = "warning";
+					break;
 				case "neutral":
 				case "info":
 					title = "Info";
@@ -516,7 +522,7 @@ namespace MarkdownDeep
 					break;
 			}
 			b.Append("<div class=\"alert alert-");
-			b.Append(alertType);
+			b.Append(alertTypeClass);
 			b.Append("\"><span class=\"alert-title\"><i class=\"fa fa-");
 			b.Append(faIconName);
 			b.Append("\"></i> ");
