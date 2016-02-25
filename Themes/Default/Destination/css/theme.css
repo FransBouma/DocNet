@@ -115,9 +115,9 @@ audio, canvas, video {
 	*zoom: 1;
 }
 
-	audio:not([controls]) {
-		display: none;
-	}
+audio:not([controls]) {
+	display: none;
+}
 
 [hidden] {
 	display: none;
@@ -401,6 +401,9 @@ p {
 		word-wrap: break-word;
 	}
 
+pre {
+	margin-bottom: 24px;
+}
 
 pre > code {
 	font-size: 13px;
