@@ -21,14 +21,36 @@ namespace MarkdownDeep
 {
 	internal class LinkInfo
 	{
-		public LinkInfo(LinkDefinition def, string link_text)
+		public LinkInfo(LinkDefinition def, string link_text, List<string> specialAttributes )
 		{
-			this.def = def;
-			this.link_text = link_text;
+			this.Definition = def;
+			this.LinkText = link_text;
+			this.SpecialAttributes = new List<string>();
+			if(specialAttributes != null)
+			{
+				this.SpecialAttributes.AddRange(specialAttributes);
+			}
 		}
 
-		public LinkDefinition def;
-		public string link_text;
+
+		public void RenderLink(Markdown m, StringBuilder sb)
+		{
+			var sf = new SpanFormatter(m);
+			sf.DisableLinks = true;
+			this.Definition.RenderLink(m, sb, sf.Format(this.LinkText), this.SpecialAttributes);
+		}
+
+
+		public void RenderImage(Markdown m, StringBuilder sb)
+		{
+			this.Definition.RenderImg(m, sb, this.LinkText, this.SpecialAttributes);
+		}
+
+
+		public LinkDefinition Definition { get; set; }
+		public string LinkText { get; set; }
+		public List<string> SpecialAttributes { get; private set; } 
+
 	}
 
 }

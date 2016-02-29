@@ -38,7 +38,7 @@ namespace MarkdownDeep
 			// If the image is a titled image and there's a class defined for titled images, we'll render it using special markup, otherwise we'll render
 			// the image as-is. 
 			if (m_Tokens.Count == 1 && !string.IsNullOrWhiteSpace(m_Markdown.HtmlClassTitledImages) && m_Tokens[0].type == TokenType.img &&
-				m_Tokens[0].data is LinkInfo && !string.IsNullOrWhiteSpace(((LinkInfo)m_Tokens[0].data).def.title))
+				m_Tokens[0].data is LinkInfo && !string.IsNullOrWhiteSpace(((LinkInfo)m_Tokens[0].data).Definition.Title))
 			{
 				// Grab the link info
 				LinkInfo li = (LinkInfo)m_Tokens[0].data;
@@ -55,10 +55,10 @@ namespace MarkdownDeep
 				dest.Append("\n");
 
 				// Render the title
-				if (!String.IsNullOrEmpty(li.def.title))
+				if (!String.IsNullOrEmpty(li.Definition.Title))
 				{
 					dest.Append("<p>");
-					Utils.SmartHtmlEncodeAmpsAndAngles(dest, li.def.title);
+					Utils.SmartHtmlEncodeAmpsAndAngles(dest, li.Definition.Title);
 					dest.Append("</p>\n");
 				}
 				
@@ -128,7 +128,7 @@ namespace MarkdownDeep
 
 					case TokenType.link:
 						LinkInfo li = (LinkInfo)t.data;
-						sb.Append(li.link_text);
+						sb.Append(li.LinkText);
 						break;
 				}
 
@@ -222,17 +222,14 @@ namespace MarkdownDeep
 					case TokenType.link:
 					{
 						LinkInfo li = (LinkInfo)t.data;
-						var sf = new SpanFormatter(m_Markdown);
-						sf.DisableLinks = true;
-
-						li.def.RenderLink(m_Markdown, sb, sf.Format(li.link_text));
+						li.RenderLink(m_Markdown, sb);
 						break;
 					}
 
 					case TokenType.img:
 					{
 						LinkInfo li = (LinkInfo)t.data;
-						li.def.RenderImg(m_Markdown, sb, li.link_text);
+						li.RenderImage(m_Markdown, sb);
 						break;
 					}
 
@@ -312,14 +309,14 @@ namespace MarkdownDeep
 					case TokenType.link:
 						{
 							LinkInfo li = (LinkInfo)t.data;
-							sb.Append(li.link_text);
+							sb.Append(li.LinkText);
 							break;
 						}
 
 					case TokenType.img:
 						{
 							LinkInfo li = (LinkInfo)t.data;
-							sb.Append(li.link_text);
+							sb.Append(li.LinkText);
 							break;
 						}
 
@@ -922,11 +919,11 @@ namespace MarkdownDeep
 							url = "mailto:" + url;
 						}
 
-						li = new LinkInfo(new LinkDefinition("auto", url, null), link_text);
+						li = new LinkInfo(new LinkDefinition("auto", url, null), link_text, null);
 					}
 					else if (Utils.IsWebAddress(url))
 					{
-						li=new LinkInfo(new LinkDefinition("auto", url, null), url);
+						li=new LinkInfo(new LinkDefinition("auto", url, null), url, null);
 					}
 
 					if (li!=null)
@@ -981,7 +978,7 @@ namespace MarkdownDeep
 			if (DisableLinks && token_type==TokenType.link)
 				return null;
 
-			bool ExtraMode = m_Markdown.ExtraMode;
+			bool extraMode = m_Markdown.ExtraMode;
 
 			// Find the closing square bracket, allowing for nesting, watching for 
 			// escapable characters
@@ -1001,7 +998,7 @@ namespace MarkdownDeep
 						break;
 				}
 
-				this.SkipEscapableChar(ExtraMode);
+				this.SkipEscapableChar(extraMode);
 			}
 
 			// Quit if end
@@ -1009,7 +1006,7 @@ namespace MarkdownDeep
 				return null;
 
 			// Get the link text and unescape it
-			string link_text = Utils.UnescapeString(Extract(), ExtraMode);
+			string link_text = Utils.UnescapeString(Extract(), extraMode);
 
 			// The closing ']'
 			SkipForward(1);
@@ -1030,8 +1027,19 @@ namespace MarkdownDeep
 				if (!SkipChar(')'))
 					return null;
 
+				List<string> specialAttributes = null;
+				if(extraMode && DoesMatch('{'))
+				{
+					int end;
+					specialAttributes = Utils.StripSpecialAttributes(this.Input, this.Position, out end);
+					if(specialAttributes != null)
+					{
+						Position = end;
+					}
+				}
+
 				// Create the token
-				return CreateToken(token_type, new LinkInfo(link_def, link_text));
+				return CreateToken(token_type, new LinkInfo(link_def, link_text, specialAttributes));
 			}
 
 			// Optional space or tab
@@ -1091,8 +1099,9 @@ namespace MarkdownDeep
 			if (def == null)
 				return null;
 
-			// Create a token
-			return CreateToken(token_type, new LinkInfo(def, link_text));
+			// Create a token. 
+			// [FB]: Currently not supported: special attributes on reference links.
+			return CreateToken(token_type, new LinkInfo(def, link_text, null));
 		}
 
 		// Process a ``` code span ```
@@ -1175,7 +1184,7 @@ namespace MarkdownDeep
 
 		#endregion
 
-		Markdown m_Markdown;
+		private Markdown m_Markdown;
 		internal bool DisableLinks;
 		List<Token> m_Tokens=new List<Token>();
 	}

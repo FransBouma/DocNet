@@ -21,54 +21,33 @@ namespace MarkdownDeep
 {
 	public class LinkDefinition
 	{
-		public LinkDefinition(string id)
+		public LinkDefinition(string id) : this(id, string.Empty, string.Empty)
 		{
-			this.id= id;
 		}
 
-		public LinkDefinition(string id, string url)
+		public LinkDefinition(string id, string url) : this(id, url, string.Empty)
 		{
-			this.id = id;
-			this.url = url;
 		}
 
 		public LinkDefinition(string id, string url, string title)
 		{
-			this.id = id;
-			this.url = url;
-			this.title = title;
-		}
-
-		public string id
-		{
-			get;
-			set;
-		}
-
-		public string url
-		{
-			get;
-			set;
-		}
-
-		public string title
-		{
-			get;
-			set;
+			this.Id = id;
+			this.Url = url;
+			this.Title = title;
 		}
 
 
-		internal void RenderLink(Markdown m, StringBuilder b, string link_text)
+		internal void RenderLink(Markdown m, StringBuilder b, string link_text, List<string> specialAttributes)
 		{
-			if (url.StartsWith("mailto:"))
+			if (this.Url.StartsWith("mailto:"))
 			{
 				b.Append("<a href=\"");
-				Utils.HtmlRandomize(b, url);
+				Utils.HtmlRandomize(b, this.Url);
 				b.Append('\"');
-				if (!String.IsNullOrEmpty(title))
+				if (!String.IsNullOrEmpty(this.Title))
 				{
 					b.Append(" title=\"");
-					Utils.SmartHtmlEncodeAmpsAndAngles(b, title);
+					Utils.SmartHtmlEncodeAmpsAndAngles(b, this.Title);
 					b.Append('\"');
 				}
 				b.Append('>');
@@ -81,15 +60,20 @@ namespace MarkdownDeep
 
 				// encode url
 				StringBuilder sb = m.GetStringBuilder();
-				Utils.SmartHtmlEncodeAmpsAndAngles(sb, url);
+				Utils.SmartHtmlEncodeAmpsAndAngles(sb, this.Url);
 				tag.attributes["href"] = sb.ToString();
 
 				// encode title
-				if (!String.IsNullOrEmpty(title ))
+				if (!String.IsNullOrEmpty(this.Title ))
 				{
 					sb.Length = 0;
-					Utils.SmartHtmlEncodeAmpsAndAngles(sb, title);
+					Utils.SmartHtmlEncodeAmpsAndAngles(sb, this.Title);
 					tag.attributes["title"] = sb.ToString();
+				}
+
+				if(specialAttributes.Any())
+				{
+					LinkDefinition.HandleSpecialAttributes(specialAttributes, sb, tag);
 				}
 
 				// Do user processing
@@ -103,13 +87,14 @@ namespace MarkdownDeep
 			}
 		}
 
-		internal void RenderImg(Markdown m, StringBuilder b, string alt_text)
+
+		internal void RenderImg(Markdown m, StringBuilder b, string alt_text, List<string> specialAttributes)
 		{
 			HtmlTag tag = new HtmlTag("img");
 
 			// encode url
 			StringBuilder sb = m.GetStringBuilder();
-			Utils.SmartHtmlEncodeAmpsAndAngles(sb, url);
+			Utils.SmartHtmlEncodeAmpsAndAngles(sb, Url);
 			tag.attributes["src"] = sb.ToString();
 
 			// encode alt text
@@ -121,13 +106,16 @@ namespace MarkdownDeep
 			}
 
 			// encode title
-			if (!String.IsNullOrEmpty(title))
+			if (!String.IsNullOrEmpty(Title))
 			{
 				sb.Length = 0;
-				Utils.SmartHtmlEncodeAmpsAndAngles(sb, title);
+				Utils.SmartHtmlEncodeAmpsAndAngles(sb, Title);
 				tag.attributes["title"] = sb.ToString();
 			}
-
+			if(specialAttributes.Any())
+			{
+				LinkDefinition.HandleSpecialAttributes(specialAttributes, sb, tag);
+			}
 			tag.closed = true;
 
 			m.OnPrepareImage(tag, m.RenderingTitledImage);
@@ -220,7 +208,7 @@ namespace MarkdownDeep
 					return null;
 
 				// Unescape it
-				r.url = Utils.UnescapeString(url.Trim(), ExtraMode);
+				r.Url = Utils.UnescapeString(url.Trim(), ExtraMode);
 			}
 			else
 			{
@@ -247,7 +235,7 @@ namespace MarkdownDeep
 					p.SkipEscapableChar(ExtraMode);
 				}
 
-				r.url = Utils.UnescapeString(p.Extract().Trim(), ExtraMode);
+				r.Url = Utils.UnescapeString(p.Extract().Trim(), ExtraMode);
 			}
 
 			p.SkipLinespace();
@@ -329,7 +317,7 @@ namespace MarkdownDeep
 			}
 
 			// Store the title
-			r.title = Utils.UnescapeString(p.Extract(), ExtraMode);
+			r.Title = Utils.UnescapeString(p.Extract(), ExtraMode);
 
 			// Skip closing quote
 			p.SkipForward(1);
@@ -337,5 +325,49 @@ namespace MarkdownDeep
 			// Done!
 			return r;
 		}
+
+
+		private static void HandleSpecialAttributes(List<string> specialAttributes, StringBuilder sb, HtmlTag tag)
+		{
+			string id = specialAttributes.FirstOrDefault(s => s.StartsWith("#"));
+			if(id != null && id.Length > 1)
+			{
+				sb.Length = 0;
+				Utils.SmartHtmlEncodeAmpsAndAngles(sb, id.Substring(1));
+				tag.attributes["id"] = sb.ToString();
+			}
+			var cssClasses = new List<string>();
+			foreach(var cssClass in specialAttributes.Where(s => s.StartsWith(".") && s.Length > 1))
+			{
+				sb.Length = 0;
+				Utils.SmartHtmlEncodeAmpsAndAngles(sb, cssClass.Substring(1));
+				cssClasses.Add(sb.ToString());
+			}
+			if(cssClasses.Any())
+			{
+				tag.attributes["class"] = string.Join(" ", cssClasses.ToArray());
+			}
+			foreach(var nameValuePair in specialAttributes.Where(s => s.Contains("=") && s.Length > 2 && !s.StartsWith(".") && !s.StartsWith("#")))
+			{
+				var pair = nameValuePair.Split('=');
+				if(pair.Length == 2)
+				{
+					sb.Length = 0;
+					Utils.SmartHtmlEncodeAmpsAndAngles(sb, pair[0]);
+					var key = sb.ToString();
+					sb.Length = 0;
+					Utils.SmartHtmlEncodeAmpsAndAngles(sb, pair[1]);
+					var value = sb.ToString();
+					tag.attributes[key] = value;
+				}
+			}
+		}
+
+
+		#region Properties
+		public string Id { get; set; }
+		public string Url { get; set; }
+		public string Title { get; set; }
+		#endregion
 	}
 }

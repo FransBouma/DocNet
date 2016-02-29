@@ -23,9 +23,9 @@ namespace MarkdownDeepTests
 			r = LinkDefinition.ParseLinkDefinition(str, false);
 
 			Assert.IsNotNull(r);
-			Assert.AreEqual(r.id, "id");
-			Assert.AreEqual(r.url, "url.com");
-			Assert.AreEqual(r.title, null);
+			Assert.AreEqual(r.Id, "id");
+			Assert.AreEqual(r.Url, "url.com");
+			Assert.AreEqual(r.Title, string.Empty);
 		}
 
 		[Test]
@@ -35,9 +35,9 @@ namespace MarkdownDeepTests
 			r = LinkDefinition.ParseLinkDefinition(str, false);
 
 			Assert.IsNotNull(r);
-			Assert.AreEqual(r.id, "id");
-			Assert.AreEqual(r.url, "url.com");
-			Assert.AreEqual(r.title, "my title");
+			Assert.AreEqual(r.Id, "id");
+			Assert.AreEqual(r.Url, "url.com");
+			Assert.AreEqual(r.Title, "my title");
 		}
 
 		[Test]
@@ -47,9 +47,9 @@ namespace MarkdownDeepTests
 			r = LinkDefinition.ParseLinkDefinition(str, false);
 
 			Assert.IsNotNull(r);
-			Assert.AreEqual(r.id, "id");
-			Assert.AreEqual(r.url, "url.com");
-			Assert.AreEqual(r.title, "my title");
+			Assert.AreEqual(r.Id, "id");
+			Assert.AreEqual(r.Url, "url.com");
+			Assert.AreEqual(r.Title, "my title");
 		}
 
 		[Test]
@@ -59,9 +59,9 @@ namespace MarkdownDeepTests
 			r = LinkDefinition.ParseLinkDefinition(str, false);
 
 			Assert.IsNotNull(r);
-			Assert.AreEqual(r.id, "id");
-			Assert.AreEqual(r.url, "url.com");
-			Assert.AreEqual(r.title, "my title");
+			Assert.AreEqual(r.Id, "id");
+			Assert.AreEqual(r.Url, "url.com");
+			Assert.AreEqual(r.Title, "my title");
 		}
 
 		[Test]
@@ -71,9 +71,9 @@ namespace MarkdownDeepTests
 			r = LinkDefinition.ParseLinkDefinition(str, false);
 
 			Assert.IsNotNull(r);
-			Assert.AreEqual(r.id, "id");
-			Assert.AreEqual(r.url, "url.com");
-			Assert.AreEqual(r.title, "my title");
+			Assert.AreEqual(r.Id, "id");
+			Assert.AreEqual(r.Url, "url.com");
+			Assert.AreEqual(r.Title, "my title");
 		}
 
 		[Test]
@@ -83,9 +83,9 @@ namespace MarkdownDeepTests
 			r = LinkDefinition.ParseLinkDefinition(str, false);
 
 			Assert.IsNotNull(r);
-			Assert.AreEqual(r.id, "id");
-			Assert.AreEqual(r.url, "http://www.site.com");
-			Assert.AreEqual(r.title, "my title");
+			Assert.AreEqual(r.Id, "id");
+			Assert.AreEqual(r.Url, "http://www.site.com");
+			Assert.AreEqual(r.Title, "my title");
 		}
 
 		[Test]

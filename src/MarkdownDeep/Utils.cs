@@ -486,6 +486,50 @@ namespace MarkdownDeep
 			return strID;
 		}
 
+
+		/// <summary>
+		/// Strips the special attributes specified at the location of start. Special attributes are a php markdown extension
+		/// and specified between {}. Attributes are separated with spaces. It recognizes the following attributes:
+		/// id, which start with a '#'. Only the first one is used
+		/// css classes, which start with a'.'. All specified are used
+		/// name=value pairs, which will end up as attributes on the element. 
+		/// </summary>
+		/// <param name="str">The string we're scanning.</param>
+		/// <param name="start">The start (current) position.</param>
+		/// <param name="end">The end position. Is only valid if returned list contains at least one value.</param>
+		/// <returns>list of special attributes found, or null if none found or error in string format.</returns>
+		public static List<string> StripSpecialAttributes(string str, int start, out int end)
+		{
+			end = start;
+			var scanner = new StringScanner(str, start);
+			if(!scanner.DoesMatch('{'))
+			{
+				// not a start of a special attribute block
+				return null;
+			}
+			// first find the end of the block, 
+			scanner.SkipForward(1);
+			var startOfAttributes = scanner.Position;
+			// first find the next EOL, as the closing } has to be on this line.
+			scanner.SkipToEol();
+			var nextEolPos = scanner.Position;
+			scanner.Position = startOfAttributes;
+			scanner.Mark();
+			if(!scanner.Find('}') || scanner.Position >= nextEolPos)
+			{
+				// not enclosed properly.
+				return null;
+			}
+			var attributesString = scanner.Extract();
+			if(string.IsNullOrWhiteSpace(attributesString))
+			{
+				return null;
+			}
+			// Position is on enclosing '}' (due to the Find('}'), so we have to skip 1 character
+			end = scanner.Position + 1;
+			return attributesString.Split(' ').Where(s=>!string.IsNullOrWhiteSpace(s)).ToList();
+		}
+
 		public static bool IsUrlFullyQualified(string url)
 		{
 			return url.Contains("://") || url.StartsWith("mailto:");

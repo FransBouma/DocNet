@@ -568,7 +568,7 @@ namespace MarkdownDeep
 		internal void AddLinkDefinition(LinkDefinition link)
 		{
 			// Store it
-			m_LinkDefinitions[link.id]=link;
+			m_LinkDefinitions[link.Id]=link;
 		}
 
 		internal void AddFootnote(Block footnote)
