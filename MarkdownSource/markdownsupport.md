@@ -59,6 +59,34 @@ Pears|Green
 Bananas|Yellow
 Bongo|Bongo... it's a strange color, do you have a minute? It's a bit like the sea, but also a bit like the beach. You know how it is... oh and a bit like the wind too? You see it? Hey! Where're you going?!
 
+###Special attributes
+DocNet supports special attributes for Links and Images. Currently this is supported on normal links/image specifications only, e.g.:
+```
+![id text](imageurl){.cssclass1 .cssclass2 #idvalue name=value}
+```
+which will result in:
+```html
+<img src="imageurl" alt="id text" id="idvalue" class="cssclass1 cssclass2" name="value" />
+```
+
+###Image rendering
+By default images have no special rendering applied to them. To apply a shadow, specify '.shadowed' as css class in a special attribute specification. 
+If you want to have an image rendered centered with a note below it, simply specify a title for the image: 
+
+```
+![](mycenteredpicture.jpg "this is a picture")
+```
+
+will be rendered as: (xxx and yyy are the width/height values of mycenteredpicture.jpg)
+```html
+<div class="figure">
+<img src="mycenteredpicture.jpg" title="this is a picture" width="xxx" height="yyy"/>
+<p>this is a picture</p>
+</div>
+```
+
+All images rendered contain the width/height of the picture file included in the html.
+
 ###Abbreviations
 There's also support for abbreviations, using the `<abbr>` HTML tag. 
 

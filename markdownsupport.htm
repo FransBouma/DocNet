@@ -150,6 +150,25 @@ Bongo|Bongo... it's a strange color, do you have a minute? It's a bit like the s
 </tr>
 </tbody>
 </table>
+<h3 id="special-attributes">Special attributes</h3>
+<p>DocNet supports special attributes for Links and Images. Currently this is supported on normal links/image specifications only, e.g.:</p>
+<pre class="nocode">![id text](imageurl){.cssclass1 .cssclass2 #idvalue name=value}
+</pre><p>which will result in:</p>
+<pre><code class="html">&lt;img src=&quot;imageurl&quot; alt=&quot;id text&quot; id=&quot;idvalue&quot; class=&quot;cssclass1 cssclass2&quot; name=&quot;value&quot; /&gt;
+</code></pre>
+
+<h3 id="image-rendering">Image rendering</h3>
+<p>By default images have no special rendering applied to them. To apply a shadow, specify '.shadowed' as css class in a special attribute specification. 
+If you want to have an image rendered centered with a note below it, simply specify a title for the image: </p>
+<pre class="nocode">![](mycenteredpicture.jpg &quot;this is a picture&quot;)
+</pre><p>will be rendered as: (xxx and yyy are the width/height values of mycenteredpicture.jpg)</p>
+<pre><code class="html">&lt;div class=&quot;figure&quot;&gt;
+&lt;img src=&quot;mycenteredpicture.jpg&quot; title=&quot;this is a picture&quot; width=&quot;xxx&quot; height=&quot;yyy&quot;/&gt;
+&lt;p&gt;this is a picture&lt;/p&gt;
+&lt;/div&gt;
+</code></pre>
+
+<p>All images rendered contain the width/height of the picture file included in the html.</p>
 <h3 id="abbreviations">Abbreviations</h3>
 <p>There's also support for abbreviations, using the <code>&lt;abbr&gt;</code> HTML tag. </p>
 <p>Specifying:</p>
