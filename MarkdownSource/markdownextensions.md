@@ -64,6 +64,20 @@ Results in
 This is an info text, it will be displayed in an info alert box!
 @end
 
+The markdown:
+
+```nohighlight
+@alert tip
+This is a tip! It will be displayed in a tip alert box!
+@end
+```
+
+Results in
+
+@alert tip
+This is a tip! It will be displayed in a tip alert box!
+@end
+
 ## Font Awesome icons
 To specify a font-awesome icon, use `@fa-iconname`, where _iconname_ is the name of the font-awesome icon.
 

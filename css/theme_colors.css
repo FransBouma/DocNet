@@ -108,6 +108,15 @@ mark {
 .alert.alert-neutral a {
 	color: #2980B9;
 }
+
+.alert.alert-tip {
+	background:#dbfaf4;
+}
+
+.alert.alert-tip .alert-title {
+	background:#1abc9c;
+}
+
 /* #endregion*/
 
 /* #region Tables*/
