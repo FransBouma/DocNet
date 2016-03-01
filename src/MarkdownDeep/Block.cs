@@ -520,6 +520,10 @@ namespace MarkdownDeep
 					title = "Info";
 					faIconName = "info-circle";
 					break;
+				case "tip":
+					title = "Tip";
+					faIconName = "info-circle";
+					break;
 			}
 			b.Append("<div class=\"alert alert-");
 			b.Append(alertTypeClass);
