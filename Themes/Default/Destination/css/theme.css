@@ -381,6 +381,10 @@ li {
 	line-height: 24px;
 }
 
+li pre {
+	line-height: normal;
+}
+
 mark {
 	font-style: italic;
 	font-weight: bold;
