@@ -182,3 +182,7 @@ UpgradeLog*.htm
 # Microsoft Fakes
 FakesAssemblies/
 .vs/config/applicationhost.config
+
+#Rider
+.idea/
+*.iml
