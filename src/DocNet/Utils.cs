@@ -25,6 +25,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Docnet
@@ -184,5 +185,37 @@ namespace Docnet
 
 			return relativePath;
 		}
-	}
+
+        /// <summary>
+        /// Regex expression used to parse @@include(filename.html) tag.
+        /// </summary>
+        private static Regex includeRegex = new Regex(@"@@include\((.*)\)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+        /// <summary>
+        /// Process the input for @@include tags and embeds the included content
+        /// into the output.
+        /// </summary>
+        /// <param name="content"></param>
+        /// <param name="partialPath"></param>
+        /// <returns></returns>
+        public static string IncludeProcessor(string content, string partialPath)
+        {
+            Match m = includeRegex.Match(content);
+            while (m.Success)
+            {
+                if (m.Groups.Count > 1)
+                {
+                    string tagToReplace = m.Groups[0].Value;
+                    string fileName = m.Groups[1].Value;
+                    string filePath = Path.Combine(partialPath, fileName);
+                    if (File.Exists(filePath))
+                    {
+                        content = content.Replace(tagToReplace, File.ReadAllText(filePath));
+                    }
+                }
+                m = m.NextMatch();
+            }
+            return content;
+        }
+    }
 }

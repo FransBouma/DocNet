@@ -108,9 +108,12 @@ namespace Docnet
 			sb.Replace("{{Breadcrumbs}}", activePath.CreateBreadCrumbsHTML(relativePathToRoot));
 			sb.Replace("{{ToC}}", activePath.CreateToCHTML(relativePathToRoot));
 			sb.Replace("{{ExtraScript}}", (this.ExtraScriptProducerFunc == null) ? string.Empty : this.ExtraScriptProducerFunc(this));
-
-			// the last action has to be replacing the content marker, so markers in the content which we have in the template as well aren't replaced 
-			sb.Replace("{{Content}}", content);
+            
+            // Check if the content contains @@include tag
+            content = Utils.IncludeProcessor(content, Path.Combine(activeConfig.Source, "_partials"));
+            
+            // the last action has to be replacing the content marker, so markers in the content which we have in the template as well aren't replaced 
+            sb.Replace("{{Content}}", content);
 			Utils.CreateFoldersIfRequired(destinationFile);
 			File.WriteAllText(destinationFile, sb.ToString());
 			if(!this.IsIndexElement)
@@ -210,7 +213,7 @@ namespace Docnet
 					_targetURLForHTML = (this.Value ?? string.Empty);
 					if(_targetURLForHTML.ToLowerInvariant().EndsWith(".md"))
 					{
-						_targetURLForHTML = _targetURLForHTML.Substring(0, _targetURLForHTML.Length-3) + ".htm";
+						_targetURLForHTML = _targetURLForHTML.Substring(0, _targetURLForHTML.Length-3) + ".html";
 					}
 					_targetURLForHTML = _targetURLForHTML.Replace("\\", "/");
 				}
