@@ -647,6 +647,7 @@ div.figure p {
 
 .table-bordered-all {
 	border: 1px solid;
+	box-shadow: 0px 0px 8px rgba(10,10,10,0.1);
 }
 
 .table-bordered-all td {
@@ -973,64 +974,64 @@ div.figure p {
 	list-style-image: none;
 }
 
-	.menu-vertical ul.tocroot {
-		padding-left: 15px;
-	}
+.menu-vertical ul.tocroot {
+	padding-left: 15px;
+}
 
-	.menu-vertical ul.currentrelative {
-		margin-left: -15px;
-		margin-bottom: -4px;
-		padding-bottom: 4px;
-		padding-left: 15px;
-	}
+.menu-vertical ul.currentrelative {
+	margin-left: -15px;
+	margin-bottom: -4px;
+	padding-bottom: 4px;
+	padding-left: 15px;
+}
 
-	.menu-vertical ul.currentrelativeroot {
-		margin-left: -15px;
-		margin-bottom: -4px;
-		padding-bottom: 4px;
-		padding-left: 15px;
-	}
+.menu-vertical ul.currentrelativeroot {
+	margin-left: -15px;
+	margin-bottom: -4px;
+	padding-bottom: 4px;
+	padding-left: 15px;
+}
 
-	.menu-vertical ul.tocroot > li.current {
-		margin-left: -4px;
-		padding-left: 4px;
-		padding-bottom: 3px;
-		margin-bottom: 10px;
-	}
+.menu-vertical ul.tocroot > li.current {
+	margin-left: -4px;
+	padding-left: 4px;
+	padding-bottom: 3px;
+	margin-bottom: 10px;
+}
 
-	.menu-vertical ul.current {
-		padding-left: 10px;
-		margin-left: -10px;
-		padding-bottom: 3px;
-	}
+.menu-vertical ul.current {
+	padding-left: 10px;
+	margin-left: -10px;
+	padding-bottom: 3px;
+}
 
 .menu-vertical li {
 	list-style: none;
-	line-height: initial;
+	line-height: 16px;
 }
 
-	.menu-vertical li.tocentry {
-		padding-left: 15px;
-	}
+.menu-vertical li.tocentry {
+	padding-left: 15px;
+	padding-top: 7px;
+}
 
-	.menu-vertical li.tocrootentry {
-		padding-left: 15px;
-	}
+.menu-vertical li.tocrootentry {
+	padding-left: 15px;
+}
 
-	.menu-vertical li.current {
-		margin-top: 0px;
-		margin-bottom: 3px;
-		margin-left: 0;
-		padding-top: 0px;
-	}
+.menu-vertical li.current {
+	margin-top: 7px;
+	margin-bottom: 3px;
+	margin-left: 0;
+	padding-top: 0px;
+}
 
-		.menu-vertical li.current > a {
-			font-weight: bold;
-			border: none;
-		}
+.menu-vertical li.current > a {
+	font-weight: bold;
+	border: none;
+}
 
 .menu-vertical a {
-	line-height: 20px;
 	position: relative;
 	border: none;
 }
@@ -1048,7 +1049,6 @@ div.figure p {
 	}
 
 .menu-vertical span.navigationgroup {
-	line-height: 23px;
 	font-weight: bold;
 	margin-bottom: 3px;
 }
@@ -1060,7 +1060,6 @@ div.figure p {
 	width: 320px;
 	overflow: hidden;
 	min-height: 100%;
-	background: #343131;
 	z-index: 200;
 	height: 100%;
 	overflow-y: auto;
@@ -1077,32 +1076,32 @@ div.figure p {
 	*zoom: 1;
 }
 
-	.nav-top:before, .nav-top:after {
-		display: table;
-		content: "";
-	}
+.nav-top:before, .nav-top:after {
+	display: table;
+	content: "";
+}
 
-	.nav-top:after {
-		clear: both;
-	}
+.nav-top:after {
+	clear: both;
+}
 
-	.nav-top a {
-		font-weight: bold;
-	}
+.nav-top a {
+	font-weight: bold;
+}
 
-	.nav-top img {
-		margin-right: 12px;
-		height: 45px;
-		width: 45px;
-		padding: 5px;
-		border-radius: 100%;
-	}
+.nav-top img {
+	margin-right: 12px;
+	height: 45px;
+	width: 45px;
+	padding: 5px;
+	border-radius: 100%;
+}
 
-	.nav-top i {
-		font-size: 30px;
-		float: left;
-		cursor: pointer;
-	}
+.nav-top i {
+	font-size: 30px;
+	float: left;
+	cursor: pointer;
+}
 
 .nav-content-wrap {
 	margin-left: 320px;

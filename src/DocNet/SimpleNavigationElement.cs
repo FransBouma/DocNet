@@ -107,10 +107,7 @@ namespace Docnet
 			sb.Replace("{{Path}}", relativePathToRoot);
 			sb.Replace("{{Breadcrumbs}}", activePath.CreateBreadCrumbsHTML(relativePathToRoot));
 			sb.Replace("{{ToC}}", activePath.CreateToCHTML(relativePathToRoot));
-			if(this.ExtraScriptProducerFunc != null)
-			{
-				sb.Replace("{{ExtraScript}}", this.ExtraScriptProducerFunc(this));
-			}
+			sb.Replace("{{ExtraScript}}", (this.ExtraScriptProducerFunc == null) ? string.Empty : this.ExtraScriptProducerFunc(this));
 
 			// the last action has to be replacing the content marker, so markers in the content which we have in the template as well aren't replaced 
 			sb.Replace("{{Content}}", content);
