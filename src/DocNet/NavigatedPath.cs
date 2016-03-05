@@ -52,7 +52,7 @@ namespace Docnet
 				}
 				else
 				{
-					fragments.Add(string.Format("<li><a href=\"{0}{1}\">{2}</a></li>", relativePathToRoot, HttpUtility.UrlEncode(targetURL), element.Name));
+					fragments.Add(string.Format("<li><a href=\"{0}{1}\">{2}</a></li>", relativePathToRoot, targetURL, element.Name));
 				}
 			}
 			return string.Format("<ul>{0}</ul>{1}", string.Join(" / ", fragments.ToArray()), Environment.NewLine);
