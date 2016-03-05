@@ -64,7 +64,10 @@ namespace Docnet
 				Console.WriteLine("[ERROR] Page template '{0}' is empty.", _configData.PageTemplate);
 				return false;
 			}
-			return true;
+            // Set default extension
+            string defaultExtension = _configData.DefaultExtension;
+            DefaultExtension = string.IsNullOrWhiteSpace(defaultExtension) ? "htm" : defaultExtension;
+            return true;
 		}
 
 
@@ -269,7 +272,12 @@ namespace Docnet
 				}
 				return rawFolderNames.HasValues ? rawFolderNames.Values<string>().ToList() : new List<string>();
 			}
-		} 
-		#endregion
-	}
+		}
+
+        /// <summary>
+        /// File extension to be used for the generated HTML files. Defaults to 'htm'
+        /// </summary>
+        public static string DefaultExtension = "htm";
+        #endregion
+    }
 }
