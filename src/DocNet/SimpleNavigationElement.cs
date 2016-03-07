@@ -77,7 +77,7 @@ namespace Docnet
 					// specified / existend. 
 					var defaultMarkdown = new StringBuilder();
 					defaultMarkdown.AppendFormat("# {0}{1}{1}", this.ParentContainer.Name, Environment.NewLine);
-					defaultMarkdown.AppendFormat("Please select one of the topic in this section:{0}{0}", Environment.NewLine);
+					defaultMarkdown.AppendFormat("Please select one of the topics in this section:{0}{0}", Environment.NewLine);
 					foreach(var sibling in this.ParentContainer.Value)
 					{
 						if(sibling == this)
