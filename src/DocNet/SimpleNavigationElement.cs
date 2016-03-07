@@ -62,6 +62,7 @@ namespace Docnet
 			var sb = new StringBuilder(activeConfig.PageTemplateContents.Length + 2048);
 			var content = string.Empty;
 			this.MarkdownFromFile = string.Empty;
+			var relativePathToRoot = Utils.MakeRelativePathForUri(Path.GetDirectoryName(destinationFile), activeConfig.Destination);
 			if(File.Exists(sourceFile))
 			{
 				this.MarkdownFromFile = File.ReadAllText(sourceFile);
@@ -84,7 +85,7 @@ namespace Docnet
 						{
 							continue;
 						}
-						defaultMarkdown.AppendFormat("* [{0}]({1}){2}", sibling.Name, HttpUtility.UrlPathEncode(sibling.TargetURL), Environment.NewLine);
+						defaultMarkdown.AppendFormat("* [{0}]({1}{2}){3}", sibling.Name, relativePathToRoot, HttpUtility.UrlPathEncode(sibling.TargetURL), Environment.NewLine);
 					}
 					defaultMarkdown.Append(Environment.NewLine);
 					content = Utils.ConvertMarkdownToHtml(defaultMarkdown.ToString(), Path.GetDirectoryName(destinationFile), activeConfig.Destination, _relativeH2LinksOnPage);
@@ -103,7 +104,6 @@ namespace Docnet
 			sb.Replace("{{Name}}", activeConfig.Name);
 			sb.Replace("{{Footer}}", activeConfig.Footer);
 			sb.Replace("{{TopicTitle}}", this.Name);
-			var relativePathToRoot = Utils.MakeRelativePath(Path.GetDirectoryName(destinationFile), activeConfig.Destination).Replace(@"\", @"/");
 			sb.Replace("{{Path}}", relativePathToRoot);
 			sb.Replace("{{Breadcrumbs}}", activePath.CreateBreadCrumbsHTML(relativePathToRoot));
 			sb.Replace("{{ToC}}", activePath.CreateToCHTML(relativePathToRoot));

@@ -184,5 +184,18 @@ namespace Docnet
 
 			return relativePath;
 		}
+
+
+		/// <summary>
+		/// As <see cref="MakeRelativePath"/> but it also converts '\' to '/'. 
+		/// </summary>
+		/// <param name="fromPath">From path.</param>
+		/// <param name="toPath">To path.</param>
+		/// <returns></returns>
+		/// <remarks>Only works with file paths, which is ok, as it's used to create the {{Path}} macro.</remarks>
+		public static string MakeRelativePathForUri(string fromPath, string toPath)
+		{
+			return Utils.MakeRelativePath(fromPath, toPath).Replace(@"\", @"/");
+		}
 	}
 }
