@@ -116,3 +116,18 @@ Now, the second tab however is very interesting. At least let's pretend it is!
 @end
 @endtabs
 
+##Include files
+You can include other files in your markdown files using the directive `@@include("filename")`, where `filename` is the name of the file to include. The include system isn't recursive. 
+The files to include are read from a special folder, specified under `IncludeSource` in the [docnet.json](docnetjson.htm) file. If no `IncludeSource` directive is
+specified in the [docnet.json](docnetjson.htm) file, the folder `Includes` is assumed. 
+
+The directive `@@include("somehtmlinclude.htm")`
+
+results in the contents of `somehtmlinclude.htm` being included at the spot where the @@include statement is given, as shown below:
+
+@@include("includedhtml.htm")
+
+You can also include markdown, which is then processed with the other markdown as if it's part of it. 
+
+@@include("includedmarkdown.md")
+

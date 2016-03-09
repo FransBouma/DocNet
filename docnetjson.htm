@@ -85,6 +85,7 @@
     &quot;Name&quot; : &quot;name of site&quot;,
     &quot;Source&quot; : &quot;sourcefolder&quot;,
     &quot;Destination&quot; : &quot;destinationfolder&quot;,
+    &quot;IncludeSource&quot;: &quot;includefolder&quot;,
     &quot;Theme&quot; : &quot;themefolder&quot;,
     &quot;SourceFoldersToCopy&quot; : [&quot;folder1&quot;, &quot;foldern&quot;],
     &quot;Footer&quot; : &quot;footer text or HTML&quot;,
@@ -108,6 +109,7 @@
 <li><code>Name</code> specifies the name of the site to generate. </li>
 <li><code>Source</code> specifies the root of the tree of folders in which markdown files are expected. <code>sourcefolder</code> can be a relative path or an absolute path and is used as the root folder for filenames specified in <code>Pages</code>. </li>
 <li><code>Destination</code> specifies the folder where the output will be written to (.htm files). The output will be written to this folder only, all files from subfolders in <code>Source</code> will be written to the folder specified in <code>Destination</code>. with the same structure as the <em>navigation</em> in <code>Pages</code>. <code>destinationfolder</code> can be a relative path or an absolute path.</li>
+<li><code>IncludeSource</code> specifies the folder where the files specified to be included using <a href="markdownextensions.htm#include-files">@@include directives</a> are located. If <code>IncludeSource</code> isn't specified, the value <code>Includes</code> is assumed. </li>
 <li><code>Theme</code> specifies the folder within the <code>Themes</code> folder in the folder the <code>docnet</code> executable is located which is used as the theme for the pages to generate. <code>Docnet</code> expects a file called <code>PageTemplate.htm</code> within the specified <code>Theme</code> folder, which contains the HTML which is used as the wrapper file for the HTML generated from the markdown. It has to contain a couple of marker, which are described later in this document. If <code>Theme</code> isn't specified, <code>Default</code> is assumed.</li>
 <li><code>SourceFoldersToCopy</code>. This is an optional directive with, if specified, one or more folder names relative to <code>Source</code>, which contain files to copy to the <code>Destination</code> folder. E.g. image files used in the markdown files, located in an <code>Images</code> folder can be copied this way to the output folder reliably. All folders specified are copied recursively.</li>
 <li><code>Footer</code>. This is text and/or HTML which is placed in the footer of each page, using a <em>marker</em> (see below).</li>

@@ -51,6 +51,7 @@
 <li class="tocentry"><a href="#alert-boxes">Alert boxes</a></li>
 <li class="tocentry"><a href="#font-awesome-icons">Font Awesome icons</a></li>
 <li class="tocentry"><a href="#tabs">Tabs</a></li>
+<li class="tocentry"><a href="#include-files">Include files</a></li>
 </ul>
 
 </ul>
@@ -145,7 +146,16 @@ Now, the second tab however is very interesting. At least let's pretend it is!
 <div class="tab-wrap"><input type="radio" id="tab0_1" name="tabGroup1" class="tab" checked><label for="tab0_1">First Tab</label><input type="radio" id="tab1_1" name="tabGroup1" class="tab"><label for="tab1_1">Second Tab</label><div class="tab-content"><p>This is the text for the first tab. It's nothing special</p>
 <p>As you can see, it can deal with newlines as well. </p>
 </div><div class="tab-content"><p>Now, the second tab however is very interesting. At least let's pretend it is!</p>
-</div></div>
+</div></div><h2 id="include-files">Include files</h2>
+<p>You can include other files in your markdown files using the directive <code>@@include(&quot;filename&quot;)</code>, where <code>filename</code> is the name of the file to include. The include system isn't recursive. 
+The files to include are read from a special folder, specified under <code>IncludeSource</code> in the <a href="docnetjson.htm">docnet.json</a> file. If no <code>IncludeSource</code> directive is
+specified in the <a href="docnetjson.htm">docnet.json</a> file, the folder <code>Includes</code> is assumed. </p>
+<p>The directive <code>@@include(&quot;somehtmlinclude.htm&quot;)</code></p>
+<p>results in the contents of <code>somehtmlinclude.htm</code> being included at the spot where the @@include statement is given, as shown below:</p>
+<p><i>This</i> is an <b>included</b> piece of html</p>
+<p>You can also include markdown, which is then processed with the other markdown as if it's part of it. </p>
+<p><em>This</em> is an included <code>piece</code> of <strong>Markdown</strong>.</p>
+
                     </div>
                 </div>
                 <footer>
