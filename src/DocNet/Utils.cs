@@ -212,9 +212,9 @@ namespace Docnet
 		/// into the output.
 		/// </summary>
 		/// <param name="content">content to be scanned for include tags</param>
-		/// <param name="includePath">Directory containing the include files</param>
+		/// <param name="includeFolder">Directory containing the include files (absolute folder)</param>
 		/// <returns>String with @@include replaced with the actual content from the partial.</returns>
-		public static string IncludeProcessor(String content, string includePath)
+		public static string IncludeProcessor(String content, string includeFolder)
 		{
 			Match m = includeRegex.Match(content);
 			while (m.Success)
@@ -223,7 +223,8 @@ namespace Docnet
 				{
 					string tagToReplace = m.Groups[0].Value;
 					string fileName = m.Groups[1].Value;
-					string filePath = Path.Combine(includePath, fileName);
+					fileName = fileName.Replace("\"", "");
+					string filePath = Path.Combine(includeFolder, fileName);
 					if (File.Exists(filePath))
 					{
 						content = content.Replace(tagToReplace, File.ReadAllText(filePath));

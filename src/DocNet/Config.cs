@@ -198,6 +198,15 @@ namespace Docnet
 				return _destinationPath;
 			}
 		}
+
+		public string IncludeFolder
+		{
+			get
+			{
+				string rawIncludeFolder = _configData.IncludeSource;
+				return string.IsNullOrWhiteSpace(rawIncludeFolder) ? "Includes" : rawIncludeFolder;
+			}
+		}
 		
 		public string ThemeName
 		{
