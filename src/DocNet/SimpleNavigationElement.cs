@@ -66,9 +66,9 @@ namespace Docnet
 			if(File.Exists(sourceFile))
 			{
 				this.MarkdownFromFile = File.ReadAllText(sourceFile);
-                // Check if the content contains @@include tag
-                content = Utils.IncludeProcessor(this.MarkdownFromFile, Path.Combine(activeConfig.Source, "_partials"));
-                content = Utils.ConvertMarkdownToHtml(content, Path.GetDirectoryName(destinationFile), activeConfig.Destination, _relativeH2LinksOnPage);
+				// Check if the content contains @@include tag
+				content = Utils.IncludeProcessor(this.MarkdownFromFile, Path.Combine(activeConfig.Source, "Includes"));
+				content = Utils.ConvertMarkdownToHtml(content, Path.GetDirectoryName(destinationFile), activeConfig.Destination, _relativeH2LinksOnPage);
 			}
 			else
 			{

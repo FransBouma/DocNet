@@ -32,6 +32,13 @@ namespace Docnet
 {
 	public static class Utils
 	{
+		#region Statics
+		/// <summary>
+		/// Regex expression used to parse @@include(filename.html) tag.
+		/// </summary>
+		private static Regex includeRegex = new Regex(@"@@include\((.*)\)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+		#endregion
+
 		/// <summary>
 		/// Converts the markdown to HTML.
 		/// </summary>
@@ -199,36 +206,32 @@ namespace Docnet
 			return Utils.MakeRelativePath(fromPath, toPath).Replace(@"\", @"/");
 		}
 
-        /// <summary>
-        /// Regex expression used to parse @@include(filename.html) tag.
-        /// </summary>
-        private static Regex includeRegex = new Regex(@"@@include\((.*)\)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        /// <summary>
-        /// Process the input for @@include tags and embeds the included content
-        /// into the output.
-        /// </summary>
-        /// <param name="content">content to be scanned for include tags</param>
-        /// <param name="partialPath">Directory containing the partials</param>
-        /// <returns>String with @@content replaced with the actual content from the partial.</returns>
-        public static string IncludeProcessor(String content, string partialPath)
-        {
-            Match m = includeRegex.Match(content);
-            while (m.Success)
-            {
-                if (m.Groups.Count > 1)
-                {
-                    string tagToReplace = m.Groups[0].Value;
-                    string fileName = m.Groups[1].Value;
-                    string filePath = Path.Combine(partialPath, fileName);
-                    if (File.Exists(filePath))
-                    {
-                        content = content.Replace(tagToReplace, File.ReadAllText(filePath));
-                    }
-                }
-                m = m.NextMatch();
-            }
-            return content;
-        }
+		/// <summary>
+		/// Process the input for @@include tags and embeds the included content
+		/// into the output.
+		/// </summary>
+		/// <param name="content">content to be scanned for include tags</param>
+		/// <param name="includePath">Directory containing the include files</param>
+		/// <returns>String with @@include replaced with the actual content from the partial.</returns>
+		public static string IncludeProcessor(String content, string includePath)
+		{
+			Match m = includeRegex.Match(content);
+			while (m.Success)
+			{
+				if (m.Groups.Count > 1)
+				{
+					string tagToReplace = m.Groups[0].Value;
+					string fileName = m.Groups[1].Value;
+					string filePath = Path.Combine(includePath, fileName);
+					if (File.Exists(filePath))
+					{
+						content = content.Replace(tagToReplace, File.ReadAllText(filePath));
+					}
+				}
+				m = m.NextMatch();
+			}
+			return content;
+		}
     }
 }
