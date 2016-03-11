@@ -67,7 +67,7 @@ namespace Docnet
 			{
 				this.MarkdownFromFile = File.ReadAllText(sourceFile);
 				// Check if the content contains @@include tag
-				content = Utils.IncludeProcessor(this.MarkdownFromFile, Utils.MakeAbsolutePath(activeConfig.Source, activeConfig.IncludeFolder));
+				content = Utils.PartialProcessor(this.MarkdownFromFile, Utils.MakeAbsolutePath(activeConfig.Source, activeConfig.IncludeFolder));
 				content = Utils.ConvertMarkdownToHtml(content, Path.GetDirectoryName(destinationFile), activeConfig.Destination, _relativeH2LinksOnPage);
 			}
 			else
@@ -212,7 +212,7 @@ namespace Docnet
 					_targetURLForHTML = (this.Value ?? string.Empty);
 					if(_targetURLForHTML.ToLowerInvariant().EndsWith(".md"))
 					{
-						_targetURLForHTML = _targetURLForHTML.Substring(0, _targetURLForHTML.Length-3) + ".htm";
+						_targetURLForHTML = _targetURLForHTML.Substring(0, _targetURLForHTML.Length-3) + ".html";
 					}
 					_targetURLForHTML = _targetURLForHTML.Replace("\\", "/");
 				}
