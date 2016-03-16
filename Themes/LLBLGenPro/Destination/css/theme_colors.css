@@ -19,6 +19,10 @@ body {
 	color: #404040;
 }
 
+code {
+	color : #600;
+}
+
 code, pre.nocode {
 	background: #fff;
 	border: solid 1px #e1e4e5;
