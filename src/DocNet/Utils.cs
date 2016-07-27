@@ -227,7 +227,7 @@ namespace Docnet
 					string filePath = Path.Combine(includeFolder, fileName);
 					if (File.Exists(filePath))
 					{
-						content = content.Replace(tagToReplace, File.ReadAllText(filePath));
+						content = content.Replace(tagToReplace, File.ReadAllText(filePath, Encoding.UTF8));
 					}
 				}
 				m = m.NextMatch();

@@ -41,7 +41,7 @@ namespace Docnet
 		{
 			_configFileSourcePath = Path.GetDirectoryName(configFile);
 
-			var configData = File.ReadAllText(configFile, Encoding.Default);
+			var configData = File.ReadAllText(configFile, Encoding.UTF8);
 			if(string.IsNullOrWhiteSpace(configData))
 			{
 				Console.WriteLine("[ERROR] '{0}' is empty.", configFile);
@@ -58,7 +58,7 @@ namespace Docnet
 				Console.WriteLine("[ERROR] Theme '{0}' or Themes folder not found.", this.ThemeFolder);
 				return false;
 			}
-			_templateContents = File.ReadAllText(this.PageTemplateFile);
+			_templateContents = File.ReadAllText(this.PageTemplateFile, Encoding.UTF8);
 			if(string.IsNullOrWhiteSpace(_templateContents))
 			{
 				Console.WriteLine("[ERROR] Page template '{0}' is empty.", _configData.PageTemplate);

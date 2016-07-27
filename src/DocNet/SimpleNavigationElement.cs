@@ -65,7 +65,7 @@ namespace Docnet
 			var relativePathToRoot = Utils.MakeRelativePathForUri(Path.GetDirectoryName(destinationFile), activeConfig.Destination);
 			if(File.Exists(sourceFile))
 			{
-				this.MarkdownFromFile = File.ReadAllText(sourceFile);
+				this.MarkdownFromFile = File.ReadAllText(sourceFile, Encoding.UTF8);
 				// Check if the content contains @@include tag
 				content = Utils.IncludeProcessor(this.MarkdownFromFile, Utils.MakeAbsolutePath(activeConfig.Source, activeConfig.IncludeFolder));
 				content = Utils.ConvertMarkdownToHtml(content, Path.GetDirectoryName(destinationFile), activeConfig.Destination, _relativeH2LinksOnPage);
