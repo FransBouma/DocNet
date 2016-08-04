@@ -90,17 +90,17 @@
                 </div>
                 <div role="main">
                     <div class="section">
-<h1 id="markdown-support">Markdown support</h1>
+<h1 id="markdown-support">Markdown support<a class="headerlink" href="#markdown-support" title="Permalink to this headline"><i class="fa fa-link" aria-hidden="true"></i></a></h1>
 <p><code>DocNet</code> uses markdown files as input. The markdown is parsed with the markdown parser from topten software (called '<a href="http://www.toptensoftware.com/markdowndeep/" target="_blank">MarkdownDeep</a>'). It supports the default markdown statements as well as github style code block markers and specific extensions for writing documentation, which are described below.</p>
-<h2 id="standard-markdown">Standard Markdown</h2>
+<h2 id="standard-markdown">Standard Markdown<a class="headerlink" href="#standard-markdown" title="Permalink to this headline"><i class="fa fa-link" aria-hidden="true"></i></a></h2>
 <p>The standard markdown syntax as defined by <a href="https://daringfireball.net/projects/markdown/" target="_blank">John Gruber</a> is supported in full. </p>
-<h2 id="php-markdown-extra">Php Markdown Extra</h2>
+<h2 id="php-markdown-extra">Php Markdown Extra<a class="headerlink" href="#php-markdown-extra" title="Permalink to this headline"><i class="fa fa-link" aria-hidden="true"></i></a></h2>
 <p>MarkdownDeep supports <a href="https://michelf.ca/projects/php-markdown/extra/" target="_blank">PHP Markdown Extra</a>. PHP Markdown Extra comes with a set of neat extensions for markdown to define e.g. tables, footnotes and more. Please see the link above for all the syntax examples. Additionally, you can look at the <a href="https://github.com/FransBouma/DocNet/tree/master/src/MarkdownDeepTests/testfiles/extramode" target="_blank">unit test files</a> for MarkdownDeep in the <a href="https://github.com/FransBouma/DocNet" target="_blank">DocNet respository at GitHub</a>.  </p>
 <p>A couple of examples are given below</p>
-<h3 id="footnotes">Footnotes</h3>
+<h3 id="footnotes">Footnotes<a class="headerlink" href="#footnotes" title="Permalink to this headline"><i class="fa fa-link" aria-hidden="true"></i></a></h3>
 <p>MarkdownDeep supports Footnotes, which can be added through the following system: To specify a footnote marker, specify <code>[^1]</code>, which will result in:<sup id="fnref:1"><a href="#fn:1" rel="footnote">1</a></sup></p>
 <p>The actual footnote text is then specified with <code>[^1]:</code> following the text of the actual footnote. Click on the superscript <code>1</code> link above to go to the footnote rendered at the bottom of this page. </p>
-<h3 id="definition-lists">Definition lists</h3>
+<h3 id="definition-lists">Definition lists<a class="headerlink" href="#definition-lists" title="Permalink to this headline"><i class="fa fa-link" aria-hidden="true"></i></a></h3>
 <p>To specify simple definition lists, simply do:</p>
 <pre class="nocode">Item one
 :   this is the description of item one
@@ -114,7 +114,7 @@ Item Two
 <dt>Item Two</dt>
 <dd>this is the text of item 2</dd>
 </dl>
-<h3 id="tables">Tables</h3>
+<h3 id="tables">Tables<a class="headerlink" href="#tables" title="Permalink to this headline"><i class="fa fa-link" aria-hidden="true"></i></a></h3>
 <p>There's basic support for defining tables. </p>
 <p>Specifying: </p>
 <pre class="nocode">Fruit|Color
@@ -150,14 +150,14 @@ Bongo|Bongo... it's a strange color, do you have a minute? It's a bit like the s
 </tr>
 </tbody>
 </table>
-<h3 id="special-attributes">Special attributes</h3>
+<h3 id="special-attributes">Special attributes<a class="headerlink" href="#special-attributes" title="Permalink to this headline"><i class="fa fa-link" aria-hidden="true"></i></a></h3>
 <p>DocNet supports special attributes for Links and Images. Currently this is supported on normal links/image specifications only, e.g.:</p>
 <pre class="nocode">![id text](imageurl){.cssclass1 .cssclass2 #idvalue name=value}
 </pre><p>which will result in:</p>
 <pre><code class="html">&lt;img src=&quot;imageurl&quot; alt=&quot;id text&quot; id=&quot;idvalue&quot; class=&quot;cssclass1 cssclass2&quot; name=&quot;value&quot; /&gt;
 </code></pre>
 
-<h3 id="image-rendering">Image rendering</h3>
+<h3 id="image-rendering">Image rendering<a class="headerlink" href="#image-rendering" title="Permalink to this headline"><i class="fa fa-link" aria-hidden="true"></i></a></h3>
 <p>By default images have no special rendering applied to them. To apply a shadow, specify '.shadowed' as css class in a special attribute specification. 
 If you want to have an image rendered centered with a note below it, simply specify a title for the image: </p>
 <pre class="nocode">![](mycenteredpicture.jpg &quot;this is a picture&quot;)
@@ -169,12 +169,12 @@ If you want to have an image rendered centered with a note below it, simply spec
 </code></pre>
 
 <p>All images rendered contain the width/height of the picture file included in the html.</p>
-<h3 id="abbreviations">Abbreviations</h3>
+<h3 id="abbreviations">Abbreviations<a class="headerlink" href="#abbreviations" title="Permalink to this headline"><i class="fa fa-link" aria-hidden="true"></i></a></h3>
 <p>There's also support for abbreviations, using the <code>&lt;abbr&gt;</code> HTML tag. </p>
 <p>Specifying:</p>
 <pre class="nocode">*[FuBar]: F**ked Up Beyond Any Repair.
 </pre><p>gives an abbreviation link in the following sentence: This is a test for abbreviations: <abbr title="F**ked Up Beyond Any Repair.">FuBar</abbr>.</p>
-<h2 id="highlighting-code">Highlighting code</h2>
+<h2 id="highlighting-code">Highlighting code<a class="headerlink" href="#highlighting-code" title="Permalink to this headline"><i class="fa fa-link" aria-hidden="true"></i></a></h2>
 <p>The markdown parser has been extended with GitHub code specifications, so it's easy to specify a specific code beautifying based on a language. This feature uses the <a href="https://highlightjs.org/" target="_blank">Highlight.js</a> javascript library and most popular languages are included. </p>
 <p>Example: to specify a codeblock as C#, append <code>cs</code> after the first ``` marker:</p>
 <pre><code class="cs">var i=42;
@@ -182,7 +182,7 @@ If you want to have an image rendered centered with a note below it, simply spec
 
 <p>To specify a block of text in a fixed sized font but not specify any language highlighting, specify <code>nohighlight</code> as language name:</p>
 <pre class="nocode">this is a simple &lt;pre&gt; block
-</pre><h2 id="linking">Linking</h2>
+</pre><h2 id="linking">Linking<a class="headerlink" href="#linking" title="Permalink to this headline"><i class="fa fa-link" aria-hidden="true"></i></a></h2>
 <p><code>Docnet</code> doesn't transform links. This means that any link to any document in your documentation has to use the url it will get in the destination folder. Example: you want to link to the file <code>How to\AddEntity.md</code> from a page. In the result site this should be the link <code>How%20to/AddEntity.htm</code>, which you should specify in your markdown. In the future it might be <code>docnet</code> will be updated with link transformation, at the moment it doesn't convert any links besides the usual markdown ones. The markdown parser also doesn't allow spaces to be present in the urls. If you need a space in the url, escape it with <code>%20</code>. </p>
 
 <div class="footnotes">

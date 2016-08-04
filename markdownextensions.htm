@@ -90,9 +90,9 @@
                 </div>
                 <div role="main">
                     <div class="section">
-<h1 id="docnet-markdown-extensions">DocNet Markdown extensions</h1>
+<h1 id="docnet-markdown-extensions">DocNet Markdown extensions<a class="headerlink" href="#docnet-markdown-extensions" title="Permalink to this headline"><i class="fa fa-link" aria-hidden="true"></i></a></h1>
 <p><code>Docnet</code> defines the following markdown extensions to make writing documentation easier. </p>
-<h2 id="alert-boxes">Alert boxes</h2>
+<h2 id="alert-boxes">Alert boxes<a class="headerlink" href="#alert-boxes" title="Permalink to this headline"><i class="fa fa-link" aria-hidden="true"></i></a></h2>
 <p>To quickly define alert boxes, <code>Docnet</code> defines the <code>@alert</code> element. Three types of alerts are defined: <em>danger</em> (displayed in red), <em>warning</em> or <em>important</em> (displayed in yellow) and <em>info</em> or <em>neutral</em>, which is displayed in blue. You specify the type of the alert after the <code>@alert</code> statement using &#64;alert <em>name</em>. Close the <code>@alert</code> with <code>@end</code>.</p>
 <p>Below are examples for each alert box and the markdown used to create them. </p>
 <p>The markdown:</p>
@@ -125,10 +125,10 @@ This is a tip! It will be displayed in a tip alert box!
 @end
 </pre><p>Results in</p>
 <div class="alert alert-tip"><span class="alert-title"><i class="fa fa-info-circle"></i> Tip</span><p>This is a tip! It will be displayed in a tip alert box!</p>
-</div><h2 id="font-awesome-icons">Font Awesome icons</h2>
+</div><h2 id="font-awesome-icons">Font Awesome icons<a class="headerlink" href="#font-awesome-icons" title="Permalink to this headline"><i class="fa fa-link" aria-hidden="true"></i></a></h2>
 <p>To specify a font-awesome icon, use <code>@fa-iconname</code>, where <em>iconname</em> is the name of the font-awesome icon.</p>
 <p>Example: To specify the font awesome icon for GitHub, use <code>@fa-github</code>, which will result in: <i class="fa fa-github"></i></p>
-<h2 id="tabs">Tabs</h2>
+<h2 id="tabs">Tabs<a class="headerlink" href="#tabs" title="Permalink to this headline"><i class="fa fa-link" aria-hidden="true"></i></a></h2>
 <p>It's very easy with <code>Docnet</code> to add a tab control with one or more tabs to the HTML with a simple set of markdown statements. The tab statements are converted into pure CSS3/HTML tabs, based on the work of <a href="http://codepen.io/fusco/pen/Wvzjrm" target="_blank">Joseph Fusco</a>.</p>
 <p>To start a Tab control, start with <code>@tabs</code> and end the tabs definition with <code>@endtabs</code>. Between those two statements, which each need to be suffixed with a newline, you define one or more tabs using <code>@tab</code> followed by the label text for that tab, followed by a newline. End your tab contents with <code>@end</code>.</p>
 <p>The following example shows two tabs, one with label 'First Tab' and one with 'Second Tab':</p>
@@ -146,7 +146,7 @@ Now, the second tab however is very interesting. At least let's pretend it is!
 <div class="tab-wrap"><input type="radio" id="tab0_1" name="tabGroup1" class="tab" checked><label for="tab0_1">First Tab</label><input type="radio" id="tab1_1" name="tabGroup1" class="tab"><label for="tab1_1">Second Tab</label><div class="tab-content"><p>This is the text for the first tab. It's nothing special</p>
 <p>As you can see, it can deal with newlines as well. </p>
 </div><div class="tab-content"><p>Now, the second tab however is very interesting. At least let's pretend it is!</p>
-</div></div><h2 id="include-files">Include files</h2>
+</div></div><h2 id="include-files">Include files<a class="headerlink" href="#include-files" title="Permalink to this headline"><i class="fa fa-link" aria-hidden="true"></i></a></h2>
 <p>You can include other files in your markdown files using the directive <code>@@include(&quot;filename&quot;)</code>, where <code>filename</code> is the name of the file to include. The include system isn't recursive. 
 The files to include are read from a special folder, specified under <code>IncludeSource</code> in the <a href="docnetjson.htm">docnet.json</a> file. If no <code>IncludeSource</code> directive is
 specified in the <a href="docnetjson.htm">docnet.json</a> file, the folder <code>Includes</code> is assumed. </p>

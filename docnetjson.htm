@@ -79,7 +79,7 @@
                 </div>
                 <div role="main">
                     <div class="section">
-<h1 id="the-configuration-file-docnet.json">The configuration file: 'docnet.json'</h1>
+<h1 id="the-configuration-file-docnet.json">The configuration file: 'docnet.json'<a class="headerlink" href="#the-configuration-file-docnet.json" title="Permalink to this headline"><i class="fa fa-link" aria-hidden="true"></i></a></h1>
 <p>DocNet uses a json file to determine what to do in what form. The format is straight forward and described below</p>
 <pre><code class="json">{
     &quot;Name&quot; : &quot;name of site&quot;,
@@ -117,7 +117,7 @@
 </ul>
 <p>Paths are expected to use <code>\</code> characters, and as it's json, you have to escape them, so the path <code>.\foo</code> becomes <code>.\\foo</code>.</p>
 <p>Each level, starting with the root, has a special page defined, <code>__index</code>. This page is the page shown when the level header (in the example above this is e.g. <em>Sub Header 1</em>) is clicked in the navigation. If <code>__index</code> is specified in the root level, it's assigned to the navigation name <code>Home</code>. If there's no <code>__index</code> specified, there will still be a page generated but it will have default content (See below). The names of the elements are case sensitive.</p>
-<h2 id="levels-without-index-defined">Levels without __index defined</h2>
+<h2 id="levels-without-index-defined">Levels without __index defined<a class="headerlink" href="#levels-without-index-defined" title="Permalink to this headline"><i class="fa fa-link" aria-hidden="true"></i></a></h2>
 <p>If a level has no <code>__index</code> defined, <code>DocNet</code> will create a <code>__index</code> entry for the level and will specify as target <code>&lt;path to index of parent&gt;/nameoflevel.md</code>. If the page exists it will be loaded as the content for the index of the level, if it doesn't exist, the HTML will simply contain the topictitle and a list of all the sub topics in the level. This guarantees the tree can always be navigated in full.  </p>
 
                     </div>
