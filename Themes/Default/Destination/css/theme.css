@@ -136,6 +136,14 @@ a:hover, a:active {
 	outline: 0;
 }
 
+a.headerlink {
+	display: inline;
+	text-decoration: none;
+	visibility: hidden;
+	font-size: smaller;
+	margin-left: 3px;
+}
+
 abbr[title] {
 	border-bottom: 1px dotted;
 }
@@ -301,6 +309,30 @@ h5 {
 h6 {
 	font-size: 105%;
 	margin-bottom: 7px;
+}
+
+h1:hover a.headerlink {
+	visibility: visible;
+}
+
+h2:hover a.headerlink {
+	visibility: visible;
+}
+
+h3:hover a.headerlink {
+	visibility: visible;
+}
+
+h4:hover a.headerlink {
+	visibility: visible;
+}
+
+h5:hover a.headerlink {
+	visibility: visible;
+}
+
+h6:hover a.headerlink {
+	visibility: visible;
 }
 
 hr {

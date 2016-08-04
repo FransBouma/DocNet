@@ -172,6 +172,7 @@ namespace MarkdownDeep
 				case BlockType.h5:
 				case BlockType.h6:
 					string id = string.Empty;
+					bool insertPermalink = false;
 					if (m.ExtraMode && !m.SafeMode)
 					{
 						b.Append("<" + BlockType.ToString());
@@ -181,6 +182,7 @@ namespace MarkdownDeep
 							b.Append(" id=\"");
 							b.Append(id);
 							b.Append("\">");
+							insertPermalink = true;
 						}
 						else
 						{
@@ -203,6 +205,13 @@ namespace MarkdownDeep
 					else
 					{
 						m.SpanFormatter.Format(b, Buf, ContentStart, ContentLen);
+					}
+					if(insertPermalink)
+					{
+						// append header permalink link
+						b.Append("<a class=\"headerlink\" href=\"#");
+						b.Append(id);
+						b.Append("\" title=\"Permalink to this headline\"><i class=\"fa fa-link\" aria-hidden=\"true\"></i></a>");
 					}
 					b.Append("</" + BlockType.ToString() + ">\n");
 					break;
