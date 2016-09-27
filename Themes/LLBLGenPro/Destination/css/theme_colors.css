@@ -79,9 +79,9 @@ mark {
 .alert.alert-danger {
 	background: #fdf3f2;
 }
-
+ 
 .alert.alert-danger .alert-title {
-	background: #f29f97;
+	background: #e22222;
 }
 
 .alert.alert-warning {
