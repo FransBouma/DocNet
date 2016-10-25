@@ -90,9 +90,12 @@ namespace Docnet
 		public override void GenerateOutput(Config activeConfig, NavigatedPath activePath)
 		{
 			activePath.Push(this);
-			foreach(var element in this.Value)
+			int i = 0;
+			while(i<this.Value.Count)
 			{
+				var element = this.Value[i];
 				element.GenerateOutput(activeConfig, activePath);
+				i++;
 			}
 			activePath.Pop();
 		}
