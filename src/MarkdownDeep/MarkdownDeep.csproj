@@ -105,6 +105,12 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Projbook.Extension\Projbook.Extension.csproj">
+      <Project>{8338b756-0519-4d20-ba04-3a8f4839237a}</Project>
+      <Name>Projbook.Extension</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

@@ -1,0 +1,9 @@
+﻿pre
+
+This is some text with a snippet.
+
+@snippet cs [..\..\AutoHeaderIDTests.cs] SetUp
+
+@snippet cs [..\..\AutoHeaderIDTests.cs] =WithPunctuation
+		
+post
