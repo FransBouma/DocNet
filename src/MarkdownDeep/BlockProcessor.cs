@@ -14,8 +14,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
+using Projbook.Extension;
+using Projbook.Extension.CSharpExtractor;
+using Projbook.Extension.Spi;
+using Projbook.Extension.XmlExtractor;
 
 namespace MarkdownDeep
 {
@@ -1281,23 +1286,26 @@ namespace MarkdownDeep
 			{
 				return HandleAlertExtension(b);
 			}
+		    if(DoesMatch("@snippet"))
+		    {
+		        return HandleSnippetExtension(b);
+		    }
 			return false;
 		}
 
 
-
-		/// <summary>
-		/// Handles the alert extension:
-		/// @alert type
-		/// text
-		/// @end
-		/// 
-		/// where text can be anything and has to be handled further. 
-		/// type is: danger, warning, info or neutral.
-		/// </summary>
-		/// <param name="b">The b.</param>
-		/// <returns></returns>
-		private bool HandleAlertExtension(Block b)
+        /// <summary>
+        /// Handles the alert extension:
+        /// @alert type
+        /// text
+        /// @end
+        /// 
+        /// where text can be anything and has to be handled further. 
+        /// type is: danger, warning, info or neutral.
+        /// </summary>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
+        private bool HandleAlertExtension(Block b)
 		{
 			// skip '@alert'
 			if(!SkipString("@alert"))
@@ -1438,15 +1446,114 @@ namespace MarkdownDeep
 			b.Children = contentProcessor.ScanLines(Input, startContent, endContent - startContent);
 			return true;
 		}
+        
+
+        /// <summary>
+        /// Handles the snippet extension:
+        /// @snippet language [filename] pattern
+        /// 
+        /// where 'language' can be: cs, xml or txt. If something else, txt is used
+        /// '[filename]' is evaluated relatively to the document location of the current document. 
+        /// 'pattern' is the pattern passed to the extractor, which is determined based on the language. This is Projbook code.
+        /// 
+        /// The read snippet is wrapped in a fenced code block with language as language marker, except for txt, which will get 'nohighlight'.
+        /// This fenced code block is then parsed again and that result is returned as b's data.
+        /// </summary>
+        /// <param name="b">The block to handle.</param>
+        /// <returns></returns>
+        private bool HandleSnippetExtension(Block b)
+        {
+            // skip @snippet
+            if(!SkipString("@snippet"))
+            {
+                return false;
+            }
+            if(!SkipLinespace())
+            {
+                return false;
+            }
+
+            // language
+            var language = string.Empty;
+            if(!SkipIdentifier(ref language))
+            {
+                return false;
+            }
+
+            if(!SkipLinespace())
+            {
+                return false;
+            }
+
+            // [filename]
+            if(!this.SkipChar('['))
+            {
+                return false;
+            }
+            // mark start of filename string
+            this.Mark();
+            if(!this.Find(']'))
+            {
+                return false;
+            }
+            string filename = this.Extract();
+            if(string.IsNullOrWhiteSpace(filename))
+            {
+                return false;
+            }
+            if(!SkipChar(']'))
+            {
+                return false;
+            }
+            if(!SkipLinespace())
+            {
+                return false;
+            }
+
+            // pattern
+            var patternStart = this.Position;
+            SkipToEol();
+            var pattern = this.Input.Substring(patternStart, this.Position - patternStart);
+            SkipToNextLine();
+            language = language.ToLowerInvariant();
+            ISnippetExtractor extractor = null;
+            switch(language)
+            {
+                case "cs":
+                    extractor = new CSharpSnippetExtractor();
+                    break;
+                case "xml":
+                    extractor = new XmlSnippetExtractor();
+                    break;
+                default:
+                    // text
+                    language = "nohighlight";
+                    extractor = new DefaultSnippetExtractor();
+                    break;
+            }
+
+            // extract the snippet, then build the fenced block to return.
+            var fullFilename = Path.Combine(Path.GetDirectoryName(m_markdown.DocumentLocation) ?? string.Empty, filename);
+            var snippetText = extractor.Extract(fullFilename, pattern) ?? string.Empty;
+            b.BlockType = BlockType.codeblock;
+            b.Data = language;
+            var child = CreateBlock();
+            child.BlockType = BlockType.indent;
+            child.Buf = snippetText;
+            child.ContentStart = 0;
+            child.ContentEnd = snippetText.Length;
+            b.Children = new List<Block>() { child};
+            return true;
+        }
 
 
-		/// <summary>
-		/// Handles the font awesome extension, which is available in DocNet mode. FontAwesome extension uses @fa-iconname, where iconname is the name of the fontawesome icon.
-		/// Called when '@fa-' has been seen. Current position is on 'f' of 'fa-'.
-		/// </summary>
-		/// <param name="b">The b.</param>
-		/// <returns></returns>
-		private bool HandleFontAwesomeExtension(Block b)
+        /// <summary>
+        /// Handles the font awesome extension, which is available in DocNet mode. FontAwesome extension uses @fa-iconname, where iconname is the name of the fontawesome icon.
+        /// Called when '@fa-' has been seen. Current position is on 'f' of 'fa-'.
+        /// </summary>
+        /// <param name="b">The b.</param>
+        /// <returns></returns>
+        private bool HandleFontAwesomeExtension(Block b)
 		{
 			string iconName = string.Empty;
 			int newPosition = this.Position;

@@ -132,6 +132,10 @@ namespace MarkdownDeepTests
 			{
 				md.HtmlClassTitledImages = "figure";
 			}
+		    if(md.DocNetMode)
+		    {
+		        md.GitHubCodeBlocks = true;
+		    }
 
 			string actual = md.Transform(input);
 			string actual_clean = Utils.strip_redundant_whitespace(actual);
