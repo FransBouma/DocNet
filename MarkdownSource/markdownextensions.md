@@ -116,6 +116,27 @@ Now, the second tab however is very interesting. At least let's pretend it is!
 @end
 @endtabs
 
+
+##Snippets
+You can include snippets from other files as fenced code blocks using the directive `@snippet` which has the following syntax:
+
+`@snippet language [file specification] pattern`
+
+Here, _language_ can be one of `cs`, `txt` or `xml`. If an unknown language is specified, `txt` is chosen. _Pattern_ is used to determine which part of the file specified between `[]`
+is to be embedded at the spot of the `@snippet` fragment. This code is based on [Projbook's extractor feature](http://defrancea.github.io/Projbook/projbook.html#Pageextractormd) and follows the same pattern system. 
+
+Below, the method `GenerateToCFragment` is embedded in a C# fenced code block. This method is a DocNet method and is obtained directly from the source code. This shows the `@snippet`
+feature's power as it keeps the documentation in sync with the embedded code without the necessity of updating things. 
+
+The following snippet, if the DocNet sourcecode is located at the spot reachable by the path below:
+
+```nohighlight
+@snippet cs [../../DocNet/src/DocNet/NavigationLevel.cs] GenerateToCFragment
+```
+
+will result in:
+@snippet cs [../../DocNet/src/DocNet/NavigationLevel.cs] GenerateToCFragment
+
 ##Include files
 You can include other files in your markdown files using the directive `@@include("filename")`, where `filename` is the name of the file to include. The include system isn't recursive. 
 The files to include are read from a special folder, specified under `IncludeSource` in the [docnet.json](docnetjson.htm) file. If no `IncludeSource` directive is

@@ -51,6 +51,7 @@
 <li class="tocentry"><a href="#alert-boxes">Alert boxes</a></li>
 <li class="tocentry"><a href="#font-awesome-icons">Font Awesome icons</a></li>
 <li class="tocentry"><a href="#tabs">Tabs</a></li>
+<li class="tocentry"><a href="#snippets">Snippets</a></li>
 <li class="tocentry"><a href="#include-files">Include files</a></li>
 </ul>
 
@@ -146,7 +147,83 @@ Now, the second tab however is very interesting. At least let's pretend it is!
 <div class="tab-wrap"><input type="radio" id="tab0_1" name="tabGroup1" class="tab" checked><label for="tab0_1">First Tab</label><input type="radio" id="tab1_1" name="tabGroup1" class="tab"><label for="tab1_1">Second Tab</label><div class="tab-content"><p>This is the text for the first tab. It's nothing special</p>
 <p>As you can see, it can deal with newlines as well. </p>
 </div><div class="tab-content"><p>Now, the second tab however is very interesting. At least let's pretend it is!</p>
-</div></div><h2 id="include-files">Include files<a class="headerlink" href="#include-files" title="Permalink to this headline"><i class="fa fa-link" aria-hidden="true"></i></a></h2>
+</div></div><h2 id="snippets">Snippets<a class="headerlink" href="#snippets" title="Permalink to this headline"><i class="fa fa-link" aria-hidden="true"></i></a></h2>
+<p>You can include snippets from other files as fenced code blocks using the directive <code>@snippet</code> which has the following syntax:</p>
+<p><code>@snippet language [file specification] pattern</code></p>
+<p>Here, <em>language</em> can be one of <code>cs</code>, <code>txt</code> or <code>xml</code>. If an unknown language is specified, <code>txt</code> is chosen. <em>Pattern</em> is used to determine which part of the file specified between <code>[]</code>
+is to be embedded at the spot of the <code>@snippet</code> fragment. This code is based on <a href="http://defrancea.github.io/Projbook/projbook.html#Pageextractormd" target="_blank">Projbook's extractor feature</a> and follows the same pattern system. </p>
+<p>Below, the method <code>GenerateToCFragment</code> is embedded in a C# fenced code block. This method is a DocNet method and is obtained directly from the source code. This shows the <code>@snippet</code>
+feature's power as it keeps the documentation in sync with the embedded code without the necessity of updating things. </p>
+<p>The following snippet, if the DocNet sourcecode is located at the spot reachable by the path below:</p>
+<pre class="nocode">@snippet cs [../../DocNet/src/DocNet/NavigationLevel.cs] GenerateToCFragment
+</pre><p>will result in:</p>
+<pre><code class="cs">/// &lt;summary&gt;
+/// Generates the ToC fragment for this element, which can either be a simple line or a full expanded menu.
+/// &lt;/summary&gt;
+/// &lt;param name=&quot;navigatedPath&quot;&gt;The navigated path to the current element, which doesn't necessarily have to be this element.&lt;/param&gt;
+/// &lt;param name=&quot;relativePathToRoot&quot;&gt;The relative path back to the URL root, e.g. ../.., so it can be used for links to elements in this path.&lt;/param&gt;
+/// &lt;returns&gt;&lt;/returns&gt;
+public override string GenerateToCFragment(NavigatedPath navigatedPath, string relativePathToRoot)
+{
+    var fragments = new List&lt;string&gt;();
+    if(!this.IsRoot)
+    {
+        fragments.Add(&quot;&lt;li class=\&quot;tocentry\&quot;&gt;&quot;);
+    }
+    if(navigatedPath.Contains(this))
+    {
+        // we're expanded. If we're not root and on the top of the navigated path stack, our index page is the page we're currently generating the ToC for, so 
+        // we have to mark the entry as 'current'
+        if(navigatedPath.Peek() == this &amp;&amp; !this.IsRoot)
+        {
+            fragments.Add(&quot;&lt;ul class=\&quot;current\&quot;&gt;&quot;);
+        }
+        else
+        {
+            fragments.Add(&quot;&lt;ul&gt;&quot;);
+        }
+
+        // first render the level header, which is the index element, if present or a label. The root always has an __index element otherwise we'd have stopped at load.
+        var elementStartTag = &quot;&lt;li&gt;&lt;span class=\&quot;navigationgroup\&quot;&gt;&lt;i class=\&quot;fa fa-caret-down\&quot;&gt;&lt;/i&gt; &quot;;
+        var indexElement = this.IndexElement;
+        if(indexElement == null)
+        {
+            fragments.Add(string.Format(&quot;{0}{1}&lt;/span&gt;&lt;/li&gt;&quot;, elementStartTag, this.Name));
+        }
+        else
+        {
+            if(this.IsRoot)
+            {
+                fragments.Add(indexElement.PerformGenerateToCFragment(navigatedPath, relativePathToRoot));
+            }
+            else
+            {
+                fragments.Add(string.Format(&quot;{0}&lt;a href=\&quot;{1}{2}\&quot;&gt;{3}&lt;/a&gt;&lt;/span&gt;&lt;/li&gt;&quot;, elementStartTag, relativePathToRoot, HttpUtility.UrlPathEncode(indexElement.TargetURL), 
+                                            this.Name));
+            }
+        }
+        // then the elements in the container. Index elements are skipped here.
+        foreach(var element in this.Value)
+        {
+            fragments.Add(element.GenerateToCFragment(navigatedPath, relativePathToRoot));
+        }
+        fragments.Add(&quot;&lt;/ul&gt;&quot;);
+    }
+    else
+    {
+        // just a link
+        fragments.Add(string.Format(&quot;&lt;span class=\&quot;navigationgroup\&quot;&gt;&lt;i class=\&quot;fa fa-caret-right\&quot;&gt;&lt;/i&gt; &lt;a href=\&quot;{0}{1}\&quot;&gt;{2}&lt;/a&gt;&lt;/span&gt;&quot;, 
+                                    relativePathToRoot, HttpUtility.UrlPathEncode(this.TargetURL), this.Name));
+    }
+    if(!this.IsRoot)
+    {
+        fragments.Add(&quot;&lt;/li&gt;&quot;);
+    }
+    return string.Join(Environment.NewLine, fragments.ToArray());
+}
+</code></pre>
+
+<h2 id="include-files">Include files<a class="headerlink" href="#include-files" title="Permalink to this headline"><i class="fa fa-link" aria-hidden="true"></i></a></h2>
 <p>You can include other files in your markdown files using the directive <code>@@include(&quot;filename&quot;)</code>, where <code>filename</code> is the name of the file to include. The include system isn't recursive. 
 The files to include are read from a special folder, specified under <code>IncludeSource</code> in the <a href="docnetjson.htm">docnet.json</a> file. If no <code>IncludeSource</code> directive is
 specified in the <a href="docnetjson.htm">docnet.json</a> file, the folder <code>Includes</code> is assumed. </p>

@@ -16,7 +16,7 @@ a:visited {
 }
 
 body {
-	color: #404040;
+	color: #222;
 }
 
 code, pre.nocode {
@@ -58,7 +58,7 @@ mark {
 }
 
 .toc-footer hr {
-	border-color: #3e3a3a;
+	border-color: #ccc;
 }
 /* #endregion */
 
@@ -182,44 +182,43 @@ mark {
 }
 
 .menu-vertical ul.currentrelative, .menu-vertical ul.currentrelativeroot {
-	background-color: #e3e3e3;
+	background-color: #fcfcfc;
 }
 
 .menu-vertical li.current {
-	background-color: #fff;
+	background-color: #fcfcfc;
 }
 
 .menu-vertical ul.current {
-	background-color: #3e3a3a;
+	background-color: #fcfcfc;
 }
 
 .menu-vertical li.current a {
-	color: #777;
+	color: #6b6b6b;
 }
 
 .menu-vertical li.current.tocentry > a, .menu-vertical li.current > a {
-	color: #444;
+	color: #6b6b6b;
 }
 
 .menu-vertical li.current.tocentry ul li > a {
-	color: #777;
+	color: #6b6b6b;
 }
 
 .menu-vertical a {
-	color: #ccc;
+	color: #6b6b6b;
 }
 
 .menu-vertical a:hover, .menu-vertical li.on a:hover {
-	color: #ccc;
+	color: #999;
 }
 
-
 .menu-vertical span, .menu-vertical span > a {
-    color: #999;
+    color: #6b6b6b;
 }
 
 .nav-side {
-	background: #343131;
+	background: #eee;
 }
 
 .nav-top {
