@@ -23,7 +23,7 @@ namespace Projbook.Extension.CSharpExtractor
         /// <summary>
         /// Defines rule regex used to parse the snippet into chunks.
         /// Expected input format: Path/File.cs [My.Name.Space.Class.Method][(string, string)]
-        /// * The first chunk is the file name and will be loaded in <seealso cref="TargetFile"/>
+        /// * The first chunk is the file name and will be loaded in TargetFile
         /// * The optional second chunks are all full qualified name to the member separated by "."
         /// * The optional last chunk is the method parameters if matching a method.
         /// </summary>

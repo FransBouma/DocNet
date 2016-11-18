@@ -299,7 +299,7 @@ namespace MarkdownDeep
 				return false;
 
 			// Work out base location
-			string str = url.StartsWith("/") ? DocumentRoot : DocumentLocation;
+			string str = url.StartsWith("/") ? DocumentRoot : DestinationDocumentLocation;
 			if (String.IsNullOrEmpty(str))
 				return false;
 
@@ -909,14 +909,18 @@ namespace MarkdownDeep
 			set;
 		}
 
-		// Local file system location of the current document.  Used to locate relative
+		// Local file system location of the current destination document.  Used to locate relative
 		// path images for image size.
 		// Typical value: c:\inetpub\www\wwwroot\subfolder
-		public string DocumentLocation
+		public string DestinationDocumentLocation
 		{
 			get;
 			set;
 		}
+
+
+	    public string SourceDocumentFilename { get; set; }
+
 
 		// Limit the width of images (0 for no limit)
 		public int MaxImageWidth

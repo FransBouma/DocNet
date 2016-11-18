@@ -11,9 +11,9 @@
         public string Pattern { get; private set; }
 
         /// <summary>
-        /// Initializes a new instance of <see cref="ProjbookEngine"/>.
+        /// Initializes a new instance of <see cref="SnippetExtractionException"/>.
         /// </summary>
-        /// <param name="message">Initializes the required <see cref="Message"/>.</param>
+        /// <param name="message">Initializes the required message.</param>
         /// <param name="pattern">Initializes the required <see cref="Pattern"/>.</param>
         public SnippetExtractionException(string message, string pattern)
             : base(message)

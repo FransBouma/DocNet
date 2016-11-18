@@ -1533,7 +1533,7 @@ namespace MarkdownDeep
             }
 
             // extract the snippet, then build the fenced block to return.
-            var fullFilename = Path.Combine(Path.GetDirectoryName(m_markdown.DocumentLocation) ?? string.Empty, filename);
+            var fullFilename = Path.Combine(Path.GetDirectoryName(m_markdown.SourceDocumentFilename) ?? string.Empty, filename);
             var snippetText = extractor.Extract(fullFilename, pattern) ?? string.Empty;
             b.BlockType = BlockType.codeblock;
             b.Data = language;

@@ -68,7 +68,7 @@ namespace Docnet
 				this.MarkdownFromFile = File.ReadAllText(sourceFile, Encoding.UTF8);
 				// Check if the content contains @@include tag
 				content = Utils.IncludeProcessor(this.MarkdownFromFile, Utils.MakeAbsolutePath(activeConfig.Source, activeConfig.IncludeFolder));
-				content = Utils.ConvertMarkdownToHtml(content, Path.GetDirectoryName(destinationFile), activeConfig.Destination, _relativeH2LinksOnPage);
+				content = Utils.ConvertMarkdownToHtml(content, Path.GetDirectoryName(destinationFile), activeConfig.Destination, sourceFile, _relativeH2LinksOnPage);
 			}
 			else
 			{
@@ -90,7 +90,7 @@ namespace Docnet
 						defaultMarkdown.AppendFormat("* [{0}]({1}{2}){3}", sibling.Name, relativePathToRoot, HttpUtility.UrlPathEncode(sibling.TargetURL), Environment.NewLine);
 					}
 					defaultMarkdown.Append(Environment.NewLine);
-					content = Utils.ConvertMarkdownToHtml(defaultMarkdown.ToString(), Path.GetDirectoryName(destinationFile), activeConfig.Destination, _relativeH2LinksOnPage);
+					content = Utils.ConvertMarkdownToHtml(defaultMarkdown.ToString(), Path.GetDirectoryName(destinationFile), activeConfig.Destination, string.Empty, _relativeH2LinksOnPage);
 				}
 				else
 				{

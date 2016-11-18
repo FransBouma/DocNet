@@ -39,15 +39,17 @@ namespace Docnet
 		private static Regex includeRegex = new Regex(@"@@include\((.*)\)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 		#endregion
 
-		/// <summary>
-		/// Converts the markdown to HTML.
-		/// </summary>
-		/// <param name="toConvert">The markdown string to convert.</param>
-		/// <param name="documentPath">The document path (without the document filename).</param>
-		/// <param name="siteRoot">The site root.</param>
-		/// <param name="createdAnchorCollector">The created anchor collector, for ToC sublinks for H2 headers.</param>
-		/// <returns></returns>
-		public static string ConvertMarkdownToHtml(string toConvert, string documentPath, string siteRoot, List<Tuple<string, string>> createdAnchorCollector)
+	    /// <summary>
+	    /// Converts the markdown to HTML.
+	    /// </summary>
+	    /// <param name="toConvert">The markdown string to convert.</param>
+	    /// <param name="destinationDocumentPath">The document path (without the document filename).</param>
+	    /// <param name="siteRoot">The site root.</param>
+	    /// <param name="sourceDocumentFilename">the filename of the source markdown file</param>
+	    /// <param name="createdAnchorCollector">The created anchor collector, for ToC sublinks for H2 headers.</param>
+	    /// <returns></returns>
+	    public static string ConvertMarkdownToHtml(string toConvert, string destinationDocumentPath, string siteRoot, string sourceDocumentFilename, 
+                                                   List<Tuple<string, string>> createdAnchorCollector)
 		{
 			var parser = new MarkdownDeep.Markdown
 						 {
@@ -56,8 +58,9 @@ namespace Docnet
 							 AutoHeadingIDs = true,
 							 NewWindowForExternalLinks = true,
 							 DocNetMode = true,
-							 DocumentLocation = documentPath,
+							 DestinationDocumentLocation = destinationDocumentPath,
 							 DocumentRoot = siteRoot,
+                             SourceDocumentFilename = sourceDocumentFilename,
 							 HtmlClassTitledImages = "figure",
 						 };
 
