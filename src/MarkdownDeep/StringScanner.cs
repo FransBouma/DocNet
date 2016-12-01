@@ -434,11 +434,18 @@ namespace MarkdownDeep
 			return str.Substring(mark, pos - mark);
 		}
 
-		// Skip an identifier
-		public bool SkipIdentifier(ref string identifier)
+
+	    public bool SkipIdentifier(ref string identifier)
+	    {
+	        return SkipIdentifier(ref identifier, false);
+	    }
+
+
+	    // Skip an identifier
+        public bool SkipIdentifier(ref string identifier, bool dashIsValidChar)
 		{
 			int savepos = Position;
-			if (!Utils.ParseIdentifier(this.str, ref pos, ref identifier))
+			if (!Utils.ParseIdentifier(this.str, ref pos, ref identifier, dashIsValidChar))
 				return false;
 			if (pos >= end)
 			{

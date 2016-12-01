@@ -2,6 +2,16 @@
 
 This is some text with a @fa-github font awesome icon in it! `@fa-github`. 
 
+this is a @fa-arrow-right right arrow!
+
+@fa-arrow-right
+
+ @fa-arrow-right
+
+   @fa-arrow-right
+
+   @fa-arrow-right	@fa-arrow-right
+
 @fa-github
 
  @fa-github

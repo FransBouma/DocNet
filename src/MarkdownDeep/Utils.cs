@@ -64,15 +64,15 @@ namespace MarkdownDeep
 
 
 		// Scan a string for a valid identifier.  Identifier must start with alpha or underscore
-		// and can be followed by alpha, digit or underscore
+		// and can be followed by alpha, digit or underscore. If dashIsValidChar, additionally to underscore, a '-' is also accepted as a valid identifier character. 
 		// Updates `pos` to character after the identifier if matched
-		public static bool ParseIdentifier(string str, ref int pos, ref string identifer)
+		public static bool ParseIdentifier(string str, ref int pos, ref string identifer, bool dashIsValidChar)
 		{
 			if (pos >= str.Length)
 				return false;
 
-			// Must start with a letter or underscore
-			if (!char.IsLetter(str[pos]) && str[pos] != '_')
+			// Must start with a letter or underscore, or if marked as valid, a dash
+			if (!char.IsLetter(str[pos]) && str[pos] != '_' && (!dashIsValidChar || (dashIsValidChar && str[pos] != '-')))
 			{
 				return false;
 			}
@@ -80,13 +80,16 @@ namespace MarkdownDeep
 			// Find the end
 			int startpos = pos;
 			pos++;
-			while (pos < str.Length && (char.IsDigit(str[pos]) || char.IsLetter(str[pos]) || str[pos] == '_'))
-				pos++;
+		    while(pos < str.Length && (char.IsDigit(str[pos]) || char.IsLetter(str[pos]) || str[pos] == '_' || (dashIsValidChar && str[pos]=='-')))
+		    {
+		        pos++;
+		    }
 
-			// Return it
+		    // Return it
 			identifer = str.Substring(startpos, pos - startpos);
 			return true;
 		}
+
 		
 		// Skip over anything that looks like a valid html entity (eg: &amp, &#123, &#nnn) etc...
 		// Updates `pos` to character after the entity if matched
@@ -566,7 +569,7 @@ namespace MarkdownDeep
 			}
 			scanner.SkipForward(3);
 			iconName = string.Empty;
-			if(!scanner.SkipIdentifier(ref iconName))
+			if(!scanner.SkipIdentifier(ref iconName, dashIsValidChar:true))
 			{
 				// no icon name specified
 				return false;
