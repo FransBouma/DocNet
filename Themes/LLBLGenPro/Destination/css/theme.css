@@ -229,6 +229,10 @@ code.code-large {
 	font-size: 90%;
 }
 
+div.alert > pre > code {
+	line-height: initial;
+}
+
 dfn {
 	font-style: italic;
 }
