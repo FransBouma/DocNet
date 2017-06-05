@@ -5,4 +5,4 @@ Markdown
 
 [Local 1](./target1.md)
 
-[Local 2](./target2.md)
+[Local 2](./target2.md#bla)
