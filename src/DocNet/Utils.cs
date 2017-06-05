@@ -37,19 +37,20 @@ namespace Docnet
 		/// Regex expression used to parse @@include(filename.html) tag.
 		/// </summary>
 		private static Regex includeRegex = new Regex(@"@@include\((.*)\)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-		#endregion
+        #endregion
 
-	    /// <summary>
-	    /// Converts the markdown to HTML.
-	    /// </summary>
-	    /// <param name="toConvert">The markdown string to convert.</param>
-	    /// <param name="destinationDocumentPath">The document path (without the document filename).</param>
-	    /// <param name="siteRoot">The site root.</param>
-	    /// <param name="sourceDocumentFilename">the filename of the source markdown file</param>
-	    /// <param name="createdAnchorCollector">The created anchor collector, for ToC sublinks for H2 headers.</param>
-	    /// <returns></returns>
-	    public static string ConvertMarkdownToHtml(string toConvert, string destinationDocumentPath, string siteRoot, string sourceDocumentFilename, 
-                                                   List<Tuple<string, string>> createdAnchorCollector)
+        /// <summary>
+        /// Converts the markdown to HTML.
+        /// </summary>
+        /// <param name="toConvert">The markdown string to convert.</param>
+        /// <param name="destinationDocumentPath">The document path (without the document filename).</param>
+        /// <param name="siteRoot">The site root.</param>
+        /// <param name="sourceDocumentFilename">the filename of the source markdown file</param>
+        /// <param name="createdAnchorCollector">The created anchor collector, for ToC sublinks for H2 headers.</param>
+        /// <param name="convertLocalLinks">if set to <c>true</c>, convert local links to md files to target files.</param>
+        /// <returns></returns>
+        public static string ConvertMarkdownToHtml(string toConvert, string destinationDocumentPath, string siteRoot, string sourceDocumentFilename, 
+                                                   List<Tuple<string, string>> createdAnchorCollector, bool convertLocalLinks)
 		{
 			var parser = new MarkdownDeep.Markdown
 						 {
@@ -58,7 +59,8 @@ namespace Docnet
 							 AutoHeadingIDs = true,
 							 NewWindowForExternalLinks = true,
 							 DocNetMode = true,
-							 DestinationDocumentLocation = destinationDocumentPath,
+						     ConvertLocalLinks = convertLocalLinks,
+                             DestinationDocumentLocation = destinationDocumentPath,
 							 DocumentRoot = siteRoot,
                              SourceDocumentFilename = sourceDocumentFilename,
 							 HtmlClassTitledImages = "figure",
