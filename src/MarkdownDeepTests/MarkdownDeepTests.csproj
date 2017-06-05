@@ -76,6 +76,7 @@
     <Compile Include="AutoHeaderIDTests.cs" />
     <Compile Include="DocNetMode.cs" />
     <Compile Include="GithubMode.cs" />
+    <Compile Include="LocalLinkTests.cs" />
     <Compile Include="TableSpecTests.cs" />
     <Compile Include="ExtraMode.cs" />
     <Compile Include="SafeModeTests.cs" />
@@ -401,6 +402,12 @@
     </None>
     <None Include="packages.config" />
     <EmbeddedResource Include="testfiles\mdtest11\Images%28Titled%29.text" />
+    <EmbeddedResource Include="testfiles\locallinks_enabled\markdown-readme%28DocNetMode%29%28ConvertLocalLinks%29.text" />
+    <EmbeddedResource Include="testfiles\locallinks_enabled\target1.text" />
+    <EmbeddedResource Include="testfiles\locallinks_enabled\target2.text" />
+    <EmbeddedResource Include="testfiles\locallinks_disabled\markdown-readme%28DocNetMode%29.text" />
+    <EmbeddedResource Include="testfiles\locallinks_disabled\target1.text" />
+    <EmbeddedResource Include="testfiles\locallinks_disabled\target2.text" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="testfiles\githubmode\FencedCodeBlocksAlt%28GitHubMode%29.html" />
@@ -486,6 +493,24 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="testfiles\docnetmode\Snippet%28DocNetMode%29.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="testfiles\locallinks_enabled\markdown-readme%28DocNetMode%29%28ConvertLocalLinks%29.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="testfiles\locallinks_enabled\target1.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="testfiles\locallinks_enabled\target2.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="testfiles\locallinks_disabled\markdown-readme%28DocNetMode%29.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="testfiles\locallinks_disabled\target1.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="testfiles\locallinks_disabled\target2.html" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

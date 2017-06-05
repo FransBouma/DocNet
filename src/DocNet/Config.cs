@@ -207,7 +207,15 @@ namespace Docnet
 				return string.IsNullOrWhiteSpace(rawIncludeFolder) ? "Includes" : rawIncludeFolder;
 			}
 		}
-		
+
+	    public bool ConvertLocalLinks
+	    {
+	        get
+	        {
+	            return _configData.ConvertLocalLinks ?? false;
+	        }
+        }
+
 		public string ThemeName
 		{
 			get

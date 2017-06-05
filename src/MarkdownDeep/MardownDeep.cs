@@ -846,10 +846,16 @@ namespace MarkdownDeep
 		/// </summary>
 		public bool DocNetMode { get; set; }
 
-		// When set, all html block level elements automatically support
-		// markdown syntax within them.  
-		// (Similar to Pandoc's handling of markdown in html)
-		public bool MarkdownInHtml
+
+	    /// <summary>
+	    /// Gets or sets a value indicating whether local links to markdown files should be converted as well.
+	    /// </summary>
+	    public bool ConvertLocalLinks { get; set; }
+
+        // When set, all html block level elements automatically support
+        // markdown syntax within them.  
+        // (Similar to Pandoc's handling of markdown in html)
+        public bool MarkdownInHtml
 		{
 			get;
 			set;

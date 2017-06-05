@@ -126,7 +126,8 @@ namespace MarkdownDeepTests
 			md.ExtraMode = resourceName.IndexOf("(ExtraMode)") >= 0;
 			md.GitHubCodeBlocks = resourceName.IndexOf("(GitHubMode)") >= 0;
 			md.DocNetMode = resourceName.IndexOf("(DocNetMode") >= 0;
-			md.MarkdownInHtml = resourceName.IndexOf("(MarkdownInHtml)") >= 0;
+		    md.ConvertLocalLinks = resourceName.IndexOf("(ConvertLocalLinks") >= 0;
+            md.MarkdownInHtml = resourceName.IndexOf("(MarkdownInHtml)") >= 0;
 			md.AutoHeadingIDs = resourceName.IndexOf("(AutoHeadingIDs)") >= 0;
 			if(resourceName.IndexOf("(Titled)") >= 0)
 			{

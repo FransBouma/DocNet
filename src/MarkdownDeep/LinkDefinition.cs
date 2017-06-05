@@ -58,9 +58,36 @@ namespace MarkdownDeep
 			{
 				HtmlTag tag = new HtmlTag("a");
 
+			    var url = this.Url;
+
+			    if (m.DocNetMode && m.ConvertLocalLinks)
+			    {
+			        // A few requirements before we can convert local links:
+                    //   1. Link contains .md
+                    //   2. Link is relative
+                    //   3. Link is included in the index
+                    var index = url.LastIndexOf(".md", StringComparison.OrdinalIgnoreCase);
+			        if (index >= 0)
+			        {
+			            Uri uri;
+			            if (Uri.TryCreate(url, UriKind.RelativeOrAbsolute, out uri))
+			            {
+			                if (!uri.IsAbsoluteUri)
+			                {
+			                    // TODO: Check if link exists in the ToC
+			                    var existsInTableOfContents = true;
+			                    if (existsInTableOfContents)
+			                    {
+			                        url = url.Remove(index, ".md".Length).Insert(index, ".htm");
+			                    }
+			                }
+			            }
+			        }
+			    }
+
 				// encode url
 				StringBuilder sb = m.GetStringBuilder();
-				Utils.SmartHtmlEncodeAmpsAndAngles(sb, this.Url);
+				Utils.SmartHtmlEncodeAmpsAndAngles(sb, url);
 				tag.attributes["href"] = sb.ToString();
 
 				// encode title
