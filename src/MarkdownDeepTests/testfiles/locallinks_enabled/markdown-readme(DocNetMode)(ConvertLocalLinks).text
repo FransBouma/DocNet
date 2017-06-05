@@ -3,6 +3,8 @@ Markdown
 
 [Remote link](https://github.com/FransBouma)
 
+[Remote link](https://github.com/FransBouma/target1.md)
+
 [Local 1](./target1.md)
 
 [Local 2](./target2.md#bla)

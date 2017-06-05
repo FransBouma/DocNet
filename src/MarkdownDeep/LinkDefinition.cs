@@ -70,18 +70,10 @@ namespace MarkdownDeep
 			        if (index >= 0)
 			        {
 			            Uri uri;
-			            if (Uri.TryCreate(url, UriKind.RelativeOrAbsolute, out uri))
-			            {
-			                if (!uri.IsAbsoluteUri)
-			                {
-			                    // TODO: Check if link exists in the ToC
-			                    var existsInTableOfContents = true;
-			                    if (existsInTableOfContents)
-			                    {
-			                        url = url.Remove(index, ".md".Length).Insert(index, ".htm");
-			                    }
-			                }
-			            }
+						if(Uri.TryCreate(url, UriKind.Relative, out uri))
+						{
+							url = String.Concat(url.Substring(0, index), ".htm", url.Substring(index + ".md".Length));
+						}
 			        }
 			    }
 
