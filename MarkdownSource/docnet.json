@@ -5,6 +5,7 @@
 	"IncludeSource": "Includes",
     "Theme" : "Default",
     "Footer" : "Made with DocNet. Get your copy at: <a href='https://github.com/FransBouma/DocNet' target='_blank'>https://github.com/FransBouma/DocNet</a>.",
+	"ConvertLocalLinks": "true",
     "Pages" : 
     {
         "__index" : "index.md",

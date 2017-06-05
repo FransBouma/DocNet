@@ -114,6 +114,11 @@ this is a simple <pre> block
 ```
 
 ##Linking
-`Docnet` doesn't transform links. This means that any link to any document in your documentation has to use the url it will get in the destination folder. Example: you want to link to the file `How to\AddEntity.md` from a page. In the result site this should be the link `How%20to/AddEntity.htm`, which you should specify in your markdown. In the future it might be `docnet` will be updated with link transformation, at the moment it doesn't convert any links besides the usual markdown ones. The markdown parser also doesn't allow spaces to be present in the urls. If you need a space in the url, escape it with `%20`. 
+`Docnet` doesn't automatically transform links to markdown files by default. To enable automatic link conversion to local markdown files, please specify the `ConvertLocalLinks` option in the [docnet.json file](docnetjson.md) file with the value `true`. If `ConvertLocalLinks` isn't specified or set to `false`, any link to any document in your documentation has to use the url it will get in the destination folder. 
 
+Example: you want to link to the file `How to\AddEntity.md` from a page. If `ConvertLocalLinks` isn't specified or set to `false`, you have to specify in the markdown the url it will need to be in the result site, which is the link `How%20to/AddEntity.htm`. If `ConvertLocalLinks` is set to `true`, you can specify `How%20to/AddEntity.md` and DocNet will convert it to `How%20to/AddEntity.htm`.
+
+@alert important
+The markdown parser also doesn't allow spaces to be present in the urls. If you need a space in the url, escape it with `%20`. 
+@end
 
