@@ -214,7 +214,7 @@ namespace Docnet
 					_targetURLForHTML = (this.Value ?? string.Empty);
 					if(_targetURLForHTML.ToLowerInvariant().EndsWith(".md"))
 					{
-						_targetURLForHTML = _targetURLForHTML.Substring(0, _targetURLForHTML.Length-3) + ".htm";
+						_targetURLForHTML = String.Format("{0}.{1}", _targetURLForHTML.Substring(0, _targetURLForHTML.Length-3), Config.DefaultExtension);
 					}
 					_targetURLForHTML = _targetURLForHTML.Replace("\\", "/");
 				}
