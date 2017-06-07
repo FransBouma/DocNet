@@ -107,7 +107,9 @@ namespace Docnet
 			sb.Replace("{{Footer}}", activeConfig.Footer);
 			sb.Replace("{{TopicTitle}}", this.Name);
 			sb.Replace("{{Path}}", relativePathToRoot);
-			sb.Replace("{{Breadcrumbs}}", activePath.CreateBreadCrumbsHTML(relativePathToRoot));
+		    sb.Replace("{{RelativeSourceFileName}}", Utils.MakeRelativePathForUri(activeConfig.Destination, sourceFile).TrimEnd('/'));
+		    sb.Replace("{{RelativeTargetFileName}}", Utils.MakeRelativePathForUri(activeConfig.Destination, destinationFile).TrimEnd('/'));
+            sb.Replace("{{Breadcrumbs}}", activePath.CreateBreadCrumbsHTML(relativePathToRoot));
 			sb.Replace("{{ToC}}", activePath.CreateToCHTML(relativePathToRoot));
 			sb.Replace("{{ExtraScript}}", (this.ExtraScriptProducerFunc == null) ? string.Empty : this.ExtraScriptProducerFunc(this));
 
