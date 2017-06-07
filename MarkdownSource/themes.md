@@ -18,6 +18,8 @@ The `PageTemplate.htm` file is a simple HTML file, located in each `theme` folde
 * `{{TopicTitle}}`. This is replaced with the title of the page, which is the value specified as name in the `Pages` tree. 
 * `{{Footer}}`. This is replaced with the value specified in `Footer` in the docnet.json file. 
 * `{{Breadcrumbs}}`. This is replaced with a / delimited list of names making up the bread crumbs representing the navigation through the ToC to reach the current page. 
+* `{{RelativeSourceFileName}}`. This is replaced with the source file name relative to the root folder. 
+* `{{RelativeTargetFileName}}`. This is replaced with the target file name relative to the output folder. 
 * `{{ExtraScript}}`. This is replaced with extra script definitions / references required by some pages, like the search page. It's `docnet` specific and if this marker isn't present, search won't work.
 * `{{Path}}`. This is used to fill in the relative path to reach css/js files in hard-coded URLs in the `PageTemplate` file. This means that specifying a css URL in `PageTemplate` should look like:
     ```HTML
