@@ -49,7 +49,7 @@ Each level, starting with the root, has a special page defined, `__index`. This 
 If a level has no `__index` defined, `DocNet` will create a `__index` entry for the level and will specify as target `<path to index of parent>/nameoflevel.md`. If the page exists it will be loaded as the content for the index of the level, if it doesn't exist, the HTML will simply contain the topictitle and a list of all the sub topics in the level. This guarantees the tree can always be navigated in full.  
 
 ## Use of wildcard inclusions
-If a level has a string value ending with `**`, it will automatically generate the files for all the (sub)folders. It will use the following process:
+If a level has a string value ending with `**`, it will process all .md files in the folders and subfolders and generate htm files from them. It will use the following process:
 
 1. Search (recursively) for all markdown (`.md`) files inside the specified folder (e.g. `reference`)
 2. Generate index (htm) files for all folders
