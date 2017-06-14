@@ -57,7 +57,9 @@ namespace MarkdownDeep
 			m_Footnotes = new Dictionary<string, Block>();
 			m_UsedFootnotes = new List<Block>();
 			m_UsedHeaderIDs = new Dictionary<string, bool>();
-			this.CreatedH2IdCollector = new List<Tuple<string, string>>();
+
+			this.Headings = new List<Heading>();
+
 			_tabIdCounter = 0;
 		}
 
@@ -951,13 +953,11 @@ namespace MarkdownDeep
 			set;
 		}
 
-
 		/// <summary>
-		/// Collector for the created id's for H2 headers. First element in Tuple is id name, second is name for ToC (the text for H2). Id's are generated
+		/// Collector for the created id's for headers. First element in Tuple is id name, second is name for ToC (the text for header). Id's are generated
 		/// by the parser and use pandoc algorithm, as AutoHeadingId's is switched on. Only in use if DocNetMode is set to true
 		/// </summary>
-		public List<Tuple<string, string>> CreatedH2IdCollector { get; private set; }
-
+		public List<Heading> Headings { get; private set; }
 
 		// Set the html class for the footnotes div
 		// (defaults to "footnotes")

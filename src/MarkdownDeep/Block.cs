@@ -193,14 +193,19 @@ namespace MarkdownDeep
 					{
 						b.Append("<" + BlockType.ToString() + ">");
 					}
-					if(m.DocNetMode && BlockType == BlockType.h2 && !string.IsNullOrWhiteSpace(id))
+					if(m.DocNetMode && !string.IsNullOrWhiteSpace(id))
 					{
-						// collect h2 id + text in collector
-						var h2ContentSb = new StringBuilder();
-						m.SpanFormatter.Format(h2ContentSb, Buf, ContentStart, ContentLen);
-						var h2ContentAsString = h2ContentSb.ToString();
-						b.Append(h2ContentAsString);
-						m.CreatedH2IdCollector.Add(new Tuple<string, string>(id, h2ContentAsString));
+						// collect id + text in collector
+						var headerContentStringBuilder = new StringBuilder();
+						m.SpanFormatter.Format(headerContentStringBuilder, Buf, ContentStart, ContentLen);
+						var headerContentAsString = headerContentStringBuilder.ToString();
+						b.Append(headerContentAsString);
+						m.Headings.Add(new Heading
+						{
+							Level = (int)BlockType,
+							Id = id,
+							Name = headerContentAsString
+						});
 					}
 					else
 					{

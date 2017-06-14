@@ -106,8 +106,9 @@ namespace Docnet
 		/// </summary>
 		/// <param name="navigatedPath">The navigated path to the current element, which doesn't necessarily have to be this element.</param>
 		/// <param name="relativePathToRoot">The relative path back to the URL root, e.g. ../.., so it can be used for links to elements in this path.</param>
+		/// <param name="maxLevel">The maximum level.</param>
 		/// <returns></returns>
-		public override string GenerateToCFragment(NavigatedPath navigatedPath, string relativePathToRoot)
+		public override string GenerateToCFragment(NavigatedPath navigatedPath, string relativePathToRoot, int maxLevel)
 		{
 			var fragments = new List<string>();
 			if(!this.IsRoot)
@@ -138,7 +139,7 @@ namespace Docnet
 				{
 					if(this.IsRoot)
 					{
-						fragments.Add(indexElement.PerformGenerateToCFragment(navigatedPath, relativePathToRoot));
+						fragments.Add(indexElement.PerformGenerateToCFragment(navigatedPath, relativePathToRoot, maxLevel));
 					}
 					else
 					{
@@ -149,7 +150,7 @@ namespace Docnet
 				// then the elements in the container. Index elements are skipped here.
 				foreach(var element in this.Value)
 				{
-					fragments.Add(element.GenerateToCFragment(navigatedPath, relativePathToRoot));
+					fragments.Add(element.GenerateToCFragment(navigatedPath, relativePathToRoot, maxLevel));
 				}
 				fragments.Add("</ul>");
 			}

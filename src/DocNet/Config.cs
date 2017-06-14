@@ -216,6 +216,14 @@ namespace Docnet
 	        }
         }
 
+		public int MaxLevelInToC
+		{
+			get
+			{
+				return _configData.MaxLevelInToC ?? 2;
+			}
+		}
+
 		public string ThemeName
 		{
 			get

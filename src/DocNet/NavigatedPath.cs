@@ -73,11 +73,12 @@ namespace Docnet
 
 		/// <summary>
 		/// Creates the ToC HTML for the element reached by the elements in this path. All containers in this path are expanded, all elements inside these containers which
-		/// aren't, are not expanded. 
+		/// aren't, are not expanded.
 		/// </summary>
 		/// <param name="relativePathToRoot">The relative path back to the URL root, e.g. ../.., so it can be used for links to elements in this path.</param>
+		/// <param name="maxLevel">The maximum level.</param>
 		/// <returns></returns>
-		public string CreateToCHTML(string relativePathToRoot)
+		public string CreateToCHTML(string relativePathToRoot, int maxLevel)
 		{
 			// the root container is the bottom element of this path. We use that container to build the root and navigate any node open along the navigated path. 
 			var rootContainer = this.Reverse().FirstOrDefault() as NavigationLevel;
@@ -86,7 +87,7 @@ namespace Docnet
 				// no root container, no TOC
 				return string.Empty;
 			}
-			return rootContainer.GenerateToCFragment(this, relativePathToRoot);
+			return rootContainer.GenerateToCFragment(this, relativePathToRoot, maxLevel);
 		}
 	}
 }

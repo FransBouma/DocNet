@@ -43,8 +43,9 @@ namespace Docnet
 		/// </summary>
 		/// <param name="navigatedPath">The navigated path to the current element, which doesn't necessarily have to be this element.</param>
 		/// <param name="relativePathToRoot">The relative path back to the URL root, e.g. ../.., so it can be used for links to elements in this path.</param>
+		/// <param name="maxLevel">The maximum level.</param>
 		/// <returns></returns>
-		string GenerateToCFragment(NavigatedPath navigatedPath, string relativePathToRoot);
+		string GenerateToCFragment(NavigatedPath navigatedPath, string relativePathToRoot, int maxLevel);
 		/// <summary>
 		/// Collects the search index entries. These are created from simple navigation elements found in this container, which aren't index element.
 		/// </summary>
