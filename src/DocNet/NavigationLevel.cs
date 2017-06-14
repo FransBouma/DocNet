@@ -64,34 +64,33 @@ namespace Docnet
 					if (childValue.EndsWith("**"))
 					{
 						var path = childValue.Replace("**", string.Empty)
-							.Replace('\\', Path.DirectorySeparatorChar)
-							.Replace('/', Path.DirectorySeparatorChar);
+											 .Replace('\\', Path.DirectorySeparatorChar)
+											 .Replace('/', Path.DirectorySeparatorChar);
 
 						if (!Path.IsPathRooted(path))
 						{
 							path = Path.Combine(_rootDirectory, path);
 						}
-
 						toAdd = CreateGeneratedLevel(path);
 						toAdd.Name = nameToUse;
 					}
 					else
 					{
 						toAdd = new SimpleNavigationElement
-						{
-							Name = nameToUse,
-							Value = childValue,
-							IsIndexElement = isIndexElement
-						};
+								{
+									Name = nameToUse,
+									Value = childValue,
+									IsIndexElement = isIndexElement
+								};
 					}
 				}
 				else
 				{
 					var subLevel = new NavigationLevel(_rootDirectory)
-					{
-						Name = child.Key,
-						IsRoot = false
-					};
+								   {
+									   Name = child.Key,
+									   IsRoot = false
+								   };
 					subLevel.Load((JObject)child.Value);
 					toAdd = subLevel;
 				}
@@ -201,12 +200,13 @@ namespace Docnet
 			return string.Join(Environment.NewLine, fragments.ToArray());
 		}
 
+
 		private NavigationLevel CreateGeneratedLevel(string path)
 		{
 			var root = new NavigationLevel(_rootDirectory)
-			{
-				ParentContainer = this
-			};
+					   {
+						   ParentContainer = this
+					   };
 
 			foreach (var mdFile in Directory.GetFiles(path, "*.md", SearchOption.TopDirectoryOnly))
 			{
@@ -216,32 +216,27 @@ namespace Docnet
 					continue;
 				}
 
-				var relativeFilePath = Utils.MakeRelativePath(mdFile, _rootDirectory);
-
 				var item = new SimpleNavigationElement
-				{
-					Name = name,
-					Value = relativeFilePath,
-					ParentContainer = root
-				};
+						   {
+							   Name = name,
+							   Value = Utils.MakeRelativePath(mdFile, _rootDirectory),
+							   ParentContainer = root
+						   };
 
 				root.Value.Add(item);
 			}
 
 			foreach (var directory in Directory.GetDirectories(path, "*", SearchOption.TopDirectoryOnly))
 			{
-				var directoryInfo = new DirectoryInfo(directory);
-
 				var subDirectoryNavigationElement = CreateGeneratedLevel(directory);
-
-				subDirectoryNavigationElement.Name = directoryInfo.Name;
+				subDirectoryNavigationElement.Name = new DirectoryInfo(directory).Name;
 				subDirectoryNavigationElement.ParentContainer = root;
 
 				root.Value.Add(subDirectoryNavigationElement);
 			}
-
 			return root;
 		}
+
 
 		private string FindTitleInMdFile(string path)
 		{
@@ -252,20 +247,16 @@ namespace Docnet
 				using (var streamReader = new StreamReader(fileStream))
 				{
 					var line = string.Empty;
-
 					while (string.IsNullOrWhiteSpace(line))
 					{
 						line = streamReader.ReadLine();
-
 						if (!string.IsNullOrWhiteSpace(line))
 						{
 							line = line.Trim();
-
 							while (line.StartsWith("#"))
 							{
 								line = line.Substring(1).Trim();
 							}
-
 							if (!string.IsNullOrWhiteSpace(line))
 							{
 								title = line;
