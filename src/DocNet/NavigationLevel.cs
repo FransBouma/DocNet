@@ -187,20 +187,48 @@ namespace Docnet
 			get
 			{
 				var toReturn = this.Value.FirstOrDefault(e => e.IsIndexElement) as SimpleNavigationElement;
-				if(toReturn == null)
+				if (toReturn == null)
 				{
 					// no index element, add an artificial one.
 					var path = string.Empty;
-					if(this.ParentContainer != null)
+					if (this.ParentContainer != null)
 					{
 						path = Path.GetDirectoryName(this.ParentContainer.TargetURL);
 					}
-					var nameToUse = this.Name.Replace(".", "").Replace('/', '_').Replace("\\", "_").Replace(":", "").Replace(" ", "");
-					if(string.IsNullOrWhiteSpace(nameToUse))
+
+					var nameToUse = this.Name;
+
+					var parent = this.ParentContainer;
+					while (parent != null)
+					{
+						nameToUse = $"{parent.Name}-{nameToUse}";
+
+						parent = parent.ParentContainer;
+					}
+
+					nameToUse = nameToUse.Replace(".", "")
+						.Replace('/', '_')
+						.Replace("\\", "_")
+						.Replace(":", "")
+						.Replace(" ", "-")
+						.Replace('?', '-')
+						.Replace('&', '-')
+						.Replace('.', '-')
+						.Replace(',', '-')
+						.Replace('(', '-')
+						.Replace(')', '-');
+
+					while (nameToUse.Contains("--"))
+					{
+						nameToUse = nameToUse.Replace("--", "-");
+					}
+
+					if (string.IsNullOrWhiteSpace(nameToUse))
 					{
 						return null;
 					}
-					toReturn = new SimpleNavigationElement() {ParentContainer = this, Value = string.Format("{0}{1}.md", path, nameToUse), Name = this.Name, IsIndexElement = true};
+
+					toReturn = new SimpleNavigationElement() { ParentContainer = this, Value = string.Format("{0}{1}.md", path, nameToUse), Name = this.Name, IsIndexElement = true };
 					this.Value.Add(toReturn);
 				}
 
