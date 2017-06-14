@@ -263,7 +263,7 @@ namespace Docnet
 				if(_pages == null)
 				{
 					JObject rawPages = _configData.Pages;
-					_pages = new NavigationLevel() {Name = "Home", IsRoot = true};
+					_pages = new NavigationLevel(Source) {Name = "Home", IsRoot = true};
 					_pages.Load(rawPages);
 				}
 				return _pages;

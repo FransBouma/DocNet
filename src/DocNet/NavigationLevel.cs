@@ -33,30 +33,64 @@ namespace Docnet
 {
 	public class NavigationLevel : NavigationElement<List<INavigationElement>>
 	{
-		public NavigationLevel() : base()
+		#region Members
+		private readonly string _rootDirectory;
+		#endregion
+
+		public NavigationLevel(string rootDirectory)
+			: base()
 		{
+			this._rootDirectory = rootDirectory;
 			this.Value = new List<INavigationElement>();
 		}
 
 
 		public void Load(JObject dataFromFile)
 		{
-			foreach(KeyValuePair<string, JToken> child in dataFromFile)
+			foreach (KeyValuePair<string, JToken> child in dataFromFile)
 			{
 				INavigationElement toAdd;
-				if(child.Value.Type == JTokenType.String)
+				if (child.Value.Type == JTokenType.String)
 				{
 					var nameToUse = child.Key;
+
 					var isIndexElement = child.Key == "__index";
-					if(isIndexElement)
+					if (isIndexElement)
 					{
 						nameToUse = this.Name;
 					}
-					toAdd = new SimpleNavigationElement() { Name = nameToUse, Value = child.Value.ToObject<string>(), IsIndexElement = isIndexElement};
+
+					var childValue = child.Value.ToObject<string>();
+					if (childValue.EndsWith("**"))
+					{
+						var path = childValue.Replace("**", string.Empty)
+											 .Replace('\\', Path.DirectorySeparatorChar)
+											 .Replace('/', Path.DirectorySeparatorChar);
+
+						if (!Path.IsPathRooted(path))
+						{
+							path = Path.Combine(_rootDirectory, path);
+						}
+						toAdd = CreateGeneratedLevel(path);
+						toAdd.Name = nameToUse;
+					}
+					else
+					{
+						toAdd = new SimpleNavigationElement
+								{
+									Name = nameToUse,
+									Value = childValue,
+									IsIndexElement = isIndexElement
+								};
+					}
 				}
 				else
 				{
-					var subLevel = new NavigationLevel() { Name = child.Key, IsRoot = false};
+					var subLevel = new NavigationLevel(_rootDirectory)
+								   {
+									   Name = child.Key,
+									   IsRoot = false
+								   };
 					subLevel.Load((JObject)child.Value);
 					toAdd = subLevel;
 				}
@@ -74,7 +108,7 @@ namespace Docnet
 		public override void CollectSearchIndexEntries(List<SearchIndexEntry> collectedEntries, NavigatedPath activePath)
 		{
 			activePath.Push(this);
-			foreach(var element in this.Value)
+			foreach (var element in this.Value)
 			{
 				element.CollectSearchIndexEntries(collectedEntries, activePath);
 			}
@@ -91,7 +125,7 @@ namespace Docnet
 		{
 			activePath.Push(this);
 			int i = 0;
-			while(i<this.Value.Count)
+			while (i < this.Value.Count)
 			{
 				var element = this.Value[i];
 				element.GenerateOutput(activeConfig, activePath);
@@ -110,15 +144,15 @@ namespace Docnet
 		public override string GenerateToCFragment(NavigatedPath navigatedPath, string relativePathToRoot)
 		{
 			var fragments = new List<string>();
-			if(!this.IsRoot)
+			if (!this.IsRoot)
 			{
 				fragments.Add("<li class=\"tocentry\">");
 			}
-			if(navigatedPath.Contains(this))
+			if (navigatedPath.Contains(this))
 			{
 				// we're expanded. If we're not root and on the top of the navigated path stack, our index page is the page we're currently generating the ToC for, so 
 				// we have to mark the entry as 'current'
-				if(navigatedPath.Peek() == this && !this.IsRoot)
+				if (navigatedPath.Peek() == this && !this.IsRoot)
 				{
 					fragments.Add("<ul class=\"current\">");
 				}
@@ -130,24 +164,24 @@ namespace Docnet
 				// first render the level header, which is the index element, if present or a label. The root always has an __index element otherwise we'd have stopped at load.
 				var elementStartTag = "<li><span class=\"navigationgroup\"><i class=\"fa fa-caret-down\"></i> ";
 				var indexElement = this.IndexElement;
-				if(indexElement == null)
+				if (indexElement == null)
 				{
 					fragments.Add(string.Format("{0}{1}</span></li>", elementStartTag, this.Name));
 				}
 				else
 				{
-					if(this.IsRoot)
+					if (this.IsRoot)
 					{
 						fragments.Add(indexElement.PerformGenerateToCFragment(navigatedPath, relativePathToRoot));
 					}
 					else
 					{
-						fragments.Add(string.Format("{0}<a href=\"{1}{2}\">{3}</a></span></li>", elementStartTag, relativePathToRoot, HttpUtility.UrlPathEncode(indexElement.TargetURL), 
+						fragments.Add(string.Format("{0}<a href=\"{1}{2}\">{3}</a></span></li>", elementStartTag, relativePathToRoot, HttpUtility.UrlPathEncode(indexElement.TargetURL),
 													this.Name));
 					}
 				}
 				// then the elements in the container. Index elements are skipped here.
-				foreach(var element in this.Value)
+				foreach (var element in this.Value)
 				{
 					fragments.Add(element.GenerateToCFragment(navigatedPath, relativePathToRoot));
 				}
@@ -156,14 +190,84 @@ namespace Docnet
 			else
 			{
 				// just a link
-				fragments.Add(string.Format("<span class=\"navigationgroup\"><i class=\"fa fa-caret-right\"></i> <a href=\"{0}{1}\">{2}</a></span>", 
+				fragments.Add(string.Format("<span class=\"navigationgroup\"><i class=\"fa fa-caret-right\"></i> <a href=\"{0}{1}\">{2}</a></span>",
 											relativePathToRoot, HttpUtility.UrlPathEncode(this.TargetURL), this.Name));
 			}
-			if(!this.IsRoot)
+			if (!this.IsRoot)
 			{
 				fragments.Add("</li>");
 			}
 			return string.Join(Environment.NewLine, fragments.ToArray());
+		}
+
+
+		private NavigationLevel CreateGeneratedLevel(string path)
+		{
+			var root = new NavigationLevel(_rootDirectory)
+					   {
+						   ParentContainer = this
+					   };
+
+			foreach (var mdFile in Directory.GetFiles(path, "*.md", SearchOption.TopDirectoryOnly))
+			{
+				var name = FindTitleInMdFile(mdFile);
+				if (string.IsNullOrWhiteSpace(name))
+				{
+					continue;
+				}
+
+				var item = new SimpleNavigationElement
+						   {
+							   Name = name,
+							   Value = Utils.MakeRelativePath(mdFile, _rootDirectory),
+							   ParentContainer = root
+						   };
+
+				root.Value.Add(item);
+			}
+
+			foreach (var directory in Directory.GetDirectories(path, "*", SearchOption.TopDirectoryOnly))
+			{
+				var subDirectoryNavigationElement = CreateGeneratedLevel(directory);
+				subDirectoryNavigationElement.Name = new DirectoryInfo(directory).Name;
+				subDirectoryNavigationElement.ParentContainer = root;
+
+				root.Value.Add(subDirectoryNavigationElement);
+			}
+			return root;
+		}
+
+
+		private string FindTitleInMdFile(string path)
+		{
+			var title = string.Empty;
+
+			using (var fileStream = File.OpenRead(path))
+			{
+				using (var streamReader = new StreamReader(fileStream))
+				{
+					var line = string.Empty;
+					while (string.IsNullOrWhiteSpace(line))
+					{
+						line = streamReader.ReadLine();
+						if (!string.IsNullOrWhiteSpace(line))
+						{
+							line = line.Trim();
+							while (line.StartsWith("#"))
+							{
+								line = line.Substring(1).Trim();
+							}
+							if (!string.IsNullOrWhiteSpace(line))
+							{
+								title = line;
+								break;
+							}
+						}
+					}
+				}
+			}
+
+			return title;
 		}
 
 
@@ -173,7 +277,7 @@ namespace Docnet
 			get
 			{
 				var defaultElement = this.IndexElement;
-				if(defaultElement == null)
+				if (defaultElement == null)
 				{
 					return string.Empty;
 				}
@@ -187,20 +291,20 @@ namespace Docnet
 			get
 			{
 				var toReturn = this.Value.FirstOrDefault(e => e.IsIndexElement) as SimpleNavigationElement;
-				if(toReturn == null)
+				if (toReturn == null)
 				{
 					// no index element, add an artificial one.
 					var path = string.Empty;
-					if(this.ParentContainer != null)
+					if (this.ParentContainer != null)
 					{
 						path = Path.GetDirectoryName(this.ParentContainer.TargetURL);
 					}
 					var nameToUse = this.Name.Replace(".", "").Replace('/', '_').Replace("\\", "_").Replace(":", "").Replace(" ", "");
-					if(string.IsNullOrWhiteSpace(nameToUse))
+					if (string.IsNullOrWhiteSpace(nameToUse))
 					{
 						return null;
 					}
-					toReturn = new SimpleNavigationElement() {ParentContainer = this, Value = string.Format("{0}{1}.md", path, nameToUse), Name = this.Name, IsIndexElement = true};
+					toReturn = new SimpleNavigationElement() { ParentContainer = this, Value = string.Format("{0}{1}.md", path, nameToUse), Name = this.Name, IsIndexElement = true };
 					this.Value.Add(toReturn);
 				}
 
@@ -216,7 +320,8 @@ namespace Docnet
 		{
 			// never an index
 			get { return false; }
-			set {  
+			set
+			{
 				// nop;
 			}
 		}
