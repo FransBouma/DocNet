@@ -25,6 +25,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 using Newtonsoft.Json.Linq;
@@ -299,11 +300,30 @@ namespace Docnet
 					{
 						path = Path.GetDirectoryName(this.ParentContainer.TargetURL);
 					}
-					var nameToUse = this.Name.Replace(".", "").Replace('/', '_').Replace("\\", "_").Replace(":", "").Replace(" ", "");
+
+					var nameToUse = this.Name;
+
+					var parent = this.ParentContainer;
+					while (parent != null)
+					{
+						nameToUse = $"{parent.Name}-{nameToUse}";
+
+						parent = parent.ParentContainer;
+					}
+
+					var regEx = new Regex("[^a-zA-Z0-9 -]");
+					nameToUse = regEx.Replace(nameToUse, "-").Replace(" ", "-");
+
+					while (nameToUse.Contains("--"))
+					{
+						nameToUse = nameToUse.Replace("--", "-");
+					}
+
 					if (string.IsNullOrWhiteSpace(nameToUse))
 					{
 						return null;
 					}
+
 					toReturn = new SimpleNavigationElement() { ParentContainer = this, Value = string.Format("{0}{1}.md", path, nameToUse), Name = this.Name, IsIndexElement = true };
 					this.Value.Add(toReturn);
 				}
