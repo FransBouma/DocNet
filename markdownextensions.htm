@@ -166,15 +166,15 @@ feature's power as it keeps the documentation in sync with the embedded code wit
 public override string GenerateToCFragment(NavigatedPath navigatedPath, string relativePathToRoot)
 {
     var fragments = new List&lt;string&gt;();
-    if(!this.IsRoot)
+    if (!this.IsRoot)
     {
         fragments.Add(&quot;&lt;li class=\&quot;tocentry\&quot;&gt;&quot;);
     }
-    if(navigatedPath.Contains(this))
+    if (navigatedPath.Contains(this))
     {
         // we're expanded. If we're not root and on the top of the navigated path stack, our index page is the page we're currently generating the ToC for, so 
         // we have to mark the entry as 'current'
-        if(navigatedPath.Peek() == this &amp;&amp; !this.IsRoot)
+        if (navigatedPath.Peek() == this &amp;&amp; !this.IsRoot)
         {
             fragments.Add(&quot;&lt;ul class=\&quot;current\&quot;&gt;&quot;);
         }
@@ -186,24 +186,24 @@ public override string GenerateToCFragment(NavigatedPath navigatedPath, string r
         // first render the level header, which is the index element, if present or a label. The root always has an __index element otherwise we'd have stopped at load.
         var elementStartTag = &quot;&lt;li&gt;&lt;span class=\&quot;navigationgroup\&quot;&gt;&lt;i class=\&quot;fa fa-caret-down\&quot;&gt;&lt;/i&gt; &quot;;
         var indexElement = this.IndexElement;
-        if(indexElement == null)
+        if (indexElement == null)
         {
             fragments.Add(string.Format(&quot;{0}{1}&lt;/span&gt;&lt;/li&gt;&quot;, elementStartTag, this.Name));
         }
         else
         {
-            if(this.IsRoot)
+            if (this.IsRoot)
             {
                 fragments.Add(indexElement.PerformGenerateToCFragment(navigatedPath, relativePathToRoot));
             }
             else
             {
-                fragments.Add(string.Format(&quot;{0}&lt;a href=\&quot;{1}{2}\&quot;&gt;{3}&lt;/a&gt;&lt;/span&gt;&lt;/li&gt;&quot;, elementStartTag, relativePathToRoot, HttpUtility.UrlPathEncode(indexElement.TargetURL), 
+                fragments.Add(string.Format(&quot;{0}&lt;a href=\&quot;{1}{2}\&quot;&gt;{3}&lt;/a&gt;&lt;/span&gt;&lt;/li&gt;&quot;, elementStartTag, relativePathToRoot, HttpUtility.UrlPathEncode(indexElement.TargetURL),
                                             this.Name));
             }
         }
         // then the elements in the container. Index elements are skipped here.
-        foreach(var element in this.Value)
+        foreach (var element in this.Value)
         {
             fragments.Add(element.GenerateToCFragment(navigatedPath, relativePathToRoot));
         }
@@ -212,10 +212,10 @@ public override string GenerateToCFragment(NavigatedPath navigatedPath, string r
     else
     {
         // just a link
-        fragments.Add(string.Format(&quot;&lt;span class=\&quot;navigationgroup\&quot;&gt;&lt;i class=\&quot;fa fa-caret-right\&quot;&gt;&lt;/i&gt; &lt;a href=\&quot;{0}{1}\&quot;&gt;{2}&lt;/a&gt;&lt;/span&gt;&quot;, 
+        fragments.Add(string.Format(&quot;&lt;span class=\&quot;navigationgroup\&quot;&gt;&lt;i class=\&quot;fa fa-caret-right\&quot;&gt;&lt;/i&gt; &lt;a href=\&quot;{0}{1}\&quot;&gt;{2}&lt;/a&gt;&lt;/span&gt;&quot;,
                                     relativePathToRoot, HttpUtility.UrlPathEncode(this.TargetURL), this.Name));
     }
-    if(!this.IsRoot)
+    if (!this.IsRoot)
     {
         fragments.Add(&quot;&lt;/li&gt;&quot;);
     }
