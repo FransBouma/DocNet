@@ -219,12 +219,26 @@ namespace Docnet
 			if (_targetURLForHTML == null)
 			{
 				_targetURLForHTML = (this.Value ?? string.Empty);
-				if (_targetURLForHTML.ToLowerInvariant().EndsWith(".md"))
+
+				var toReplace = ".md";
+				var replacement = ".htm";
+
+				if (pathSpecification == PathSpecification.RelativeAsFolder)
 				{
-					_targetURLForHTML = _targetURLForHTML.Substring(0, _targetURLForHTML.Length - 3) + ".htm";
+					if (!IsIndexElement && !_targetURLForHTML.EndsWith("index.md", StringComparison.InvariantCultureIgnoreCase))
+					{
+						replacement = "/index.htm";
+					}
 				}
+
+				if (_targetURLForHTML.EndsWith(toReplace, StringComparison.InvariantCultureIgnoreCase))
+				{
+					_targetURLForHTML = _targetURLForHTML.Substring(0, _targetURLForHTML.Length - toReplace.Length) + replacement;
+				}
+
 				_targetURLForHTML = _targetURLForHTML.Replace("\\", "/");
 			}
+
 			return _targetURLForHTML;
 		}
 

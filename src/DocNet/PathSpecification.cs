@@ -4,6 +4,8 @@
     {
         Full,
 
-        Relative
+        Relative,
+
+		RelativeAsFolder
     }
 }

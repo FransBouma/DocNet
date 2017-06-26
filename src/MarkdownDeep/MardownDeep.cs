@@ -14,6 +14,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -279,8 +280,10 @@ namespace MarkdownDeep
 		}
 
 		// Override to supply the size of an image
-		public virtual bool OnGetImageSize(string url, bool TitledImage, out int width, out int height)
+		public virtual bool OnGetImageSize(string url, bool TitledImage, out int width, out int height, out string finalUrl)
 		{
+			finalUrl = url;
+
 			if (GetImageSizeFunc != null)
 			{
 				var info = new ImageInfo() { url = url, titled_image=TitledImage };
@@ -314,30 +317,51 @@ namespace MarkdownDeep
 				url=url.Substring(1);
 			}
 
-			str=str + "\\" + url.Replace("/", "\\");
+			var success = false;
 
-
-			// 
-
-			//Create an image object from the uploaded file
-			try
+			// Because PathSpecification.RelativeAsFolder creates an additional layer of directories,
+			// this trial & error code was implemented to ensure that images could be found
+			var count = 0;
+			while (count < 2)
 			{
-				var img = System.Drawing.Image.FromFile(str);
-				width=img.Width;
-				height=img.Height;
-
-				if (MaxImageWidth != 0 && width>MaxImageWidth)
+				//Create an image object from the uploaded file
+				try
 				{
-					height=(int)((double)height * (double)MaxImageWidth / (double)width);
-					width=MaxImageWidth;
+					var fileName = str + "\\";
+					var currentUrl = url;
+
+					for (int i = 0; i < count; i++)
+					{
+						currentUrl = "../" + currentUrl;
+					}
+
+					fileName += currentUrl.Replace("/", "\\");
+
+					if (File.Exists(fileName))
+					{
+						var img = System.Drawing.Image.FromFile(fileName);
+						width = img.Width;
+						height = img.Height;
+						finalUrl = currentUrl;
+
+						if (MaxImageWidth != 0 && width > MaxImageWidth)
+						{
+							height = (int)((double)height * (double)MaxImageWidth / (double)width);
+							width = MaxImageWidth;
+						}
+
+						success = true;
+						break;
+					}
+				}
+				catch (Exception)
+				{
 				}
 
-				return true;
+				count++;
 			}
-			catch (Exception)
-			{
-				return false;
-			}
+
+			return success;
 		}
 
 		
@@ -386,9 +410,11 @@ namespace MarkdownDeep
 			}
 
 			// Try to determine width and height
+			var url = tag.attributes["src"];
 			int width, height;
-			if (OnGetImageSize(tag.attributes["src"], TitledImage, out width, out height))
+			if (OnGetImageSize(url, TitledImage, out width, out height, out url))
 			{
+				tag.attributes["src"] = url;
 				tag.attributes["width"] = width.ToString();
 				tag.attributes["height"] = height.ToString();
 			}
