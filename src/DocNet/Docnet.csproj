@@ -60,6 +60,7 @@
     <Compile Include="NavigatedPath.cs" />
     <Compile Include="NavigationElement.cs" />
     <Compile Include="NavigationLevel.cs" />
+    <Compile Include="PathSpecification.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SearchIndexEntry.cs" />
