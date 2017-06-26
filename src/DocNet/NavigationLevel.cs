@@ -71,6 +71,7 @@ namespace Docnet
 						{
 							path = Path.Combine(_rootDirectory, path);
 						}
+
 						toAdd = CreateGeneratedLevel(path);
 						toAdd.Name = nameToUse;
 					}
@@ -222,7 +223,7 @@ namespace Docnet
 				var item = new SimpleNavigationElement
 				{
 					Name = name,
-					Value = Utils.MakeRelativePath(mdFile, _rootDirectory),
+					Value = Path.Combine(Utils.MakeRelativePath(_rootDirectory, path), Path.GetFileName(mdFile)),
 					ParentContainer = root
 				};
 
@@ -237,6 +238,7 @@ namespace Docnet
 
 				root.Value.Add(subDirectoryNavigationElement);
 			}
+
 			return root;
 		}
 
@@ -294,22 +296,39 @@ namespace Docnet
 				{
 					path = Path.GetDirectoryName(this.ParentContainer.GetTargetURL(pathSpecification));
 				}
+
 				var nameToUse = this.Name.Replace(".", "").Replace('/', '_').Replace("\\", "_").Replace(":", "").Replace(" ", "");
 				if (string.IsNullOrWhiteSpace(nameToUse))
 				{
 					return null;
 				}
 
-				var value = string.Empty;
+				var value = string.Format("{0}{1}.md", path, nameToUse);
 
 				switch (pathSpecification)
 				{
 					case PathSpecification.Full:
-						value = string.Format("{0}{1}.md", path, nameToUse);
+						// Default is correct
 						break;
 
 					case PathSpecification.Relative:
-						value = Path.Combine(path ?? string.Empty, nameToUse + ".md");
+						var preferredPath = path;
+
+						// We're making a big assumption here, but we can get the first page and assume it's 
+						// in the right folder.
+
+						// Find first (simple) child and use 1 level up. A SimpleNavigationElement mostly represents a folder
+						// thus is excellent to be used as a folder name
+						var firstSimpleChildPage = (SimpleNavigationElement)this.Value.FirstOrDefault(x => x is SimpleNavigationElement && !ReferenceEquals(this, x));
+						if (firstSimpleChildPage != null)
+						{
+							preferredPath = Path.GetDirectoryName(firstSimpleChildPage.Value);
+						}
+
+						if (!string.IsNullOrWhiteSpace(preferredPath))
+						{
+							value = Path.Combine(preferredPath, "index.md");
+						}
 						break;
 
 					default:

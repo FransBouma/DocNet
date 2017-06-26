@@ -262,7 +262,7 @@ namespace Docnet
 	        {
 	            var pathSpecification = PathSpecification.Full;
 
-                var pathSpecificationAsString = _configData.PathSpecification;
+                var pathSpecificationAsString = (string)_configData.PathSpecification;
 	            if (!string.IsNullOrWhiteSpace(pathSpecificationAsString))
 	            {
 	                if (!Enum.TryParse(pathSpecificationAsString, true, out pathSpecification))
