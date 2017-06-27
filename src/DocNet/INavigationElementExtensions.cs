@@ -5,6 +5,8 @@ namespace Docnet
 {
 	public static class INavigationElementExtensions
 	{
+	    private const string IndexHtmFileName = "index.htm";
+
 		/// <summary>
 		/// Gets the final URL by encoding the path and by removing the filename if it equals <c>index.htm</c>.
 		/// </summary>
@@ -16,9 +18,9 @@ namespace Docnet
 			var targetUrl = navigationElement.GetTargetURL(pathSpecification);
 			var link = HttpUtility.UrlPathEncode(targetUrl);
 
-			if (link.EndsWith("index.htm", StringComparison.InvariantCultureIgnoreCase))
+			if (link.Length > IndexHtmFileName.Length && link.EndsWith(IndexHtmFileName, StringComparison.InvariantCultureIgnoreCase))
 			{
-				link = link.Substring(0, link.Length - "index.htm".Length);
+				link = link.Substring(0, link.Length - IndexHtmFileName.Length);
 			}
 
 			return link;
