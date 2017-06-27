@@ -199,9 +199,15 @@ namespace Docnet
 			}
 			else
 			{
+				var link = HttpUtility.UrlPathEncode(this.GetTargetURL(pathSpecification));
+				if (link.EndsWith("index.htm", StringComparison.InvariantCultureIgnoreCase))
+				{
+					link = link.Substring(0, link.Length - "index.htm".Length);
+				}
+
 				// just a link
 				fragments.Add(string.Format("<span class=\"navigationgroup\"><i class=\"fa fa-caret-right\"></i> <a href=\"{0}{1}\">{2}</a></span>",
-											relativePathToRoot, HttpUtility.UrlPathEncode(this.GetTargetURL(pathSpecification)), this.Name));
+											relativePathToRoot, link, this.Name));
 			}
 			if (!this.IsRoot)
 			{
@@ -301,9 +307,14 @@ namespace Docnet
 			{
 				// no index element, add an artificial one.
 				var path = string.Empty;
-				if (this.ParentContainer != null)
+
+				// Don't check parents when using relative paths since we need to walk the tree manually
+				if (pathSpecification == PathSpecification.Full)
 				{
-					path = Path.GetDirectoryName(this.ParentContainer.GetTargetURL(pathSpecification));
+					if (this.ParentContainer != null)
+					{
+						path = Path.GetDirectoryName(this.ParentContainer.GetTargetURL(pathSpecification));
+					}
 				}
 
 				var nameToUse = this.Name.Replace(".", "").Replace('/', '_').Replace("\\", "_").Replace(":", "").Replace(" ", "");
@@ -324,7 +335,7 @@ namespace Docnet
 					case PathSpecification.RelativeAsFolder:
 						if (!IsRoot)
 						{
-							var preferredPath = value;
+							string preferredPath = null;
 
 							// We're making a big assumption here, but we can get the first page and assume it's 
 							// in the right folder.
@@ -335,10 +346,26 @@ namespace Docnet
 							if (firstSimpleChildPage != null)
 							{
 								preferredPath = Path.GetDirectoryName(firstSimpleChildPage.Value);
-								if (!string.IsNullOrWhiteSpace(preferredPath))
+							}
+							else
+							{
+								// This is representing an empty folder. Search for first child navigation that has real childs,
+								// then retrieve the path by going levels up.
+								var firstChildNavigationLevel = (NavigationLevel)this.Value.FirstOrDefault(x => x is NavigationLevel && ((NavigationLevel)x).Value.Any() && !ReferenceEquals(this, x));
+								if (firstChildNavigationLevel != null)
 								{
-									value = Path.Combine(preferredPath, "index.md");
+									var targetUrl = firstChildNavigationLevel.Value.First().GetTargetURL(pathSpecification);
+
+									// 3 times since we need 2 parents up
+									preferredPath = Path.GetDirectoryName(targetUrl);
+									preferredPath = Path.GetDirectoryName(preferredPath);
+									preferredPath = Path.GetDirectoryName(preferredPath);
 								}
+							}
+
+							if (!string.IsNullOrWhiteSpace(preferredPath))
+							{
+								value = Path.Combine(preferredPath, "index.md");
 							}
 						}
 						break;
