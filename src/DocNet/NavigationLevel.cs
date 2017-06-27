@@ -180,14 +180,8 @@ namespace Docnet
 					}
 					else
 					{
-						var link = HttpUtility.UrlPathEncode(indexElement.GetTargetURL(pathSpecification));
-						if (link.EndsWith("index.htm",StringComparison.InvariantCultureIgnoreCase))
-						{
-							link = link.Substring(0, link.Length - "index.htm".Length);
-						}
-
 						fragments.Add(string.Format("{0}<a href=\"{1}{2}\">{3}</a></span></li>", 
-							elementStartTag, relativePathToRoot, link, this.Name));
+							elementStartTag, relativePathToRoot, indexElement.GetFinalTargetUrl(pathSpecification), this.Name));
 					}
 				}
 				// then the elements in the container. Index elements are skipped here.
@@ -199,15 +193,9 @@ namespace Docnet
 			}
 			else
 			{
-				var link = HttpUtility.UrlPathEncode(this.GetTargetURL(pathSpecification));
-				if (link.EndsWith("index.htm", StringComparison.InvariantCultureIgnoreCase))
-				{
-					link = link.Substring(0, link.Length - "index.htm".Length);
-				}
-
 				// just a link
 				fragments.Add(string.Format("<span class=\"navigationgroup\"><i class=\"fa fa-caret-right\"></i> <a href=\"{0}{1}\">{2}</a></span>",
-											relativePathToRoot, link, this.Name));
+											relativePathToRoot, this.GetFinalTargetUrl(pathSpecification), this.Name));
 			}
 			if (!this.IsRoot)
 			{

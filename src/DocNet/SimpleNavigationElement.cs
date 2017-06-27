@@ -89,7 +89,8 @@ namespace Docnet
 						{
 							continue;
 						}
-						defaultMarkdown.AppendFormat("* [{0}]({1}{2}){3}", sibling.Name, relativePathToRoot, HttpUtility.UrlPathEncode(sibling.GetTargetURL(pathSpecification)), Environment.NewLine);
+						defaultMarkdown.AppendFormat("* [{0}]({1}{2}){3}", sibling.Name, relativePathToRoot, 
+							sibling.GetFinalTargetUrl(pathSpecification), Environment.NewLine);
 					}
 					defaultMarkdown.Append(Environment.NewLine);
 					content = Utils.ConvertMarkdownToHtml(defaultMarkdown.ToString(), Path.GetDirectoryName(destinationFile), activeConfig.Destination, string.Empty, _relativeH2LinksOnPage, activeConfig.ConvertLocalLinks);
@@ -189,7 +190,7 @@ namespace Docnet
 										string.IsNullOrWhiteSpace(liClass) ? string.Empty : string.Format(" class=\"{0}\"", liClass),
 										string.IsNullOrWhiteSpace(aClass) ? string.Empty : string.Format(" class=\"{0}\"", aClass),
 										relativePathToRoot,
-										HttpUtility.UrlPathEncode(this.GetTargetURL(pathSpecification)),
+										this.GetFinalTargetUrl(pathSpecification),
 										this.Name));
 			if(isCurrent && _relativeH2LinksOnPage.Any())
 			{
