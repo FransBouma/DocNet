@@ -18,12 +18,18 @@ namespace Docnet
 			var targetUrl = navigationElement.GetTargetURL(pathSpecification);
 			var link = HttpUtility.UrlPathEncode(targetUrl);
 
-			if (link.Length > IndexHtmFileName.Length && link.EndsWith(IndexHtmFileName, StringComparison.InvariantCultureIgnoreCase))
-			{
-				link = link.Substring(0, link.Length - IndexHtmFileName.Length);
-			}
+            // Disabled for now as discussed in #65 (https://github.com/FransBouma/DocNet/pull/65), but
+            // is required for #44
+            //if (pathSpecification == PathSpecification.RelativeAsFolder)
+            //{
+            //    if (link.Length > IndexHtmFileName.Length &&
+            //        link.EndsWith(IndexHtmFileName, StringComparison.InvariantCultureIgnoreCase))
+            //    {
+            //        link = link.Substring(0, link.Length - IndexHtmFileName.Length);
+            //    }
+            //}
 
-			return link;
+            return link;
 		}
 	}
 }
