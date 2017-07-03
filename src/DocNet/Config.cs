@@ -131,7 +131,7 @@ namespace Docnet
 		private void GenerateSearchDataIndex()
 		{
 			var collectedSearchEntries = new List<SearchIndexEntry>();
-			this.Pages.CollectSearchIndexEntries(collectedSearchEntries, new NavigatedPath());
+			this.Pages.CollectSearchIndexEntries(collectedSearchEntries, new NavigatedPath(), this.PathSpecification);
 			JObject searchIndex = new JObject(new JProperty("docs",
 															new JArray(
 																collectedSearchEntries.Select(e=>new JObject(
@@ -164,7 +164,7 @@ namespace Docnet
 			searchSimpleElement.ExtraScriptProducerFunc = e=> @"
 	<script>var base_url = '.';</script>
 	<script data-main=""js/search.js"" src=""js/require.js""></script>";
-			searchSimpleElement.GenerateOutput(this, activePath);
+			searchSimpleElement.GenerateOutput(this, activePath, this.PathSpecification);
 			activePath.Pop();
 		}
 
@@ -264,6 +264,25 @@ namespace Docnet
 			get { return _templateContents ?? string.Empty; }
 		}
 
+	    public PathSpecification PathSpecification
+	    {
+	        get
+	        {
+	            var pathSpecification = PathSpecification.Full;
+
+                var pathSpecificationAsString = (string)_configData.PathSpecification;
+	            if (!string.IsNullOrWhiteSpace(pathSpecificationAsString))
+	            {
+	                if (!Enum.TryParse(pathSpecificationAsString, true, out pathSpecification))
+	                {
+	                    pathSpecification = PathSpecification.Full;
+	                }
+	            }
+
+	            return pathSpecification;
+	        }
+        }
+
 		public NavigationLevel Pages
 		{
 			get
@@ -271,7 +290,7 @@ namespace Docnet
 				if(_pages == null)
 				{
 					JObject rawPages = _configData.Pages;
-					_pages = new NavigationLevel() {Name = "Home", IsRoot = true};
+					_pages = new NavigationLevel(Source) {Name = "Home", IsRoot = true};
 					_pages.Load(rawPages);
 				}
 				return _pages;

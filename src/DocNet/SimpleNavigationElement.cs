@@ -27,7 +27,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
-using MarkdownDeep;
 
 namespace Docnet
 {
@@ -35,14 +34,13 @@ namespace Docnet
 	{
 		#region Members
 		private string _targetURLForHTML;
-
-		private readonly List<Heading> _relativeLinksOnPage; // first element in Tuple is anchor name, second is name for ToC.
+		private List<Tuple<string, string>> _relativeH2LinksOnPage;		// first element in Tuple is anchor name, second is name for ToC.
 		#endregion
 
 
 		public SimpleNavigationElement()
 		{
-			_relativeLinksOnPage = new List<Heading>();
+			_relativeH2LinksOnPage = new List<Tuple<string, string>>();
 		}
 
 
@@ -51,53 +49,56 @@ namespace Docnet
 		/// </summary>
 		/// <param name="activeConfig">The active configuration to use for the output.</param>
 		/// <param name="activePath">The active path navigated through the ToC to reach this element.</param>
-		public override void GenerateOutput(Config activeConfig, NavigatedPath activePath)
+		/// <param name="pathSpecification">The path specification.</param>
+		/// <exception cref="System.IO.FileNotFoundException"></exception>
+		public override void GenerateOutput(Config activeConfig, NavigatedPath activePath, PathSpecification pathSpecification)
 		{
 			// if we're the __index element, we're not pushing ourselves on the path, as we're representing the container we're in, which is already on the path.
-			if (!this.IsIndexElement)
+			if(!this.IsIndexElement)
 			{
 				activePath.Push(this);
 			}
-			_relativeLinksOnPage.Clear();
+			_relativeH2LinksOnPage.Clear();
 			var sourceFile = Utils.MakeAbsolutePath(activeConfig.Source, this.Value);
-			var destinationFile = Utils.MakeAbsolutePath(activeConfig.Destination, this.TargetURL);
+			var destinationFile = Utils.MakeAbsolutePath(activeConfig.Destination, this.GetTargetURL(pathSpecification));
 			var sb = new StringBuilder(activeConfig.PageTemplateContents.Length + 2048);
 			var content = string.Empty;
 			this.MarkdownFromFile = string.Empty;
 			var relativePathToRoot = Utils.MakeRelativePathForUri(Path.GetDirectoryName(destinationFile), activeConfig.Destination);
-			if (File.Exists(sourceFile))
+			if(File.Exists(sourceFile))
 			{
 				this.MarkdownFromFile = File.ReadAllText(sourceFile, Encoding.UTF8);
 				// Check if the content contains @@include tag
 				content = Utils.IncludeProcessor(this.MarkdownFromFile, Utils.MakeAbsolutePath(activeConfig.Source, activeConfig.IncludeFolder));
-				content = Utils.ConvertMarkdownToHtml(content, Path.GetDirectoryName(destinationFile), activeConfig.Destination, sourceFile, _relativeLinksOnPage, activeConfig.ConvertLocalLinks);
+				content = Utils.ConvertMarkdownToHtml(content, Path.GetDirectoryName(destinationFile), activeConfig.Destination, sourceFile, _relativeH2LinksOnPage, activeConfig.ConvertLocalLinks);
 			}
 			else
 			{
 				// if we're not the index element, the file is missing and potentially it's an error in the config page. 
 				// Otherwise we can simply assume we are a missing index page and we'll generate default markdown so the user has something to look at.
-				if (this.IsIndexElement)
+				if(this.IsIndexElement)
 				{
 					// replace with default markdown snippet. This is the name of our container and links to the elements in that container as we are the index page that's not
 					// specified / existend. 
 					var defaultMarkdown = new StringBuilder();
 					defaultMarkdown.AppendFormat("# {0}{1}{1}", this.ParentContainer.Name, Environment.NewLine);
 					defaultMarkdown.AppendFormat("Please select one of the topics in this section:{0}{0}", Environment.NewLine);
-					foreach (var sibling in this.ParentContainer.Value)
+					foreach(var sibling in this.ParentContainer.Value)
 					{
-						if (sibling == this)
+						if(sibling == this)
 						{
 							continue;
 						}
-						defaultMarkdown.AppendFormat("* [{0}]({1}{2}){3}", sibling.Name, relativePathToRoot, HttpUtility.UrlPathEncode(sibling.TargetURL), Environment.NewLine);
+						defaultMarkdown.AppendFormat("* [{0}]({1}{2}){3}", sibling.Name, relativePathToRoot, 
+							sibling.GetFinalTargetUrl(pathSpecification), Environment.NewLine);
 					}
 					defaultMarkdown.Append(Environment.NewLine);
-					content = Utils.ConvertMarkdownToHtml(defaultMarkdown.ToString(), Path.GetDirectoryName(destinationFile), activeConfig.Destination, string.Empty, _relativeLinksOnPage, activeConfig.ConvertLocalLinks);
+					content = Utils.ConvertMarkdownToHtml(defaultMarkdown.ToString(), Path.GetDirectoryName(destinationFile), activeConfig.Destination, string.Empty, _relativeH2LinksOnPage, activeConfig.ConvertLocalLinks);
 				}
 				else
 				{
 					// target not found. See if there's a content producer func to produce html for us. If not, we can only conclude an error in the config file.
-					if (this.ContentProducerFunc == null)
+					if(this.ContentProducerFunc == null)
 					{
 						throw new FileNotFoundException(string.Format("The specified markdown file '{0}' couldn't be found. Aborting", sourceFile));
 					}
@@ -109,17 +110,17 @@ namespace Docnet
 			sb.Replace("{{Footer}}", activeConfig.Footer);
 			sb.Replace("{{TopicTitle}}", this.Name);
 			sb.Replace("{{Path}}", relativePathToRoot);
-			sb.Replace("{{RelativeSourceFileName}}", Utils.MakeRelativePathForUri(activeConfig.Destination, sourceFile).TrimEnd('/'));
-			sb.Replace("{{RelativeTargetFileName}}", Utils.MakeRelativePathForUri(activeConfig.Destination, destinationFile).TrimEnd('/'));
-			sb.Replace("{{Breadcrumbs}}", activePath.CreateBreadCrumbsHTML(relativePathToRoot));
-			sb.Replace("{{ToC}}", activePath.CreateToCHTML(relativePathToRoot, activeConfig.MaxLevelInToC));
+		    sb.Replace("{{RelativeSourceFileName}}", Utils.MakeRelativePathForUri(activeConfig.Destination, sourceFile).TrimEnd('/'));
+		    sb.Replace("{{RelativeTargetFileName}}", Utils.MakeRelativePathForUri(activeConfig.Destination, destinationFile).TrimEnd('/'));
+            sb.Replace("{{Breadcrumbs}}", activePath.CreateBreadCrumbsHTML(relativePathToRoot, pathSpecification));
+			sb.Replace("{{ToC}}", activePath.CreateToCHTML(relativePathToRoot, pathSpecification));
 			sb.Replace("{{ExtraScript}}", (this.ExtraScriptProducerFunc == null) ? string.Empty : this.ExtraScriptProducerFunc(this));
 
 			// the last action has to be replacing the content marker, so markers in the content which we have in the template as well aren't replaced 
 			sb.Replace("{{Content}}", content);
 			Utils.CreateFoldersIfRequired(destinationFile);
 			File.WriteAllText(destinationFile, sb.ToString());
-			if (!this.IsIndexElement)
+			if(!this.IsIndexElement)
 			{
 				activePath.Pop();
 			}
@@ -131,14 +132,15 @@ namespace Docnet
 		/// </summary>
 		/// <param name="collectedEntries">The collected entries.</param>
 		/// <param name="activePath">The active path currently navigated.</param>
-		public override void CollectSearchIndexEntries(List<SearchIndexEntry> collectedEntries, NavigatedPath activePath)
+		/// <param name="pathSpecification">The path specification.</param>
+		public override void CollectSearchIndexEntries(List<SearchIndexEntry> collectedEntries, NavigatedPath activePath, PathSpecification pathSpecification)
 		{
 			activePath.Push(this);
 			// simply convert ourselves into an entry if we're not an index
-			if (!this.IsIndexElement)
+			if(!this.IsIndexElement)
 			{
 				var toAdd = new SearchIndexEntry();
-				toAdd.Fill(this.MarkdownFromFile, this.TargetURL, this.Name, activePath);
+				toAdd.Fill(this.MarkdownFromFile, this.GetTargetURL(pathSpecification), this.Name, activePath);
 				collectedEntries.Add(toAdd);
 			}
 			activePath.Pop();
@@ -150,17 +152,17 @@ namespace Docnet
 		/// </summary>
 		/// <param name="navigatedPath">The navigated path to the current element, which doesn't necessarily have to be this element.</param>
 		/// <param name="relativePathToRoot">The relative path back to the URL root, e.g. ../.., so it can be used for links to elements in this path.</param>
-		/// <param name="maxLevel">The maximum level.</param>
+		/// <param name="pathSpecification">The path specification.</param>
 		/// <returns></returns>
-		public override string GenerateToCFragment(NavigatedPath navigatedPath, string relativePathToRoot, int maxLevel)
+		public override string GenerateToCFragment(NavigatedPath navigatedPath, string relativePathToRoot, PathSpecification pathSpecification)
 		{
 			// index elements are rendered in the parent container.
-			if (this.IsIndexElement)
+			if(this.IsIndexElement)
 			{
 				return string.Empty;
 			}
 
-			return PerformGenerateToCFragment(navigatedPath, relativePathToRoot, maxLevel, null);
+			return PerformGenerateToCFragment(navigatedPath, relativePathToRoot, pathSpecification);
 		}
 
 
@@ -170,17 +172,16 @@ namespace Docnet
 		/// </summary>
 		/// <param name="navigatedPath">The navigated path.</param>
 		/// <param name="relativePathToRoot">The relative path to root.</param>
-		/// <param name="maxLevel">The maximum level.</param>
-		/// <param name="parentHeading">The parent heading.</param>
+		/// <param name="pathSpecification">The path specification.</param>
 		/// <returns></returns>
-		public string PerformGenerateToCFragment(NavigatedPath navigatedPath, string relativePathToRoot, int maxLevel)
+		public string PerformGenerateToCFragment(NavigatedPath navigatedPath, string relativePathToRoot, PathSpecification pathSpecification)
 		{
 			// we can't navigate deeper from here. If we are the element being navigated to, we are the current and will have to emit any additional relative URLs too.
 			bool isCurrent = navigatedPath.Contains(this);
 			var fragments = new List<string>();
 			var liClass = "tocentry";
 			var aClass = string.Empty;
-			if (isCurrent)
+			if(isCurrent)
 			{
 				liClass = "tocentry current";
 				aClass = "current";
@@ -189,71 +190,60 @@ namespace Docnet
 										string.IsNullOrWhiteSpace(liClass) ? string.Empty : string.Format(" class=\"{0}\"", liClass),
 										string.IsNullOrWhiteSpace(aClass) ? string.Empty : string.Format(" class=\"{0}\"", aClass),
 										relativePathToRoot,
-										HttpUtility.UrlPathEncode(this.TargetURL),
+										this.GetFinalTargetUrl(pathSpecification),
 										this.Name));
-
-			if (isCurrent)
+			if(isCurrent && _relativeH2LinksOnPage.Any())
 			{
-				var content = PerformGenerateToCFragment(navigatedPath, relativePathToRoot, maxLevel, null);
-				if (!string.IsNullOrWhiteSpace(content))
-				{
-					fragments.Add(content);
-				}
-			}
-
-			fragments.Add("</li>");
-
-			return string.Join(Environment.NewLine, fragments.ToArray());
-		}
-
-		private string PerformGenerateToCFragment(NavigatedPath navigatedPath, string relativePathToRoot, int maxLevel, Heading parentHeading)
-		{
-			var fragments = new List<string>();
-
-			var headings = (parentHeading != null) ? parentHeading.Children : _relativeLinksOnPage;
-			var includedHeadings = headings.Where(x => x.Level > 1 && x.Level <= maxLevel).ToList();
-			if (includedHeadings.Count > 0)
-			{
-				fragments.Add(string.Format("<ul class=\"{0}\">", this.ParentContainer.IsRoot ? "currentrelativeroot" : "currentrelative"));
-
 				// generate relative links
-				foreach (var heading in includedHeadings)
+				fragments.Add(string.Format("<ul class=\"{0}\">", this.ParentContainer.IsRoot ? "currentrelativeroot" : "currentrelative"));
+				foreach(var p in _relativeH2LinksOnPage)
 				{
-					fragments.Add(string.Format("<li class=\"tocentry\"><a href=\"#{0}\">{1}</a></li>", heading.Id, heading.Name));
-
-					var headingContent = PerformGenerateToCFragment(navigatedPath, relativePathToRoot, maxLevel, heading);
-					if (!string.IsNullOrWhiteSpace(headingContent))
-					{
-						fragments.Add(headingContent);
-					}
+					fragments.Add(string.Format("<li class=\"tocentry\"><a href=\"#{0}\">{1}</a></li>", p.Item1, p.Item2));
 				}
-
 				fragments.Add("</ul>");
 			}
-
+			else
+			{
+				fragments.Add("</li>");
+			}
 			return string.Join(Environment.NewLine, fragments.ToArray());
 		}
 
-
-		#region Properties
-		public override string TargetURL
+		/// <summary>
+		/// Gets the target URL with respect to the <see cref="T:Docnet.PathSpecification" />.
+		/// </summary>
+		/// <param name="pathSpecification">The path specification.</param>
+		/// <returns></returns>
+		/// <exception cref="System.NotImplementedException"></exception>
+		public override string GetTargetURL(PathSpecification pathSpecification)
 		{
-			get
+			if (_targetURLForHTML == null)
 			{
-				if (_targetURLForHTML == null)
+				_targetURLForHTML = (this.Value ?? string.Empty);
+
+				var toReplace = ".md";
+				var replacement = ".htm";
+
+				if (pathSpecification == PathSpecification.RelativeAsFolder)
 				{
-					_targetURLForHTML = (this.Value ?? string.Empty);
-					if (_targetURLForHTML.ToLowerInvariant().EndsWith(".md"))
+					if (!IsIndexElement && !_targetURLForHTML.EndsWith("index.md", StringComparison.InvariantCultureIgnoreCase))
 					{
-						_targetURLForHTML = _targetURLForHTML.Substring(0, _targetURLForHTML.Length - 3) + ".htm";
+						replacement = "/index.htm";
 					}
-					_targetURLForHTML = _targetURLForHTML.Replace("\\", "/");
 				}
-				return _targetURLForHTML;
+
+				if (_targetURLForHTML.EndsWith(toReplace, StringComparison.InvariantCultureIgnoreCase))
+				{
+					_targetURLForHTML = _targetURLForHTML.Substring(0, _targetURLForHTML.Length - toReplace.Length) + replacement;
+				}
+
+				_targetURLForHTML = _targetURLForHTML.Replace("\\", "/");
 			}
+
+			return _targetURLForHTML;
 		}
 
-
+		#region Properties
 		/// <summary>
 		/// Gets / sets a value indicating whether this element is the __index element
 		/// </summary>

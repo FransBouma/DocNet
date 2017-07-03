@@ -33,30 +33,65 @@ namespace Docnet
 {
 	public class NavigationLevel : NavigationElement<List<INavigationElement>>
 	{
-		public NavigationLevel() : base()
+		#region Members
+		private readonly string _rootDirectory;
+		#endregion
+
+		public NavigationLevel(string rootDirectory)
+			: base()
 		{
+			this._rootDirectory = rootDirectory;
 			this.Value = new List<INavigationElement>();
 		}
 
 
 		public void Load(JObject dataFromFile)
 		{
-			foreach(KeyValuePair<string, JToken> child in dataFromFile)
+			foreach (KeyValuePair<string, JToken> child in dataFromFile)
 			{
 				INavigationElement toAdd;
-				if(child.Value.Type == JTokenType.String)
+				if (child.Value.Type == JTokenType.String)
 				{
 					var nameToUse = child.Key;
+
 					var isIndexElement = child.Key == "__index";
-					if(isIndexElement)
+					if (isIndexElement)
 					{
 						nameToUse = this.Name;
 					}
-					toAdd = new SimpleNavigationElement() { Name = nameToUse, Value = child.Value.ToObject<string>(), IsIndexElement = isIndexElement};
+
+					var childValue = child.Value.ToObject<string>();
+					if (childValue.EndsWith("**"))
+					{
+						var path = childValue.Replace("**", string.Empty)
+											 .Replace('\\', Path.DirectorySeparatorChar)
+											 .Replace('/', Path.DirectorySeparatorChar);
+
+						if (!Path.IsPathRooted(path))
+						{
+							path = Path.Combine(_rootDirectory, path);
+						}
+
+						toAdd = CreateGeneratedLevel(path);
+						toAdd.Name = nameToUse;
+					}
+					else
+					{
+						toAdd = new SimpleNavigationElement
+						{
+							Name = nameToUse,
+							Value = childValue,
+							IsIndexElement = isIndexElement
+						};
+					}
 				}
 				else
 				{
-					var subLevel = new NavigationLevel() { Name = child.Key, IsRoot = false};
+					var subLevel = new NavigationLevel(_rootDirectory)
+					{
+						Name = child.Key,
+						IsRoot = false
+					};
 					subLevel.Load((JObject)child.Value);
 					toAdd = subLevel;
 				}
@@ -71,12 +106,13 @@ namespace Docnet
 		/// </summary>
 		/// <param name="collectedEntries">The collected entries.</param>
 		/// <param name="activePath">The active path currently navigated.</param>
-		public override void CollectSearchIndexEntries(List<SearchIndexEntry> collectedEntries, NavigatedPath activePath)
+		/// <param name="pathSpecification">The path specification.</param>
+		public override void CollectSearchIndexEntries(List<SearchIndexEntry> collectedEntries, NavigatedPath activePath, PathSpecification pathSpecification)
 		{
 			activePath.Push(this);
-			foreach(var element in this.Value)
+			foreach (var element in this.Value)
 			{
-				element.CollectSearchIndexEntries(collectedEntries, activePath);
+				element.CollectSearchIndexEntries(collectedEntries, activePath, pathSpecification);
 			}
 			activePath.Pop();
 		}
@@ -87,14 +123,15 @@ namespace Docnet
 		/// </summary>
 		/// <param name="activeConfig">The active configuration to use for the output.</param>
 		/// <param name="activePath">The active path navigated through the ToC to reach this element.</param>
-		public override void GenerateOutput(Config activeConfig, NavigatedPath activePath)
+		/// <param name="pathSpecification">The path specification.</param>
+		public override void GenerateOutput(Config activeConfig, NavigatedPath activePath, PathSpecification pathSpecification)
 		{
 			activePath.Push(this);
 			int i = 0;
-			while(i<this.Value.Count)
+			while (i < this.Value.Count)
 			{
 				var element = this.Value[i];
-				element.GenerateOutput(activeConfig, activePath);
+				element.GenerateOutput(activeConfig, activePath, pathSpecification);
 				i++;
 			}
 			activePath.Pop();
@@ -106,20 +143,20 @@ namespace Docnet
 		/// </summary>
 		/// <param name="navigatedPath">The navigated path to the current element, which doesn't necessarily have to be this element.</param>
 		/// <param name="relativePathToRoot">The relative path back to the URL root, e.g. ../.., so it can be used for links to elements in this path.</param>
-		/// <param name="maxLevel">The maximum level.</param>
+		/// <param name="pathSpecification">The path specification.</param>
 		/// <returns></returns>
-		public override string GenerateToCFragment(NavigatedPath navigatedPath, string relativePathToRoot, int maxLevel)
+		public override string GenerateToCFragment(NavigatedPath navigatedPath, string relativePathToRoot, PathSpecification pathSpecification)
 		{
 			var fragments = new List<string>();
-			if(!this.IsRoot)
+			if (!this.IsRoot)
 			{
 				fragments.Add("<li class=\"tocentry\">");
 			}
-			if(navigatedPath.Contains(this))
+			if (navigatedPath.Contains(this))
 			{
 				// we're expanded. If we're not root and on the top of the navigated path stack, our index page is the page we're currently generating the ToC for, so 
 				// we have to mark the entry as 'current'
-				if(navigatedPath.Peek() == this && !this.IsRoot)
+				if (navigatedPath.Peek() == this && !this.IsRoot)
 				{
 					fragments.Add("<ul class=\"current\">");
 				}
@@ -130,37 +167,37 @@ namespace Docnet
 
 				// first render the level header, which is the index element, if present or a label. The root always has an __index element otherwise we'd have stopped at load.
 				var elementStartTag = "<li><span class=\"navigationgroup\"><i class=\"fa fa-caret-down\"></i> ";
-				var indexElement = this.IndexElement;
-				if(indexElement == null)
+				var indexElement = this.GetIndexElement(pathSpecification);
+				if (indexElement == null)
 				{
 					fragments.Add(string.Format("{0}{1}</span></li>", elementStartTag, this.Name));
 				}
 				else
 				{
-					if(this.IsRoot)
+					if (this.IsRoot)
 					{
-						fragments.Add(indexElement.PerformGenerateToCFragment(navigatedPath, relativePathToRoot, maxLevel));
+						fragments.Add(indexElement.PerformGenerateToCFragment(navigatedPath, relativePathToRoot, pathSpecification));
 					}
 					else
 					{
-						fragments.Add(string.Format("{0}<a href=\"{1}{2}\">{3}</a></span></li>", elementStartTag, relativePathToRoot, HttpUtility.UrlPathEncode(indexElement.TargetURL), 
-													this.Name));
+						fragments.Add(string.Format("{0}<a href=\"{1}{2}\">{3}</a></span></li>", 
+							elementStartTag, relativePathToRoot, indexElement.GetFinalTargetUrl(pathSpecification), this.Name));
 					}
 				}
 				// then the elements in the container. Index elements are skipped here.
-				foreach(var element in this.Value)
+				foreach (var element in this.Value)
 				{
-					fragments.Add(element.GenerateToCFragment(navigatedPath, relativePathToRoot, maxLevel));
+					fragments.Add(element.GenerateToCFragment(navigatedPath, relativePathToRoot, pathSpecification));
 				}
 				fragments.Add("</ul>");
 			}
 			else
 			{
 				// just a link
-				fragments.Add(string.Format("<span class=\"navigationgroup\"><i class=\"fa fa-caret-right\"></i> <a href=\"{0}{1}\">{2}</a></span>", 
-											relativePathToRoot, HttpUtility.UrlPathEncode(this.TargetURL), this.Name));
+				fragments.Add(string.Format("<span class=\"navigationgroup\"><i class=\"fa fa-caret-right\"></i> <a href=\"{0}{1}\">{2}</a></span>",
+											relativePathToRoot, this.GetFinalTargetUrl(pathSpecification), this.Name));
 			}
-			if(!this.IsRoot)
+			if (!this.IsRoot)
 			{
 				fragments.Add("</li>");
 			}
@@ -168,48 +205,178 @@ namespace Docnet
 		}
 
 
+		private NavigationLevel CreateGeneratedLevel(string path)
+		{
+			var root = new NavigationLevel(_rootDirectory)
+			{
+				ParentContainer = this,
+				IsAutoGenerated =  true
+			};
+
+			foreach (var mdFile in Directory.GetFiles(path, "*.md", SearchOption.TopDirectoryOnly))
+			{
+				var name = FindTitleInMdFile(mdFile);
+				if (string.IsNullOrWhiteSpace(name))
+				{
+					continue;
+				}
+
+				var item = new SimpleNavigationElement
+				{
+					Name = name,
+					Value = Path.Combine(Utils.MakeRelativePath(_rootDirectory, path), Path.GetFileName(mdFile)),
+					ParentContainer = root,
+					IsAutoGenerated = true
+				};
+
+				root.Value.Add(item);
+			}
+
+			foreach (var directory in Directory.GetDirectories(path, "*", SearchOption.TopDirectoryOnly))
+			{
+				var subDirectoryNavigationElement = CreateGeneratedLevel(directory);
+				subDirectoryNavigationElement.Name = new DirectoryInfo(directory).Name;
+				subDirectoryNavigationElement.ParentContainer = root;
+
+				root.Value.Add(subDirectoryNavigationElement);
+			}
+
+			return root;
+		}
+
+
+		private string FindTitleInMdFile(string path)
+		{
+			var title = string.Empty;
+
+			using (var fileStream = File.OpenRead(path))
+			{
+				using (var streamReader = new StreamReader(fileStream))
+				{
+					var line = string.Empty;
+					while (string.IsNullOrWhiteSpace(line))
+					{
+						line = streamReader.ReadLine();
+						if (!string.IsNullOrWhiteSpace(line))
+						{
+							line = line.Trim();
+							while (line.StartsWith("#"))
+							{
+								line = line.Substring(1).Trim();
+							}
+							if (!string.IsNullOrWhiteSpace(line))
+							{
+								title = line;
+								break;
+							}
+						}
+					}
+				}
+			}
+
+			return title;
+		}
+
+		public override string GetTargetURL(PathSpecification pathSpecification)
+		{
+			var defaultElement = this.GetIndexElement(pathSpecification);
+			if (defaultElement == null)
+			{
+				return string.Empty;
+			}
+
+			return defaultElement.GetTargetURL(pathSpecification) ?? string.Empty;
+		}
+
+		public SimpleNavigationElement GetIndexElement(PathSpecification pathSpecification)
+		{
+			var toReturn = this.Value.FirstOrDefault(e => e.IsIndexElement) as SimpleNavigationElement;
+			if (toReturn == null)
+			{
+				// no index element, add an artificial one.
+				var path = string.Empty;
+
+				// Don't check parents when using relative paths since we need to walk the tree manually
+				if (pathSpecification == PathSpecification.Full)
+				{
+					if (this.ParentContainer != null)
+					{
+						path = Path.GetDirectoryName(this.ParentContainer.GetTargetURL(pathSpecification));
+					}
+				}
+
+				var nameToUse = this.Name.Replace(".", "").Replace('/', '_').Replace("\\", "_").Replace(":", "").Replace(" ", "");
+				if (string.IsNullOrWhiteSpace(nameToUse))
+				{
+					return null;
+				}
+
+				var value = string.Format("{0}{1}.md", path, nameToUse);
+
+				switch (pathSpecification)
+				{
+					case PathSpecification.Full:
+						// Default is correct
+						break;
+
+					case PathSpecification.Relative:
+					case PathSpecification.RelativeAsFolder:
+						if (!IsRoot)
+						{
+							string preferredPath = null;
+
+							// We're making a big assumption here, but we can get the first page and assume it's 
+							// in the right folder.
+
+							// Find first (simple) child and use 1 level up. A SimpleNavigationElement mostly represents a folder
+							// thus is excellent to be used as a folder name
+							var firstSimpleChildPage = (SimpleNavigationElement) this.Value.FirstOrDefault(x => x is SimpleNavigationElement && !ReferenceEquals(this, x));
+							if (firstSimpleChildPage != null)
+							{
+								preferredPath = Path.GetDirectoryName(firstSimpleChildPage.Value);
+							}
+							else
+							{
+								// This is representing an empty folder. Search for first child navigation that has real childs,
+								// then retrieve the path by going levels up.
+								var firstChildNavigationLevel = (NavigationLevel)this.Value.FirstOrDefault(x => x is NavigationLevel && ((NavigationLevel)x).Value.Any() && !ReferenceEquals(this, x));
+								if (firstChildNavigationLevel != null)
+								{
+									var targetUrl = firstChildNavigationLevel.Value.First().GetTargetURL(pathSpecification);
+
+									// 3 times since we need 2 parents up
+									preferredPath = Path.GetDirectoryName(targetUrl);
+									preferredPath = Path.GetDirectoryName(preferredPath);
+									preferredPath = Path.GetDirectoryName(preferredPath);
+								}
+							}
+
+							if (!string.IsNullOrWhiteSpace(preferredPath))
+							{
+								value = Path.Combine(preferredPath, "index.md");
+							}
+						}
+						break;
+
+					default:
+						throw new ArgumentOutOfRangeException(nameof(pathSpecification), pathSpecification, null);
+				}
+
+				toReturn = new SimpleNavigationElement
+				{
+					ParentContainer = this,
+					Value = value,
+					Name = this.Name,
+					IsIndexElement = true
+				};
+
+				this.Value.Add(toReturn);
+			}
+
+			return toReturn;
+		}
+
 		#region Properties
-		public override string TargetURL
-		{
-			get
-			{
-				var defaultElement = this.IndexElement;
-				if(defaultElement == null)
-				{
-					return string.Empty;
-				}
-				return defaultElement.TargetURL ?? string.Empty;
-			}
-		}
-
-
-		public SimpleNavigationElement IndexElement
-		{
-			get
-			{
-				var toReturn = this.Value.FirstOrDefault(e => e.IsIndexElement) as SimpleNavigationElement;
-				if(toReturn == null)
-				{
-					// no index element, add an artificial one.
-					var path = string.Empty;
-					if(this.ParentContainer != null)
-					{
-						path = Path.GetDirectoryName(this.ParentContainer.TargetURL);
-					}
-					var nameToUse = this.Name.Replace(".", "").Replace('/', '_').Replace("\\", "_").Replace(":", "").Replace(" ", "");
-					if(string.IsNullOrWhiteSpace(nameToUse))
-					{
-						return null;
-					}
-					toReturn = new SimpleNavigationElement() {ParentContainer = this, Value = string.Format("{0}{1}.md", path, nameToUse), Name = this.Name, IsIndexElement = true};
-					this.Value.Add(toReturn);
-				}
-
-				return toReturn;
-			}
-		}
-
-
 		/// <summary>
 		/// Gets / sets a value indicating whether this element is the __index element
 		/// </summary>
@@ -217,7 +384,8 @@ namespace Docnet
 		{
 			// never an index
 			get { return false; }
-			set {  
+			set
+			{
 				// nop;
 			}
 		}
