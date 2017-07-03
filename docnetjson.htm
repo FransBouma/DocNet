@@ -91,6 +91,7 @@
     &quot;SourceFoldersToCopy&quot; : [&quot;folder1&quot;, &quot;foldern&quot;],
     &quot;Footer&quot; : &quot;footer text or HTML&quot;,
     &quot;ConvertLocalLinks: &quot;true&quot; | &quot;false&quot;,
+    &quot;PathSpecification&quot;: &quot;Full&quot; | &quot;Relative&quot; | &quot;RelativeAsFolder&quot;,
     &quot;Pages&quot; : 
     {
         &quot;__index&quot; : &quot;index.md&quot;,
@@ -116,6 +117,14 @@
 <li><code>Theme</code> specifies the folder within the <code>Themes</code> folder in the folder the <code>docnet</code> executable is located which is used as the theme for the pages to generate. <code>Docnet</code> expects a file called <code>PageTemplate.htm</code> within the specified <code>Theme</code> folder, which contains the HTML which is used as the wrapper file for the HTML generated from the markdown. It has to contain a couple of marker, which are described later in this document. If <code>Theme</code> isn't specified, <code>Default</code> is assumed.</li>
 <li><code>SourceFoldersToCopy</code>. This is an optional directive with, if specified, one or more folder names relative to <code>Source</code>, which contain files to copy to the <code>Destination</code> folder. E.g. image files used in the markdown files, located in an <code>Images</code> folder can be copied this way to the output folder reliably. All folders specified are copied recursively.</li>
 <li><code>ConvertLocalLinks</code>. This is an optional directive which, if specified and set to <code>&quot;true&quot;</code>, will make DocNet convert all local links to <code>.md</code> suffixed files into <code>.htm</code> files. Example: <code>(local link)[somemarkdownfile.md]</code> will be converted to <code>&lt;a href=&quot;somemarkdownfile.htm&quot;&gt;local link&lt;/a&gt;</code>. Non-local urls are not converted. Default: <code>&quot;false&quot;</code>. </li>
+<li>
+<code>PathSpecification</code>. Determines the way (md) paths are treated by the tooling. The default value is <code>Full</code> for backwards compatibility.
+<ul>
+<li><code>Full</code>: Assumes that all paths are full paths. All auto-generated index files will be placed in the root folder (this setting can lead to index clashes when reusing names in subfolders).</li>
+<li><code>Relative</code>: Assumes that all paths are relative paths. All auto-generated index files will be put in the right (sub)folder.</li>
+<li><code>RelativeAsFolder</code>: Behaves the same as <code>Relative</code>, but puts <em>every</em> source md in its own folder resulting in clean navigation urls (e.g. <code>/getting-started/introduction.htm</code> becomes <code>/getting-started/introduction/index.htm</code>)</li>
+</ul>
+</li>
 <li><code>Footer</code>. This is text and/or HTML which is placed in the footer of each page, using a <em>marker</em> (see below).</li>
 <li><code>Pages</code> contains the pages to generate into the output, in the order and structure in which you want them to appear in the navigation. The name given is the value used in the navigation tree and has to be unique per level. The value specified with each name is the markdown file to load, parse and generate as .htm file in the output. The markdown file is relative to the path specified in <code>Source</code>. A file <code>foo.md</code> will be generated as <code>foo.htm</code> in the output. </li>
 </ul>
