@@ -72,10 +72,11 @@ namespace Docnet
 		/// Generates the search data, which is the json file called 'search_index.json' with search data of all pages as well as the docnet_search.htm file in the output.
 		/// The search index is written to the root of the output folder.
 		/// </summary>
-		internal void GenerateSearchData()
+		/// <param name="navigationContext">The navigation context.</param>
+		internal void GenerateSearchData(NavigationContext navigationContext)
 		{
-			GenerateSearchPage();
-			GenerateSearchDataIndex();
+			GenerateSearchPage(navigationContext);
+			GenerateSearchDataIndex(navigationContext);
 		}
 
 		internal void CopyThemeToDestination()
@@ -128,10 +129,10 @@ namespace Docnet
 		/// <summary>
 		/// Generates the index of the search data. this is a json file with per page which has markdown a couple of data elements.
 		/// </summary>
-		private void GenerateSearchDataIndex()
+		private void GenerateSearchDataIndex(NavigationContext navigationContext)
 		{
 			var collectedSearchEntries = new List<SearchIndexEntry>();
-			this.Pages.CollectSearchIndexEntries(collectedSearchEntries, new NavigatedPath(), this.PathSpecification);
+			this.Pages.CollectSearchIndexEntries(collectedSearchEntries, new NavigatedPath(), navigationContext);
 			JObject searchIndex = new JObject(new JProperty("docs",
 															new JArray(
 																collectedSearchEntries.Select(e=>new JObject(
@@ -145,7 +146,7 @@ namespace Docnet
 		}
 
 
-		private void GenerateSearchPage()
+		private void GenerateSearchPage(NavigationContext navigationContext)
 		{
 			var activePath = new NavigatedPath();
 			activePath.Push(this.Pages);
@@ -164,7 +165,7 @@ namespace Docnet
 			searchSimpleElement.ExtraScriptProducerFunc = e=> @"
 	<script>var base_url = '.';</script>
 	<script data-main=""js/search.js"" src=""js/require.js""></script>";
-			searchSimpleElement.GenerateOutput(this, activePath, this.PathSpecification);
+			searchSimpleElement.GenerateOutput(this, activePath, navigationContext);
 			activePath.Pop();
 		}
 

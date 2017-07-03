@@ -77,9 +77,9 @@ namespace Docnet
 		/// aren't, are not expanded.
 		/// </summary>
 		/// <param name="relativePathToRoot">The relative path back to the URL root, e.g. ../.., so it can be used for links to elements in this path.</param>
-		/// <param name="pathSpecification">The path specification.</param>
+		/// <param name="navigationContext">The navigation context.</param>
 		/// <returns></returns>
-		public string CreateToCHTML(string relativePathToRoot, PathSpecification pathSpecification)
+		public string CreateToCHTML(string relativePathToRoot, NavigationContext navigationContext)
 		{
 			// the root container is the bottom element of this path. We use that container to build the root and navigate any node open along the navigated path. 
 			var rootContainer = this.Reverse().FirstOrDefault() as NavigationLevel;
@@ -88,7 +88,7 @@ namespace Docnet
 				// no root container, no TOC
 				return string.Empty;
 			}
-			return rootContainer.GenerateToCFragment(this, relativePathToRoot, pathSpecification);
+			return rootContainer.GenerateToCFragment(this, relativePathToRoot, navigationContext);
 		}
 	}
 }

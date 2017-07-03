@@ -35,24 +35,24 @@ namespace Docnet
 		/// </summary>
 		/// <param name="activeConfig">The active configuration to use for the output.</param>
 		/// <param name="activePath">The active path navigated through the ToC to reach this element.</param>
-		/// <param name="pathSpecification">The path specification.</param>
-		void GenerateOutput(Config activeConfig, NavigatedPath activePath, PathSpecification pathSpecification);
+		/// <param name="navigationContext">The navigation context.</param>
+		void GenerateOutput(Config activeConfig, NavigatedPath activePath, NavigationContext navigationContext);
 
 		/// <summary>
 		/// Generates the ToC fragment for this element, which can either be a simple line or a full expanded menu.
 		/// </summary>
 		/// <param name="navigatedPath">The navigated path to the current element, which doesn't necessarily have to be this element.</param>
 		/// <param name="relativePathToRoot">The relative path back to the URL root, e.g. ../.., so it can be used for links to elements in this path.</param>
-		/// <param name="pathSpecification">The path specification.</param>
+		/// <param name="navigationContext">The navigation context.</param>
 		/// <returns></returns>
-		string GenerateToCFragment(NavigatedPath navigatedPath, string relativePathToRoot, PathSpecification pathSpecification);
+		string GenerateToCFragment(NavigatedPath navigatedPath, string relativePathToRoot, NavigationContext navigationContext);
 		/// <summary>
 		/// Collects the search index entries. These are created from simple navigation elements found in this container, which aren't index element.
 		/// </summary>
 		/// <param name="collectedEntries">The collected entries.</param>
 		/// <param name="activePath">The active path currently navigated.</param>
-		/// <param name="pathSpecification">The path specification.</param>
-		void CollectSearchIndexEntries(List<SearchIndexEntry> collectedEntries, NavigatedPath activePath, PathSpecification pathSpecification);
+		/// <param name="navigationContext">The navigation context.</param>
+		void CollectSearchIndexEntries(List<SearchIndexEntry> collectedEntries, NavigatedPath activePath, NavigationContext navigationContext);
 
 		/// <summary>
 		/// Gets the target URL with respect to the <see cref="PathSpecification"/>.

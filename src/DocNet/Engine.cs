@@ -44,7 +44,14 @@ namespace Docnet
 			{
 				return 1;
 			}
-			GeneratePages();
+
+			var navigationContext = new NavigationContext
+			{
+				MaxLevel = _loadedConfig.MaxLevelInToC,
+				PathSpecification = _loadedConfig.PathSpecification
+			};
+
+			GeneratePages(navigationContext);
 			return 0;
 		}
 
@@ -86,7 +93,7 @@ namespace Docnet
 		/// Generates the pages from the md files in the source, using the page template loaded and the loaded config.
 		/// </summary>
 		/// <returns>true if everything went ok, false otherwise</returns>
-		private void GeneratePages()
+		private void GeneratePages(NavigationContext navigationContext)
 		{
 			if(_input.ClearDestinationFolder)
 			{
@@ -98,9 +105,9 @@ namespace Docnet
 			Console.WriteLine("Copying source folders to copy.");
 			_loadedConfig.CopySourceFoldersToCopy();
 			Console.WriteLine("Generating pages in '{0}'", _loadedConfig.Destination);
-			_loadedConfig.Pages.GenerateOutput(_loadedConfig, new NavigatedPath(), _loadedConfig.PathSpecification);
+			_loadedConfig.Pages.GenerateOutput(_loadedConfig, new NavigatedPath(), navigationContext);
 			Console.WriteLine("Generating search index");
-			_loadedConfig.GenerateSearchData();
+			_loadedConfig.GenerateSearchData(navigationContext);
 			Console.WriteLine("Done!");
 		}
 	}
