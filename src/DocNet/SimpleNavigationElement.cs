@@ -56,7 +56,7 @@ namespace Docnet
 		public override void GenerateOutput(Config activeConfig, NavigatedPath activePath, NavigationContext navigationContext)
 		{
 			// if we're the __index element, we're not pushing ourselves on the path, as we're representing the container we're in, which is already on the path.
-			if(!this.IsIndexElement)
+			if (!this.IsIndexElement)
 			{
 				activePath.Push(this);
 			}
@@ -67,7 +67,7 @@ namespace Docnet
 			var content = string.Empty;
 			this.MarkdownFromFile = string.Empty;
 			var relativePathToRoot = Utils.MakeRelativePathForUri(Path.GetDirectoryName(destinationFile), activeConfig.Destination);
-			if(File.Exists(sourceFile))
+			if (File.Exists(sourceFile))
 			{
 				this.MarkdownFromFile = File.ReadAllText(sourceFile, Encoding.UTF8);
 				// Check if the content contains @@include tag
@@ -78,20 +78,20 @@ namespace Docnet
 			{
 				// if we're not the index element, the file is missing and potentially it's an error in the config page. 
 				// Otherwise we can simply assume we are a missing index page and we'll generate default markdown so the user has something to look at.
-				if(this.IsIndexElement)
+				if (this.IsIndexElement)
 				{
 					// replace with default markdown snippet. This is the name of our container and links to the elements in that container as we are the index page that's not
 					// specified / existend. 
 					var defaultMarkdown = new StringBuilder();
 					defaultMarkdown.AppendFormat("# {0}{1}{1}", this.ParentContainer.Name, Environment.NewLine);
 					defaultMarkdown.AppendFormat("Please select one of the topics in this section:{0}{0}", Environment.NewLine);
-					foreach(var sibling in this.ParentContainer.Value)
+					foreach (var sibling in this.ParentContainer.Value)
 					{
-						if(sibling == this)
+						if (sibling == this)
 						{
 							continue;
 						}
-						defaultMarkdown.AppendFormat("* [{0}]({1}{2}){3}", sibling.Name, relativePathToRoot, 
+						defaultMarkdown.AppendFormat("* [{0}]({1}{2}){3}", sibling.Name, relativePathToRoot,
 							sibling.GetFinalTargetUrl(navigationContext.PathSpecification), Environment.NewLine);
 					}
 					defaultMarkdown.Append(Environment.NewLine);
@@ -100,7 +100,7 @@ namespace Docnet
 				else
 				{
 					// target not found. See if there's a content producer func to produce html for us. If not, we can only conclude an error in the config file.
-					if(this.ContentProducerFunc == null)
+					if (this.ContentProducerFunc == null)
 					{
 						throw new FileNotFoundException(string.Format("The specified markdown file '{0}' couldn't be found. Aborting", sourceFile));
 					}
@@ -112,9 +112,9 @@ namespace Docnet
 			sb.Replace("{{Footer}}", activeConfig.Footer);
 			sb.Replace("{{TopicTitle}}", this.Name);
 			sb.Replace("{{Path}}", relativePathToRoot);
-		    sb.Replace("{{RelativeSourceFileName}}", Utils.MakeRelativePathForUri(activeConfig.Destination, sourceFile).TrimEnd('/'));
-		    sb.Replace("{{RelativeTargetFileName}}", Utils.MakeRelativePathForUri(activeConfig.Destination, destinationFile).TrimEnd('/'));
-            sb.Replace("{{Breadcrumbs}}", activePath.CreateBreadCrumbsHTML(relativePathToRoot, navigationContext.PathSpecification));
+			sb.Replace("{{RelativeSourceFileName}}", Utils.MakeRelativePathForUri(activeConfig.Destination, sourceFile).TrimEnd('/'));
+			sb.Replace("{{RelativeTargetFileName}}", Utils.MakeRelativePathForUri(activeConfig.Destination, destinationFile).TrimEnd('/'));
+			sb.Replace("{{Breadcrumbs}}", activePath.CreateBreadCrumbsHTML(relativePathToRoot, navigationContext.PathSpecification));
 			sb.Replace("{{ToC}}", activePath.CreateToCHTML(relativePathToRoot, navigationContext));
 			sb.Replace("{{ExtraScript}}", (this.ExtraScriptProducerFunc == null) ? string.Empty : this.ExtraScriptProducerFunc(this));
 
@@ -122,7 +122,7 @@ namespace Docnet
 			sb.Replace("{{Content}}", content);
 			Utils.CreateFoldersIfRequired(destinationFile);
 			File.WriteAllText(destinationFile, sb.ToString());
-			if(!this.IsIndexElement)
+			if (!this.IsIndexElement)
 			{
 				activePath.Pop();
 			}
@@ -139,7 +139,7 @@ namespace Docnet
 		{
 			activePath.Push(this);
 			// simply convert ourselves into an entry if we're not an index
-			if(!this.IsIndexElement)
+			if (!this.IsIndexElement)
 			{
 				var toAdd = new SearchIndexEntry();
 				toAdd.Fill(this.MarkdownFromFile, this.GetTargetURL(navigationContext.PathSpecification), this.Name, activePath);
@@ -159,7 +159,7 @@ namespace Docnet
 		public override string GenerateToCFragment(NavigatedPath navigatedPath, string relativePathToRoot, NavigationContext navigationContext)
 		{
 			// index elements are rendered in the parent container.
-			if(this.IsIndexElement)
+			if (this.IsIndexElement)
 			{
 				return string.Empty;
 			}
@@ -183,7 +183,7 @@ namespace Docnet
 			var fragments = new List<string>();
 			var liClass = "tocentry";
 			var aClass = string.Empty;
-			if(isCurrent)
+			if (isCurrent)
 			{
 				liClass = "tocentry current";
 				aClass = "current";
@@ -194,13 +194,17 @@ namespace Docnet
 										relativePathToRoot,
 										this.GetFinalTargetUrl(navigationContext.PathSpecification),
 										this.Name));
-			if(isCurrent && _relativeLinksOnPage.Any())
+			if (isCurrent && _relativeLinksOnPage.Any())
 			{
 				// generate relative links
 				fragments.Add(string.Format("<ul class=\"{0}\">", this.ParentContainer.IsRoot ? "currentrelativeroot" : "currentrelative"));
-				foreach(var p in _relativeLinksOnPage)
+				foreach (var heading in _relativeLinksOnPage)
 				{
-					fragments.Add(string.Format("<li class=\"tocentry\"><a href=\"#{0}\">{1}</a></li>", p.Id, p.Name));
+					var content = GenerateToCFragmentForHeading(heading, navigationContext);
+					if (!string.IsNullOrWhiteSpace(content))
+					{
+						fragments.Add(content);
+					}
 				}
 				fragments.Add("</ul>");
 			}
@@ -243,6 +247,32 @@ namespace Docnet
 			}
 
 			return _targetURLForHTML;
+		}
+
+		private string GenerateToCFragmentForHeading(Heading heading, NavigationContext navigationContext)
+		{
+			var stringBuilder = new StringBuilder();
+
+			// Skip heading 1 and larger than allowed
+			if (heading.Level > 1 && heading.Level <= navigationContext.MaxLevel)
+			{
+				stringBuilder.AppendLine(string.Format("<li class=\"tocentry\"><a href=\"#{0}\">{1}</a></li>", heading.Id, heading.Name));
+			}
+
+			stringBuilder.AppendLine("<ul>");
+
+			foreach (var child in heading.Children)
+			{
+				var childContent = GenerateToCFragmentForHeading(child, navigationContext);
+				if (!string.IsNullOrWhiteSpace(childContent))
+				{
+					stringBuilder.AppendLine(childContent);
+				}
+			}
+
+			stringBuilder.AppendLine("</ul>");
+
+			return stringBuilder.ToString();
 		}
 
 		#region Properties
