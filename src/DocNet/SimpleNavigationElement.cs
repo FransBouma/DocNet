@@ -259,18 +259,25 @@ namespace Docnet
 				stringBuilder.AppendLine(string.Format("<li class=\"tocentry\"><a href=\"#{0}\">{1}</a></li>", heading.Id, heading.Name));
 			}
 
-			stringBuilder.AppendLine("<ul>");
+			var childContentBuilder = new StringBuilder();
 
 			foreach (var child in heading.Children)
 			{
 				var childContent = GenerateToCFragmentForHeading(child, navigationContext);
 				if (!string.IsNullOrWhiteSpace(childContent))
 				{
-					stringBuilder.AppendLine(childContent);
+					childContentBuilder.AppendLine(childContent);
 				}
 			}
 
-			stringBuilder.AppendLine("</ul>");
+			if (childContentBuilder.Length > 0)
+			{
+				stringBuilder.AppendLine("<li class=\"tocentry\">");
+				stringBuilder.AppendLine(string.Format("<ul class=\"{0}\">", this.ParentContainer.IsRoot ? "currentrelativeroot" : "currentrelative"));
+				stringBuilder.AppendLine(childContentBuilder.ToString());
+				stringBuilder.AppendLine("</ul>");
+				stringBuilder.AppendLine("</li>");
+			}
 
 			return stringBuilder.ToString();
 		}
