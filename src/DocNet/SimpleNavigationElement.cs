@@ -194,10 +194,11 @@ namespace Docnet
 										relativePathToRoot,
 										this.GetFinalTargetUrl(navigationContext.PathSpecification),
 										this.Name));
-			if (isCurrent && _relativeLinksOnPage.Any())
+			if (isCurrent && _relativeLinksOnPage.SelectMany(x => x.Children).Any(x => x.Level > 1))
 			{
 				// generate relative links
 				fragments.Add(string.Format("<ul class=\"{0}\">", this.ParentContainer.IsRoot ? "currentrelativeroot" : "currentrelative"));
+
 				foreach (var heading in _relativeLinksOnPage)
 				{
 					var content = GenerateToCFragmentForHeading(heading, navigationContext);
@@ -206,6 +207,7 @@ namespace Docnet
 						fragments.Add(content);
 					}
 				}
+
 				fragments.Add("</ul>");
 			}
 			else
@@ -254,7 +256,8 @@ namespace Docnet
 			var stringBuilder = new StringBuilder();
 
 			// Skip heading 1 and larger than allowed
-			if (heading.Level > 1 && heading.Level <= navigationContext.MaxLevel)
+		    var isHeading1 = heading.Level <= 1;
+			if (!isHeading1 && heading.Level <= navigationContext.MaxLevel)
 			{
 				stringBuilder.AppendLine(string.Format("<li class=\"tocentry\"><a href=\"#{0}\">{1}</a></li>", heading.Id, heading.Name));
 			}
@@ -272,11 +275,19 @@ namespace Docnet
 
 			if (childContentBuilder.Length > 0)
 			{
-				stringBuilder.AppendLine("<li class=\"tocentry\">");
-				stringBuilder.AppendLine(string.Format("<ul class=\"{0}\">", this.ParentContainer.IsRoot ? "currentrelativeroot" : "currentrelative"));
+				if (!isHeading1)
+				{
+					stringBuilder.AppendLine("<li class=\"tocentry\">");
+					stringBuilder.AppendLine(string.Format("<ul class=\"{0}\">", this.ParentContainer.IsRoot ? "currentrelativeroot" : "currentrelative"));
+				}
+
 				stringBuilder.AppendLine(childContentBuilder.ToString());
-				stringBuilder.AppendLine("</ul>");
-				stringBuilder.AppendLine("</li>");
+
+				if (!isHeading1)
+				{
+					stringBuilder.AppendLine("</ul>");
+					stringBuilder.AppendLine("</li>");
+				}
 			}
 
 			return stringBuilder.ToString();
