@@ -240,6 +240,14 @@ namespace Docnet
 			}
 		}
 
+		public bool StripIndexHtm
+		{
+			get
+			{
+				return _configData.StripIndexHtm ?? false;
+			}
+		}
+
 		public string ThemeName
 		{
 			get

@@ -62,7 +62,7 @@ namespace Docnet
 			}
 			_relativeLinksOnPage.Clear();
 			var sourceFile = Utils.MakeAbsolutePath(activeConfig.Source, this.Value);
-			var destinationFile = Utils.MakeAbsolutePath(activeConfig.Destination, this.GetTargetURL(navigationContext.PathSpecification));
+			var destinationFile = Utils.MakeAbsolutePath(activeConfig.Destination, this.GetTargetURL(navigationContext));
 			var sb = new StringBuilder(activeConfig.PageTemplateContents.Length + 2048);
 			var content = string.Empty;
 			this.MarkdownFromFile = string.Empty;
@@ -92,7 +92,7 @@ namespace Docnet
 							continue;
 						}
 						defaultMarkdown.AppendFormat("* [{0}]({1}{2}){3}", sibling.Name, relativePathToRoot,
-							sibling.GetFinalTargetUrl(navigationContext.PathSpecification), Environment.NewLine);
+							sibling.GetFinalTargetUrl(navigationContext), Environment.NewLine);
 					}
 					defaultMarkdown.Append(Environment.NewLine);
 					content = Utils.ConvertMarkdownToHtml(defaultMarkdown.ToString(), Path.GetDirectoryName(destinationFile), activeConfig.Destination, string.Empty, _relativeLinksOnPage, activeConfig.ConvertLocalLinks);
@@ -114,7 +114,7 @@ namespace Docnet
 			sb.Replace("{{Path}}", relativePathToRoot);
 			sb.Replace("{{RelativeSourceFileName}}", Utils.MakeRelativePathForUri(activeConfig.Destination, sourceFile).TrimEnd('/'));
 			sb.Replace("{{RelativeTargetFileName}}", Utils.MakeRelativePathForUri(activeConfig.Destination, destinationFile).TrimEnd('/'));
-			sb.Replace("{{Breadcrumbs}}", activePath.CreateBreadCrumbsHTML(relativePathToRoot, navigationContext.PathSpecification));
+			sb.Replace("{{Breadcrumbs}}", activePath.CreateBreadCrumbsHTML(relativePathToRoot, navigationContext));
 			sb.Replace("{{ToC}}", activePath.CreateToCHTML(relativePathToRoot, navigationContext));
 			sb.Replace("{{ExtraScript}}", (this.ExtraScriptProducerFunc == null) ? string.Empty : this.ExtraScriptProducerFunc(this, activeConfig, navigationContext));
 
@@ -142,7 +142,7 @@ namespace Docnet
 			if (!this.IsIndexElement)
 			{
 				var toAdd = new SearchIndexEntry();
-				toAdd.Fill(this.MarkdownFromFile, this.GetTargetURL(navigationContext.PathSpecification), this.Name, activePath);
+				toAdd.Fill(this.MarkdownFromFile, this.GetTargetURL(navigationContext), this.Name, activePath);
 				collectedEntries.Add(toAdd);
 			}
 			activePath.Pop();
@@ -192,7 +192,7 @@ namespace Docnet
 										string.IsNullOrWhiteSpace(liClass) ? string.Empty : string.Format(" class=\"{0}\"", liClass),
 										string.IsNullOrWhiteSpace(aClass) ? string.Empty : string.Format(" class=\"{0}\"", aClass),
 										relativePathToRoot,
-										this.GetFinalTargetUrl(navigationContext.PathSpecification),
+										this.GetFinalTargetUrl(navigationContext),
 										this.Name));
 			if (isCurrent && _relativeLinksOnPage.SelectMany(x => x.Children).Any(x => x.Level > 1))
 			{
@@ -220,10 +220,9 @@ namespace Docnet
 		/// <summary>
 		/// Gets the target URL with respect to the <see cref="T:Docnet.PathSpecification" />.
 		/// </summary>
-		/// <param name="pathSpecification">The path specification.</param>
+		/// <param name="navigationContext">The navigation context.</param>
 		/// <returns></returns>
-		/// <exception cref="System.NotImplementedException"></exception>
-		public override string GetTargetURL(PathSpecification pathSpecification)
+		public override string GetTargetURL(NavigationContext navigationContext)
 		{
 			if (_targetURLForHTML == null)
 			{
@@ -232,7 +231,7 @@ namespace Docnet
 				var toReplace = ".md";
 				var replacement = ".htm";
 
-				if (pathSpecification == PathSpecification.RelativeAsFolder)
+				if (navigationContext.PathSpecification == PathSpecification.RelativeAsFolder)
 				{
 					if (!IsIndexElement && !_targetURLForHTML.EndsWith("index.md", StringComparison.InvariantCultureIgnoreCase))
 					{

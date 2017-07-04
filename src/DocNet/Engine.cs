@@ -48,7 +48,8 @@ namespace Docnet
 			var navigationContext = new NavigationContext
 			{
 				MaxLevel = _loadedConfig.MaxLevelInToC,
-				PathSpecification = _loadedConfig.PathSpecification
+				PathSpecification = _loadedConfig.PathSpecification,
+				StripIndexHtm = _loadedConfig.StripIndexHtm
 			};
 
 			GeneratePages(navigationContext);
@@ -78,7 +79,9 @@ namespace Docnet
 				return null;
 			}
 
-			var indexElement = config.Pages.GetIndexElement(config.PathSpecification);
+			var navigationContext = new NavigationContext(config.PathSpecification, config.MaxLevelInToC, config.StripIndexHtm);
+
+			var indexElement = config.Pages.GetIndexElement(navigationContext);
 			if(indexElement == null)
 			{
 				Console.WriteLine("[ERROR] Root __index not found. The root navigationlevel is required to have an __index element");

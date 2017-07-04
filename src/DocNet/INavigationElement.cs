@@ -55,11 +55,11 @@ namespace Docnet
 		void CollectSearchIndexEntries(List<SearchIndexEntry> collectedEntries, NavigatedPath activePath, NavigationContext navigationContext);
 
 		/// <summary>
-		/// Gets the target URL with respect to the <see cref="PathSpecification"/>.
+		/// Gets the target URL with respect to the <see cref="PathSpecification" />.
 		/// </summary>
-		/// <param name="pathSpecification">The path specification.</param>
+		/// <param name="navigationContext">The navigation context.</param>
 		/// <returns></returns>
-		string GetTargetURL(PathSpecification pathSpecification);
+		string GetTargetURL(NavigationContext navigationContext);
 
 		/// <summary>
 		/// Gets a value indicating whether this element is the __index element

@@ -167,7 +167,7 @@ namespace Docnet
 
 				// first render the level header, which is the index element, if present or a label. The root always has an __index element otherwise we'd have stopped at load.
 				var elementStartTag = "<li><span class=\"navigationgroup\"><i class=\"fa fa-caret-down\"></i> ";
-				var indexElement = this.GetIndexElement(navigationContext.PathSpecification);
+				var indexElement = this.GetIndexElement(navigationContext);
 				if (indexElement == null)
 				{
 					fragments.Add(string.Format("{0}{1}</span></li>", elementStartTag, this.Name));
@@ -181,7 +181,7 @@ namespace Docnet
 					else
 					{
 						fragments.Add(string.Format("{0}<a href=\"{1}{2}\">{3}</a></span></li>", 
-							elementStartTag, relativePathToRoot, indexElement.GetFinalTargetUrl(navigationContext.PathSpecification), this.Name));
+							elementStartTag, relativePathToRoot, indexElement.GetFinalTargetUrl(navigationContext), this.Name));
 					}
 				}
 				// then the elements in the container. Index elements are skipped here.
@@ -195,7 +195,7 @@ namespace Docnet
 			{
 				// just a link
 				fragments.Add(string.Format("<span class=\"navigationgroup\"><i class=\"fa fa-caret-right\"></i> <a href=\"{0}{1}\">{2}</a></span>",
-											relativePathToRoot, this.GetFinalTargetUrl(navigationContext.PathSpecification), this.Name));
+											relativePathToRoot, this.GetFinalTargetUrl(navigationContext), this.Name));
 			}
 			if (!this.IsRoot)
 			{
@@ -277,18 +277,18 @@ namespace Docnet
 			return title;
 		}
 
-		public override string GetTargetURL(PathSpecification pathSpecification)
+		public override string GetTargetURL(NavigationContext navigationContext)
 		{
-			var defaultElement = this.GetIndexElement(pathSpecification);
+			var defaultElement = this.GetIndexElement(navigationContext);
 			if (defaultElement == null)
 			{
 				return string.Empty;
 			}
 
-			return defaultElement.GetTargetURL(pathSpecification) ?? string.Empty;
+			return defaultElement.GetTargetURL(navigationContext) ?? string.Empty;
 		}
 
-		public SimpleNavigationElement GetIndexElement(PathSpecification pathSpecification)
+		public SimpleNavigationElement GetIndexElement(NavigationContext navigationContext)
 		{
 			var toReturn = this.Value.FirstOrDefault(e => e.IsIndexElement) as SimpleNavigationElement;
 			if (toReturn == null)
@@ -297,11 +297,11 @@ namespace Docnet
 				var path = string.Empty;
 
 				// Don't check parents when using relative paths since we need to walk the tree manually
-				if (pathSpecification == PathSpecification.Full)
+				if (navigationContext.PathSpecification == PathSpecification.Full)
 				{
 					if (this.ParentContainer != null)
 					{
-						path = Path.GetDirectoryName(this.ParentContainer.GetTargetURL(pathSpecification));
+						path = Path.GetDirectoryName(this.ParentContainer.GetTargetURL(navigationContext));
 					}
 				}
 
@@ -313,7 +313,7 @@ namespace Docnet
 
 				var value = string.Format("{0}{1}.md", path, nameToUse);
 
-				switch (pathSpecification)
+				switch (navigationContext.PathSpecification)
 				{
 					case PathSpecification.Full:
 						// Default is correct
@@ -342,7 +342,7 @@ namespace Docnet
 								var firstChildNavigationLevel = (NavigationLevel)this.Value.FirstOrDefault(x => x is NavigationLevel && ((NavigationLevel)x).Value.Any() && !ReferenceEquals(this, x));
 								if (firstChildNavigationLevel != null)
 								{
-									var targetUrl = firstChildNavigationLevel.Value.First().GetTargetURL(pathSpecification);
+									var targetUrl = firstChildNavigationLevel.Value.First().GetTargetURL(navigationContext);
 
 									// 3 times since we need 2 parents up
 									preferredPath = Path.GetDirectoryName(targetUrl);
@@ -359,7 +359,7 @@ namespace Docnet
 						break;
 
 					default:
-						throw new ArgumentOutOfRangeException(nameof(pathSpecification), pathSpecification, null);
+						throw new ArgumentOutOfRangeException(nameof(navigationContext.PathSpecification), navigationContext.PathSpecification, null);
 				}
 
 				toReturn = new SimpleNavigationElement
