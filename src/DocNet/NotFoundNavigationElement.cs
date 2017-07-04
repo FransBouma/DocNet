@@ -34,12 +34,12 @@ namespace Docnet
 				}
 
 				stringBuilder.AppendFormat("* [{0}]({1}{2}){3}", sibling.Name, "/" /* pathRelativeToRoot */,
-					sibling.GetFinalTargetUrl(navigationContext.PathSpecification), Environment.NewLine);
+					sibling.GetFinalTargetUrl(navigationContext), Environment.NewLine);
 			}
 
 			var markdownContent = stringBuilder.ToString();
 
-			var destinationFile = Utils.MakeAbsolutePath(config.Destination, this.GetTargetURL(navigationContext.PathSpecification));
+			var destinationFile = Utils.MakeAbsolutePath(config.Destination, this.GetTargetURL(navigationContext));
 
 			var htmlContent = Utils.ConvertMarkdownToHtml(markdownContent, Path.GetDirectoryName(destinationFile), config.Destination, 
 				string.Empty, new List<Heading>(), config.ConvertLocalLinks);
@@ -57,7 +57,7 @@ namespace Docnet
 			// Skip
 		}
 
-		public override string GetTargetURL(PathSpecification pathSpecification)
+		public override string GetTargetURL(NavigationContext navigationContext)
 		{
 			return "404.htm";
 		}
