@@ -106,13 +106,13 @@ namespace Docnet
 		/// </summary>
 		/// <param name="collectedEntries">The collected entries.</param>
 		/// <param name="activePath">The active path currently navigated.</param>
-		/// <param name="pathSpecification">The path specification.</param>
-		public override void CollectSearchIndexEntries(List<SearchIndexEntry> collectedEntries, NavigatedPath activePath, PathSpecification pathSpecification)
+		/// <param name="navigationContext">The navigation context.</param>
+		public override void CollectSearchIndexEntries(List<SearchIndexEntry> collectedEntries, NavigatedPath activePath, NavigationContext navigationContext)
 		{
 			activePath.Push(this);
 			foreach (var element in this.Value)
 			{
-				element.CollectSearchIndexEntries(collectedEntries, activePath, pathSpecification);
+				element.CollectSearchIndexEntries(collectedEntries, activePath, navigationContext);
 			}
 			activePath.Pop();
 		}
@@ -123,15 +123,15 @@ namespace Docnet
 		/// </summary>
 		/// <param name="activeConfig">The active configuration to use for the output.</param>
 		/// <param name="activePath">The active path navigated through the ToC to reach this element.</param>
-		/// <param name="pathSpecification">The path specification.</param>
-		public override void GenerateOutput(Config activeConfig, NavigatedPath activePath, PathSpecification pathSpecification)
+		/// <param name="navigationContext">The navigation context.</param>
+		public override void GenerateOutput(Config activeConfig, NavigatedPath activePath, NavigationContext navigationContext)
 		{
 			activePath.Push(this);
 			int i = 0;
 			while (i < this.Value.Count)
 			{
 				var element = this.Value[i];
-				element.GenerateOutput(activeConfig, activePath, pathSpecification);
+				element.GenerateOutput(activeConfig, activePath, navigationContext);
 				i++;
 			}
 			activePath.Pop();
@@ -143,9 +143,9 @@ namespace Docnet
 		/// </summary>
 		/// <param name="navigatedPath">The navigated path to the current element, which doesn't necessarily have to be this element.</param>
 		/// <param name="relativePathToRoot">The relative path back to the URL root, e.g. ../.., so it can be used for links to elements in this path.</param>
-		/// <param name="pathSpecification">The path specification.</param>
+		/// <param name="navigationContext">The navigation context.</param>
 		/// <returns></returns>
-		public override string GenerateToCFragment(NavigatedPath navigatedPath, string relativePathToRoot, PathSpecification pathSpecification)
+		public override string GenerateToCFragment(NavigatedPath navigatedPath, string relativePathToRoot, NavigationContext navigationContext)
 		{
 			var fragments = new List<string>();
 			if (!this.IsRoot)
@@ -167,7 +167,7 @@ namespace Docnet
 
 				// first render the level header, which is the index element, if present or a label. The root always has an __index element otherwise we'd have stopped at load.
 				var elementStartTag = "<li><span class=\"navigationgroup\"><i class=\"fa fa-caret-down\"></i> ";
-				var indexElement = this.GetIndexElement(pathSpecification);
+				var indexElement = this.GetIndexElement(navigationContext.PathSpecification);
 				if (indexElement == null)
 				{
 					fragments.Add(string.Format("{0}{1}</span></li>", elementStartTag, this.Name));
@@ -176,18 +176,18 @@ namespace Docnet
 				{
 					if (this.IsRoot)
 					{
-						fragments.Add(indexElement.PerformGenerateToCFragment(navigatedPath, relativePathToRoot, pathSpecification));
+						fragments.Add(indexElement.PerformGenerateToCFragment(navigatedPath, relativePathToRoot, navigationContext));
 					}
 					else
 					{
 						fragments.Add(string.Format("{0}<a href=\"{1}{2}\">{3}</a></span></li>", 
-							elementStartTag, relativePathToRoot, indexElement.GetFinalTargetUrl(pathSpecification), this.Name));
+							elementStartTag, relativePathToRoot, indexElement.GetFinalTargetUrl(navigationContext.PathSpecification), this.Name));
 					}
 				}
 				// then the elements in the container. Index elements are skipped here.
 				foreach (var element in this.Value)
 				{
-					fragments.Add(element.GenerateToCFragment(navigatedPath, relativePathToRoot, pathSpecification));
+					fragments.Add(element.GenerateToCFragment(navigatedPath, relativePathToRoot, navigationContext));
 				}
 				fragments.Add("</ul>");
 			}
@@ -195,7 +195,7 @@ namespace Docnet
 			{
 				// just a link
 				fragments.Add(string.Format("<span class=\"navigationgroup\"><i class=\"fa fa-caret-right\"></i> <a href=\"{0}{1}\">{2}</a></span>",
-											relativePathToRoot, this.GetFinalTargetUrl(pathSpecification), this.Name));
+											relativePathToRoot, this.GetFinalTargetUrl(navigationContext.PathSpecification), this.Name));
 			}
 			if (!this.IsRoot)
 			{

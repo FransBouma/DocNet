@@ -27,6 +27,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using MarkdownDeep;
 
 namespace Docnet
 {
@@ -50,7 +51,7 @@ namespace Docnet
         /// <param name="convertLocalLinks">if set to <c>true</c>, convert local links to md files to target files.</param>
         /// <returns></returns>
         public static string ConvertMarkdownToHtml(string toConvert, string destinationDocumentPath, string siteRoot, string sourceDocumentFilename, 
-                                                   List<Tuple<string, string>> createdAnchorCollector, bool convertLocalLinks)
+                                                   List<Heading> createdAnchorCollector, bool convertLocalLinks)
 		{
 			var parser = new MarkdownDeep.Markdown
 						 {
@@ -67,7 +68,9 @@ namespace Docnet
 						 };
 
 			var toReturn = parser.Transform(toConvert);
-			createdAnchorCollector.AddRange(parser.CreatedH2IdCollector);
+
+			createdAnchorCollector.AddRange(parser.Headings.ConvertToHierarchy());
+
 			return toReturn;
 		}
 

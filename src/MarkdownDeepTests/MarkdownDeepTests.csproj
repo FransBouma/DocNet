@@ -75,6 +75,7 @@
     <Compile Include="AutoLinkTests.cs" />
     <Compile Include="AutoHeaderIDTests.cs" />
     <Compile Include="DocNetMode.cs" />
+    <Compile Include="ExtensionsTests.cs" />
     <Compile Include="GithubMode.cs" />
     <Compile Include="LocalLinkTests.cs" />
     <Compile Include="TableSpecTests.cs" />

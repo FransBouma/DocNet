@@ -58,6 +58,7 @@
     <Compile Include="Engine.cs" />
     <Compile Include="INavigationElement.cs" />
     <Compile Include="NavigatedPath.cs" />
+    <Compile Include="NavigationContext.cs" />
     <Compile Include="NavigationElement.cs" />
     <Compile Include="NavigationLevel.cs" />
     <Compile Include="PathSpecification.cs" />
