@@ -7,15 +7,18 @@
 			MaxLevel = 2;
 		}
 
-		public NavigationContext(PathSpecification pathSpecification, int maxLevel)
+		public NavigationContext(PathSpecification pathSpecification, int maxLevel, bool stripIndexHtm)
 			: this()
 		{
 			PathSpecification = pathSpecification;
 			MaxLevel = maxLevel;
+			StripIndexHtm = stripIndexHtm;
 		}
+
+		public PathSpecification PathSpecification { get; set; }
 
 		public int MaxLevel { get; set; }
 
-		public PathSpecification PathSpecification { get; set; }
+		public bool StripIndexHtm { get; set; }
 	}
 }
