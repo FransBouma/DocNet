@@ -14,6 +14,7 @@ DocNet uses a json file to determine what to do in what form. The format is stra
     "Footer" : "footer text or HTML",
     "ConvertLocalLinks: "true" | "false",
     "PathSpecification": "Full" | "Relative" | "RelativeAsFolder",
+    "MaxLevelInToC": "3",
     "Pages" : 
     {
         "__index" : "index.md",
@@ -43,6 +44,7 @@ The order in which the pages are specified is the order in which they'll appear 
   * `Full`: Assumes that all paths are full paths. All auto-generated index files will be placed in the root folder (this setting can lead to index clashes when reusing names in subfolders).
   * `Relative`: Assumes that all paths are relative paths. All auto-generated index files will be put in the right (sub)folder.
   * `RelativeAsFolder`: Behaves the same as `Relative`, but puts *every* source md in its own folder resulting in clean navigation urls (e.g. `/getting-started/introduction.htm` becomes `/getting-started/introduction/index.htm`)
+* `MaxLevelInToC`. Sets the level of headings to show in the Table of Contents (ToC). The default value is `2`. To show one additional level, one would use `3` for this value. *Note that level 1 headings (titles) are never shown in the ToC).*
 * `Footer`. This is text and/or HTML which is placed in the footer of each page, using a _marker_ (see below).
 * `Pages` contains the pages to generate into the output, in the order and structure in which you want them to appear in the navigation. The name given is the value used in the navigation tree and has to be unique per level. The value specified with each name is the markdown file to load, parse and generate as .htm file in the output. The markdown file is relative to the path specified in `Source`. A file `foo.md` will be generated as `foo.htm` in the output. 
 
