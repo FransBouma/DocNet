@@ -38,15 +38,15 @@ namespace Docnet
 		/// Creates the bread crumbs HTML of the elements in this path, delimited by '/' characters.
 		/// </summary>
 		/// <param name="relativePathToRoot">The relative path back to the URL root, e.g. ../.., so it can be used for links to elements in this path.</param>
-		/// <param name="pathSpecification">The path specification.</param>
+		/// <param name="navigationContext">The navigation context.</param>
 		/// <returns></returns>
-		public string CreateBreadCrumbsHTML(string relativePathToRoot, PathSpecification pathSpecification)
+		public string CreateBreadCrumbsHTML(string relativePathToRoot, NavigationContext navigationContext)
 		{
 			var fragments = new List<string>();
 			// we enumerate a stack, which enumerates from top to bottom, so we have to reverse things first. 
 			foreach(var element in this.Reverse())
 			{
-				var targetURL = element.GetTargetURL(pathSpecification);
+				var targetURL = element.GetTargetURL(navigationContext);
 				if(string.IsNullOrWhiteSpace(targetURL))
 				{
 					fragments.Add(string.Format("<li>{0}</li>", element.Name));

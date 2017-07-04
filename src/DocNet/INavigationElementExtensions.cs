@@ -11,25 +11,23 @@ namespace Docnet
 		/// Gets the final URL by encoding the path and by removing the filename if it equals <c>index.htm</c>.
 		/// </summary>
 		/// <param name="navigationElement">The navigation element.</param>
-		/// <param name="pathSpecification">The path specification.</param>
+		/// <param name="navigationContext">The navigation context.</param>
 		/// <returns></returns>
-		public static string GetFinalTargetUrl(this INavigationElement navigationElement, PathSpecification pathSpecification)
+		public static string GetFinalTargetUrl(this INavigationElement navigationElement, NavigationContext navigationContext)
 		{
-			var targetUrl = navigationElement.GetTargetURL(pathSpecification);
+			var targetUrl = navigationElement.GetTargetURL(navigationContext);
 			var link = HttpUtility.UrlPathEncode(targetUrl);
 
-            // Disabled for now as discussed in #65 (https://github.com/FransBouma/DocNet/pull/65), but
-            // is required for #44
-            //if (pathSpecification == PathSpecification.RelativeAsFolder)
-            //{
-            //    if (link.Length > IndexHtmFileName.Length &&
-            //        link.EndsWith(IndexHtmFileName, StringComparison.InvariantCultureIgnoreCase))
-            //    {
-            //        link = link.Substring(0, link.Length - IndexHtmFileName.Length);
-            //    }
-            //}
+			if (navigationContext.StripIndexHtm)
+			{
+				if (link.Length > IndexHtmFileName.Length &&
+					link.EndsWith(IndexHtmFileName, StringComparison.InvariantCultureIgnoreCase))
+				{
+					link = link.Substring(0, link.Length - IndexHtmFileName.Length);
+				}
+			}
 
-            return link;
+			return link;
 		}
 	}
 }

@@ -55,11 +55,11 @@ namespace Docnet
 		public abstract void CollectSearchIndexEntries(List<SearchIndexEntry> collectedEntries, NavigatedPath activePath, NavigationContext navigationContext);
 
 		/// <summary>
-		/// Gets the target URL with respect to the <see cref="PathSpecification"/>.
+		/// Gets the target URL with respect to the <see cref="PathSpecification" />.
 		/// </summary>
-		/// <param name="pathSpecification">The path specification.</param>
+		/// <param name="navigationContext">The navigation context.</param>
 		/// <returns></returns>
-		public abstract string GetTargetURL(PathSpecification pathSpecification);
+		public abstract string GetTargetURL(NavigationContext navigationContext);
 
 		#region Properties
 		/// <summary>
