@@ -39,7 +39,11 @@
 <li class="tocentry current"><a class="current" href="docnetjson.htm">Site configuration with the docnet.json file</a>
 <ul class="currentrelative">
 <li class="tocentry"><a href="#levels-without-index-defined">Levels without __index defined</a></li>
+
 <li class="tocentry"><a href="#use-of-wildcard-inclusions">Use of wildcard inclusions</a></li>
+
+
+
 </ul>
 <li class="tocentry"><a href="h2leveldiscovery.htm">Automatic H2 level ToC entry discovery</a>
 </li>
@@ -92,6 +96,7 @@
     &quot;Footer&quot; : &quot;footer text or HTML&quot;,
     &quot;ConvertLocalLinks: &quot;true&quot; | &quot;false&quot;,
     &quot;PathSpecification&quot;: &quot;Full&quot; | &quot;Relative&quot; | &quot;RelativeAsFolder&quot;,
+    &quot;MaxLevelInToC&quot;: &quot;3&quot;,
     &quot;Pages&quot; : 
     {
         &quot;__index&quot; : &quot;index.md&quot;,
@@ -125,6 +130,7 @@
 <li><code>RelativeAsFolder</code>: Behaves the same as <code>Relative</code>, but puts <em>every</em> source md in its own folder resulting in clean navigation urls (e.g. <code>/getting-started/introduction.htm</code> becomes <code>/getting-started/introduction/index.htm</code>)</li>
 </ul>
 </li>
+<li><code>MaxLevelInToC</code>. Sets the level of headings to show in the Table of Contents (ToC). The default value is <code>2</code>. To show one additional level, one would use <code>3</code> for this value. <em>Note that level 1 headings (titles) are never shown in the ToC).</em></li>
 <li><code>Footer</code>. This is text and/or HTML which is placed in the footer of each page, using a <em>marker</em> (see below).</li>
 <li><code>Pages</code> contains the pages to generate into the output, in the order and structure in which you want them to appear in the navigation. The name given is the value used in the navigation tree and has to be unique per level. The value specified with each name is the markdown file to load, parse and generate as .htm file in the output. The markdown file is relative to the path specified in <code>Source</code>. A file <code>foo.md</code> will be generated as <code>foo.htm</code> in the output. </li>
 </ul>
