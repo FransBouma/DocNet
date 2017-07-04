@@ -6,6 +6,7 @@
     "Theme" : "Default",
     "Footer" : "Made with DocNet. Get your copy at: <a href='https://github.com/FransBouma/DocNet' target='_blank'>https://github.com/FransBouma/DocNet</a>.",
 	"ConvertLocalLinks": "true",
+	"MaxLevelInToC": 3,
     "Pages" : 
     {
         "__index" : "index.md",
