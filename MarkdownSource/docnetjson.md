@@ -14,6 +14,7 @@ DocNet uses a json file to determine what to do in what form. The format is stra
     "Footer" : "footer text or HTML",
     "ConvertLocalLinks: "true" | "false",
     "PathSpecification": "Full" | "Relative" | "RelativeAsFolder",
+    "UrlFormatting": "None" | "Strip" | "Dashes",
     "MaxLevelInToC": "3",
     "StripIndexHtm": "true" | "false",
     "Pages" : 
@@ -61,6 +62,13 @@ Determines the way (md) paths are treated by the tooling. The default value is `
 * `Full`: Assumes that all paths are full paths. All auto-generated index files will be placed in the root folder (this setting can lead to index clashes when reusing names in subfolders).
 * `Relative`: Assumes that all paths are relative paths. All auto-generated index files will be put in the right (sub)folder.
 * `RelativeAsFolder`: Behaves the same as `Relative`, but puts *every* source md in its own folder resulting in clean navigation urls (e.g. `/getting-started/introduction.htm` becomes `/getting-started/introduction/index.htm`)
+
+### UrlFormatting
+Determines how the urls are formatted. The default value is `None` which will only remove unsupported characters from the urls.
+
+* `None`: Does not touch the urls except from removing unsupported characters from the urls.
+* `Strip`: Replaces all non-text characters (e.g. spaces, dots, commands, etc) by an empty string (e.g. `/my-documentation/Some Introduction.md` results in `/mydocumentation/someintroduction.htm`)  
+* `Dashes`: Replaces all non-text characters (e.g. spaces, dots, commands, etc) by a dash (`-`) (e.g. `/my-documentation/Some Introduction.md` results in `/my-documentation/some-introduction.htm`)  
 
 ### MaxLevelInToC
 Sets the level of headings to show in the Table of Contents (ToC). The default value is `2`. To show one additional level, one would use `3` for this value. 
