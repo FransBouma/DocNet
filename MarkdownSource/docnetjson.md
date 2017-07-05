@@ -49,7 +49,7 @@ Specifies the folder where the files specified to be included using [@@include d
 ### Theme
 Specifies the folder within the `Themes` folder in the folder the `docnet` executable is located which is used as the theme for the pages to generate. `Docnet` expects a file called `PageTemplate.htm` within the specified `Theme` folder, which contains the HTML which is used as the wrapper file for the HTML generated from the markdown. It has to contain a couple of marker, which are described later in this document. If `Theme` isn't specified, `Default` is assumed.
 
-### SourceFoldersToCopy`
+### SourceFoldersToCopy
 This is an optional directive with, if specified, one or more folder names relative to `Source`, which contain files to copy to the `Destination` folder. E.g. image files used in the markdown files, located in an `Images` folder can be copied this way to the output folder reliably. All folders specified are copied recursively.
 
 ### ConvertLocalLinks

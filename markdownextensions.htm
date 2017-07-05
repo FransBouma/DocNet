@@ -193,7 +193,7 @@ public override string GenerateToCFragment(NavigatedPath navigatedPath, string r
 
         // first render the level header, which is the index element, if present or a label. The root always has an __index element otherwise we'd have stopped at load.
         var elementStartTag = &quot;&lt;li&gt;&lt;span class=\&quot;navigationgroup\&quot;&gt;&lt;i class=\&quot;fa fa-caret-down\&quot;&gt;&lt;/i&gt; &quot;;
-        var indexElement = this.GetIndexElement(navigationContext.PathSpecification);
+        var indexElement = this.GetIndexElement(navigationContext);
         if (indexElement == null)
         {
             fragments.Add(string.Format(&quot;{0}{1}&lt;/span&gt;&lt;/li&gt;&quot;, elementStartTag, this.Name));
@@ -207,7 +207,7 @@ public override string GenerateToCFragment(NavigatedPath navigatedPath, string r
             else
             {
                 fragments.Add(string.Format(&quot;{0}&lt;a href=\&quot;{1}{2}\&quot;&gt;{3}&lt;/a&gt;&lt;/span&gt;&lt;/li&gt;&quot;, 
-                    elementStartTag, relativePathToRoot, indexElement.GetFinalTargetUrl(navigationContext.PathSpecification), this.Name));
+                    elementStartTag, relativePathToRoot, indexElement.GetFinalTargetUrl(navigationContext), this.Name));
             }
         }
         // then the elements in the container. Index elements are skipped here.
@@ -221,7 +221,7 @@ public override string GenerateToCFragment(NavigatedPath navigatedPath, string r
     {
         // just a link
         fragments.Add(string.Format(&quot;&lt;span class=\&quot;navigationgroup\&quot;&gt;&lt;i class=\&quot;fa fa-caret-right\&quot;&gt;&lt;/i&gt; &lt;a href=\&quot;{0}{1}\&quot;&gt;{2}&lt;/a&gt;&lt;/span&gt;&quot;,
-                                    relativePathToRoot, this.GetFinalTargetUrl(navigationContext.PathSpecification), this.Name));
+                                    relativePathToRoot, this.GetFinalTargetUrl(navigationContext), this.Name));
     }
     if (!this.IsRoot)
     {
