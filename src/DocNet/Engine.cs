@@ -109,6 +109,8 @@ namespace Docnet
 			_loadedConfig.CopySourceFoldersToCopy();
 			Console.WriteLine("Generating pages in '{0}'", _loadedConfig.Destination);
 			_loadedConfig.Pages.GenerateOutput(_loadedConfig, new NavigatedPath(), navigationContext);
+			Console.WriteLine("Generating 404 page");
+			_loadedConfig.Generate404Page(navigationContext);
 			Console.WriteLine("Generating search index");
 			_loadedConfig.GenerateSearchData(navigationContext);
 			Console.WriteLine("Done!");

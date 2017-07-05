@@ -110,6 +110,21 @@ namespace Docnet
 			}
 		}
 
+		internal void Generate404Page(NavigationContext navigationContext)
+		{
+			var simpleNavigationElement = new NotFoundNavigationElement
+			{
+				ParentContainer = Pages
+			};
+
+			var navigatedPath = new NavigatedPath();
+			navigatedPath.Push(this.Pages);
+
+			simpleNavigationElement.GenerateOutput(this, navigatedPath, navigationContext);
+
+			navigatedPath.Pop();
+		}
+
 		internal void ClearDestinationFolder()
 		{
 			if(string.IsNullOrWhiteSpace(this.Destination))
@@ -151,7 +166,7 @@ namespace Docnet
 			var activePath = new NavigatedPath();
 			activePath.Push(this.Pages);
 			var searchSimpleElement = new SimpleNavigationElement() {Name = "Search", Value = "Docnet_search.htm", IsIndexElement = false, ParentContainer = this.Pages};
-			searchSimpleElement.ContentProducerFunc = e=>@"
+			searchSimpleElement.ContentProducerFunc = (e,c,n) =>@"
 					<h1 id=""search"">Search Results</h1>
 					<p>
 					<form id=""content_search"" action=""docnet_search.htm"">
@@ -162,7 +177,7 @@ namespace Docnet
 					<div id=""search-results"">
 					<p>Sorry, page not found.</p>
 					</div>";
-			searchSimpleElement.ExtraScriptProducerFunc = e=> @"
+			searchSimpleElement.ExtraScriptProducerFunc = (e,c,n) => @"
 	<script>var base_url = '.';</script>
 	<script data-main=""js/search.js"" src=""js/require.js""></script>";
 			searchSimpleElement.GenerateOutput(this, activePath, navigationContext);

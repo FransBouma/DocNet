@@ -104,7 +104,7 @@ namespace Docnet
 					{
 						throw new FileNotFoundException(string.Format("The specified markdown file '{0}' couldn't be found. Aborting", sourceFile));
 					}
-					content = this.ContentProducerFunc(this);
+					content = this.ContentProducerFunc(this, activeConfig, navigationContext);
 				}
 			}
 			sb.Append(activeConfig.PageTemplateContents);
@@ -116,7 +116,7 @@ namespace Docnet
 			sb.Replace("{{RelativeTargetFileName}}", Utils.MakeRelativePathForUri(activeConfig.Destination, destinationFile).TrimEnd('/'));
 			sb.Replace("{{Breadcrumbs}}", activePath.CreateBreadCrumbsHTML(relativePathToRoot, navigationContext));
 			sb.Replace("{{ToC}}", activePath.CreateToCHTML(relativePathToRoot, navigationContext));
-			sb.Replace("{{ExtraScript}}", (this.ExtraScriptProducerFunc == null) ? string.Empty : this.ExtraScriptProducerFunc(this));
+			sb.Replace("{{ExtraScript}}", (this.ExtraScriptProducerFunc == null) ? string.Empty : this.ExtraScriptProducerFunc(this, activeConfig, navigationContext));
 
 			// the last action has to be replacing the content marker, so markers in the content which we have in the template as well aren't replaced 
 			sb.Replace("{{Content}}", content);
@@ -303,11 +303,11 @@ namespace Docnet
 		/// If null, and the target file isn't found, the engine will throw an error as there's no content. If set, it's utilized over the default markdown producer.
 		/// Use this to produce in-line HTML for specific pages which aren't specified, like the search page.
 		/// </summary>
-		public Func<SimpleNavigationElement, string> ContentProducerFunc { get; set; }
+		public Func<SimpleNavigationElement, Config, NavigationContext, string> ContentProducerFunc { get; set; }
 		/// <summary>
 		/// Gets or sets the extra script producer function, which, if set, produces HTML to be embedded at the extra script marker
 		/// </summary>
-		public Func<SimpleNavigationElement, string> ExtraScriptProducerFunc { get; set; }
+		public Func<SimpleNavigationElement, Config, NavigationContext, string> ExtraScriptProducerFunc { get; set; }
 
 		/// <summary>
 		/// Gets the loaded markdown text from the file.
@@ -315,7 +315,7 @@ namespace Docnet
 		public string MarkdownFromFile
 		{
 			get;
-			private set;
+			protected set;
 		}
 		#endregion
 	}
