@@ -226,14 +226,18 @@ namespace Docnet
 		{
 			if (_targetURLForHTML == null)
 			{
-				_targetURLForHTML = (this.Value ?? string.Empty);
-
-				var toReplace = ".md";
+				var toReplace = "mdext";
 				var replacement = ".htm";
+
+				var value = (this.Value ?? string.Empty);
+
+				// Replace with custom extension because url formatting might optimize the extension
+				value = value.Replace(".md", toReplace);
+				_targetURLForHTML = value.ApplyUrlFormatting(navigationContext.UrlFormatting);
 
 				if (navigationContext.PathSpecification == PathSpecification.RelativeAsFolder)
 				{
-					if (!IsIndexElement && !_targetURLForHTML.EndsWith("index.md", StringComparison.InvariantCultureIgnoreCase))
+					if (!IsIndexElement && !_targetURLForHTML.EndsWith($"index{toReplace}", StringComparison.InvariantCultureIgnoreCase))
 					{
 						replacement = "/index.htm";
 					}

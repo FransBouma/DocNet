@@ -305,7 +305,20 @@ namespace Docnet
 					}
 				}
 
-				var nameToUse = this.Name.Replace(".", "").Replace('/', '_').Replace("\\", "_").Replace(":", "").Replace(" ", "");
+				var nameToUse = string.Empty;
+
+				switch (navigationContext.UrlFormatting)
+				{
+					case UrlFormatting.None:
+						// Backwards compatibility mode
+						nameToUse = this.Name.Replace(".", "").Replace('/', '_').Replace("\\", "_").Replace(":", "").Replace(" ", "");
+						break;
+
+					default:
+						nameToUse = this.Name.ApplyUrlFormatting(navigationContext.UrlFormatting);
+						break;
+				}
+
 				if (string.IsNullOrWhiteSpace(nameToUse))
 				{
 					return null;

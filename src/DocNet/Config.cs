@@ -307,6 +307,25 @@ namespace Docnet
 	        }
         }
 
+	    public UrlFormatting UrlFormatting
+	    {
+	        get
+	        {
+	            var urlFormatting = UrlFormatting.None;
+
+	            var urlFormattingAsString = (string)_configData.UrlFormatting;
+	            if (!string.IsNullOrWhiteSpace(urlFormattingAsString))
+	            {
+	                if (!Enum.TryParse(urlFormattingAsString, true, out urlFormatting))
+	                {
+	                    urlFormatting = UrlFormatting.None;
+	                }
+	            }
+
+	            return urlFormatting;
+            }
+	    }
+
 		public NavigationLevel Pages
 		{
 			get

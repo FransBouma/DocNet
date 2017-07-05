@@ -4,21 +4,21 @@
 	{
 		public NavigationContext()
 		{
-			MaxLevel = 2;
+			this.MaxLevel = 2;
 		}
 
-		public NavigationContext(PathSpecification pathSpecification, int maxLevel, bool stripIndexHtm)
+		public NavigationContext(PathSpecification pathSpecification, UrlFormatting urlFormatting, int maxLevel, bool stripIndexHtm)
 			: this()
 		{
 			PathSpecification = pathSpecification;
-			MaxLevel = maxLevel;
+		    UrlFormatting = urlFormatting;
+            MaxLevel = maxLevel;
 			StripIndexHtm = stripIndexHtm;
 		}
 
 		public PathSpecification PathSpecification { get; set; }
-
-		public int MaxLevel { get; set; }
-
+        public UrlFormatting UrlFormatting { get; set; }
+        public int MaxLevel { get; set; }
 		public bool StripIndexHtm { get; set; }
 	}
 }

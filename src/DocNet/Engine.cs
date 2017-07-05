@@ -45,13 +45,7 @@ namespace Docnet
 				return 1;
 			}
 
-			var navigationContext = new NavigationContext
-			{
-				MaxLevel = _loadedConfig.MaxLevelInToC,
-				PathSpecification = _loadedConfig.PathSpecification,
-				StripIndexHtm = _loadedConfig.StripIndexHtm
-			};
-
+			var navigationContext = new NavigationContext(_loadedConfig.PathSpecification, _loadedConfig.UrlFormatting, _loadedConfig.MaxLevelInToC, _loadedConfig.StripIndexHtm);
 			GeneratePages(navigationContext);
 			return 0;
 		}
@@ -79,7 +73,7 @@ namespace Docnet
 				return null;
 			}
 
-			var navigationContext = new NavigationContext(config.PathSpecification, config.MaxLevelInToC, config.StripIndexHtm);
+			var navigationContext = new NavigationContext(config.PathSpecification, config.UrlFormatting, config.MaxLevelInToC, config.StripIndexHtm);
 
 			var indexElement = config.Pages.GetIndexElement(navigationContext);
 			if(indexElement == null)
