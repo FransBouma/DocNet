@@ -68,6 +68,8 @@
     <Compile Include="SearchIndexEntry.cs" />
     <Compile Include="SimpleNavigationElement.cs" />
     <Compile Include="INavigationElementExtensions.cs" />
+    <Compile Include="StringExtensions.cs" />
+    <Compile Include="UrlFormatting.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
