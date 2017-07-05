@@ -15,6 +15,7 @@ DocNet uses a json file to determine what to do in what form. The format is stra
     "ConvertLocalLinks: "true" | "false",
     "PathSpecification": "Full" | "Relative" | "RelativeAsFolder",
     "MaxLevelInToC": "3",
+    "StripIndexHtm": "true" | "false",
     "Pages" : 
     {
         "__index" : "index.md",
@@ -33,20 +34,57 @@ DocNet uses a json file to determine what to do in what form. The format is stra
 
 The order in which the pages are specified is the order in which they'll appear in the navigation. 
 
-* `Name` specifies the name of the site to generate. 
-* `Source` specifies the root of the tree of folders in which markdown files are expected. `sourcefolder` can be a relative path or an absolute path and is used as the root folder for filenames specified in `Pages`. 
-* `Destination` specifies the folder where the output will be written to (.htm files). The output will be written to this folder only, all files from subfolders in `Source` will be written to the folder specified in `Destination`. with the same structure as the *navigation* in `Pages`. `destinationfolder` can be a relative path or an absolute path.
-* `IncludeSource` specifies the folder where the files specified to be included using [@@include directives](markdownextensions.htm#include-files) are located. If `IncludeSource` isn't specified, the value `Includes` is assumed. 
-* `Theme` specifies the folder within the `Themes` folder in the folder the `docnet` executable is located which is used as the theme for the pages to generate. `Docnet` expects a file called `PageTemplate.htm` within the specified `Theme` folder, which contains the HTML which is used as the wrapper file for the HTML generated from the markdown. It has to contain a couple of marker, which are described later in this document. If `Theme` isn't specified, `Default` is assumed.
-* `SourceFoldersToCopy`. This is an optional directive with, if specified, one or more folder names relative to `Source`, which contain files to copy to the `Destination` folder. E.g. image files used in the markdown files, located in an `Images` folder can be copied this way to the output folder reliably. All folders specified are copied recursively.
-* `ConvertLocalLinks`. This is an optional directive which, if specified and set to `"true"`, will make DocNet convert all local links to `.md` suffixed files into `.htm` files. Example: `(local link)[somemarkdownfile.md]` will be converted to `<a href="somemarkdownfile.htm">local link</a>`. Non-local urls are not converted. Default: `"false"`. 
-* `PathSpecification`. Determines the way (md) paths are treated by the tooling. The default value is `Full` for backwards compatibility.
-  * `Full`: Assumes that all paths are full paths. All auto-generated index files will be placed in the root folder (this setting can lead to index clashes when reusing names in subfolders).
-  * `Relative`: Assumes that all paths are relative paths. All auto-generated index files will be put in the right (sub)folder.
-  * `RelativeAsFolder`: Behaves the same as `Relative`, but puts *every* source md in its own folder resulting in clean navigation urls (e.g. `/getting-started/introduction.htm` becomes `/getting-started/introduction/index.htm`)
-* `MaxLevelInToC`. Sets the level of headings to show in the Table of Contents (ToC). The default value is `2`. To show one additional level, one would use `3` for this value. *Note that level 1 headings (titles) are never shown in the ToC).*
-* `Footer`. This is text and/or HTML which is placed in the footer of each page, using a _marker_ (see below).
-* `Pages` contains the pages to generate into the output, in the order and structure in which you want them to appear in the navigation. The name given is the value used in the navigation tree and has to be unique per level. The value specified with each name is the markdown file to load, parse and generate as .htm file in the output. The markdown file is relative to the path specified in `Source`. A file `foo.md` will be generated as `foo.htm` in the output. 
+### Name
+Specifies the name of the site to generate. 
+
+### Source
+Specifies the root of the tree of folders in which markdown files are expected. `sourcefolder` can be a relative path or an absolute path and is used as the root folder for filenames specified in `Pages`.
+
+### Destination
+Specifies the folder where the output will be written to (.htm files). The output will be written to this folder only, all files from subfolders in `Source` will be written to the folder specified in `Destination`. with the same structure as the *navigation* in `Pages`. `destinationfolder` can be a relative path or an absolute path.
+
+### IncludeSource
+Specifies the folder where the files specified to be included using [@@include directives](markdownextensions.htm#include-files) are located. If `IncludeSource` isn't specified, the value `Includes` is assumed. 
+
+### Theme
+Specifies the folder within the `Themes` folder in the folder the `docnet` executable is located which is used as the theme for the pages to generate. `Docnet` expects a file called `PageTemplate.htm` within the specified `Theme` folder, which contains the HTML which is used as the wrapper file for the HTML generated from the markdown. It has to contain a couple of marker, which are described later in this document. If `Theme` isn't specified, `Default` is assumed.
+
+### SourceFoldersToCopy
+This is an optional directive with, if specified, one or more folder names relative to `Source`, which contain files to copy to the `Destination` folder. E.g. image files used in the markdown files, located in an `Images` folder can be copied this way to the output folder reliably. All folders specified are copied recursively.
+
+### ConvertLocalLinks
+This is an optional directive which, if specified and set to `"true"`, will make DocNet convert all local links to `.md` suffixed files into `.htm` files. Example: `(local link)[somemarkdownfile.md]` will be converted to `<a href="somemarkdownfile.htm">local link</a>`. Non-local urls are not converted. Default: `"false"`. 
+
+### PathSpecification 
+Determines the way (md) paths are treated by the tooling. The default value is `Full` for backwards compatibility.
+
+* `Full`: Assumes that all paths are full paths. All auto-generated index files will be placed in the root folder (this setting can lead to index clashes when reusing names in subfolders).
+* `Relative`: Assumes that all paths are relative paths. All auto-generated index files will be put in the right (sub)folder.
+* `RelativeAsFolder`: Behaves the same as `Relative`, but puts *every* source md in its own folder resulting in clean navigation urls (e.g. `/getting-started/introduction.htm` becomes `/getting-started/introduction/index.htm`)
+
+### MaxLevelInToC
+Sets the level of headings to show in the Table of Contents (ToC). The default value is `2`. To show one additional level, one would use `3` for this value. 
+
+@alert info
+Note that level 1 headings (titles) are never shown in the ToC).
+@end
+
+### StripIndexHtm
+If set to `true`, the tool will strip `index.htm` from the end of urls. The default value is `false`. 
+
+@alert tip
+Combined with `PathSpecification` set to `RelativeAsFolder`, this will result in a 'folder-based' browsing experience (e.g. `/getting-started/introduction/`)
+@end
+
+@alert important
+Note that setting this value to `true` will remove the possibility to view the docs off-line                          
+@end
+
+### Footer
+This is text and/or HTML which is placed in the footer of each page, using a _marker_ (see below).
+
+### Pages
+Contains the pages to generate into the output, in the order and structure in which you want them to appear in the navigation. The name given is the value used in the navigation tree and has to be unique per level. The value specified with each name is the markdown file to load, parse and generate as .htm file in the output. The markdown file is relative to the path specified in `Source`. A file `foo.md` will be generated as `foo.htm` in the output. 
 
 Paths are expected to use `\` characters, and as it's json, you have to escape them, so the path `.\foo` becomes `.\\foo`.
 
