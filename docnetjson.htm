@@ -54,6 +54,8 @@
 
 <li class="tocentry"><a href="#pathspecification">PathSpecification</a></li>
 
+<li class="tocentry"><a href="#urlformatting">UrlFormatting</a></li>
+
 <li class="tocentry"><a href="#maxlevelintoc">MaxLevelInToC</a></li>
 
 <li class="tocentry"><a href="#stripindexhtm">StripIndexHtm</a></li>
@@ -70,6 +72,8 @@
 
 </ul>
 <li class="tocentry"><a href="h2leveldiscovery.htm">Automatic H2 level ToC entry discovery</a>
+</li>
+<li class="tocentry"><a href="notfound.htm">Not found (404) page</a>
 </li>
 
 </ul>
@@ -120,6 +124,7 @@
     &quot;Footer&quot; : &quot;footer text or HTML&quot;,
     &quot;ConvertLocalLinks: &quot;true&quot; | &quot;false&quot;,
     &quot;PathSpecification&quot;: &quot;Full&quot; | &quot;Relative&quot; | &quot;RelativeAsFolder&quot;,
+    &quot;UrlFormatting&quot;: &quot;None&quot; | &quot;Strip&quot; | &quot;Dashes&quot;,
     &quot;MaxLevelInToC&quot;: &quot;3&quot;,
     &quot;StripIndexHtm&quot;: &quot;true&quot; | &quot;false&quot;,
     &quot;Pages&quot; : 
@@ -159,6 +164,13 @@
 <li><code>Full</code>: Assumes that all paths are full paths. All auto-generated index files will be placed in the root folder (this setting can lead to index clashes when reusing names in subfolders).</li>
 <li><code>Relative</code>: Assumes that all paths are relative paths. All auto-generated index files will be put in the right (sub)folder.</li>
 <li><code>RelativeAsFolder</code>: Behaves the same as <code>Relative</code>, but puts <em>every</em> source md in its own folder resulting in clean navigation urls (e.g. <code>/getting-started/introduction.htm</code> becomes <code>/getting-started/introduction/index.htm</code>)</li>
+</ul>
+<h3 id="urlformatting">UrlFormatting<a class="headerlink" href="#urlformatting" title="Permalink to this headline"><i class="fa fa-link" aria-hidden="true"></i></a></h3>
+<p>Determines how the urls are formatted. The default value is <code>None</code> which will only remove unsupported characters from the urls.</p>
+<ul>
+<li><code>None</code>: Does not touch the urls except from removing unsupported characters from the urls.</li>
+<li><code>Strip</code>: Replaces all non-text characters (e.g. spaces, dots, commas, etc) by an empty string (e.g. <code>/my-documentation/Some Introduction.md</code> results in <code>/mydocumentation/someintroduction.htm</code>)  </li>
+<li><code>Dashes</code>: Replaces all non-text characters (e.g. spaces, dots, commas, etc) by a dash (<code>-</code>) (e.g. <code>/my-documentation/Some Introduction.md</code> results in <code>/my-documentation/some-introduction.htm</code>)  </li>
 </ul>
 <h3 id="maxlevelintoc">MaxLevelInToC<a class="headerlink" href="#maxlevelintoc" title="Permalink to this headline"><i class="fa fa-link" aria-hidden="true"></i></a></h3>
 <p>Sets the level of headings to show in the Table of Contents (ToC). The default value is <code>2</code>. To show one additional level, one would use <code>3</code> for this value. </p>

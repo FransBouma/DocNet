@@ -67,8 +67,8 @@ Determines the way (md) paths are treated by the tooling. The default value is `
 Determines how the urls are formatted. The default value is `None` which will only remove unsupported characters from the urls.
 
 * `None`: Does not touch the urls except from removing unsupported characters from the urls.
-* `Strip`: Replaces all non-text characters (e.g. spaces, dots, commands, etc) by an empty string (e.g. `/my-documentation/Some Introduction.md` results in `/mydocumentation/someintroduction.htm`)  
-* `Dashes`: Replaces all non-text characters (e.g. spaces, dots, commands, etc) by a dash (`-`) (e.g. `/my-documentation/Some Introduction.md` results in `/my-documentation/some-introduction.htm`)  
+* `Strip`: Replaces all non-text characters (e.g. spaces, dots, commas, etc) by an empty string (e.g. `/my-documentation/Some Introduction.md` results in `/mydocumentation/someintroduction.htm`)  
+* `Dashes`: Replaces all non-text characters (e.g. spaces, dots, commas, etc) by a dash (`-`) (e.g. `/my-documentation/Some Introduction.md` results in `/my-documentation/some-introduction.htm`)  
 
 ### MaxLevelInToC
 Sets the level of headings to show in the Table of Contents (ToC). The default value is `2`. To show one additional level, one would use `3` for this value. 
