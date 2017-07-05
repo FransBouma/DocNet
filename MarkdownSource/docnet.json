@@ -15,7 +15,7 @@
         {
             "Site configuration with the docnet.json file" : "docnetjson.md",
             "Automatic H2 level ToC entry discovery" : "h2leveldiscovery.md",
-			"Not found (404) page" : "notfound.md"
+			"Not found (404) page" : "notfoundpage.md"
         },
         "Authoring content" : 
         {
