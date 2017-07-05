@@ -4,7 +4,7 @@
 	{
 		public NavigationContext()
 		{
-			MaxLevel = 2;
+			this.MaxLevel = 2;
 		}
 
 		public NavigationContext(PathSpecification pathSpecification, UrlFormatting urlFormatting, int maxLevel, bool stripIndexHtm)
@@ -17,11 +17,8 @@
 		}
 
 		public PathSpecification PathSpecification { get; set; }
-
         public UrlFormatting UrlFormatting { get; set; }
-
         public int MaxLevel { get; set; }
-
 		public bool StripIndexHtm { get; set; }
 	}
 }
