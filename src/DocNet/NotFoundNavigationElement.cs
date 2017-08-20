@@ -42,7 +42,8 @@ namespace Docnet
 			var destinationFile = Utils.MakeAbsolutePath(config.Destination, this.GetTargetURL(navigationContext));
 
 			var htmlContent = Utils.ConvertMarkdownToHtml(markdownContent, Path.GetDirectoryName(destinationFile), config.Destination, 
-				string.Empty, new List<Heading>(), config.ConvertLocalLinks);
+				string.Empty, new List<Heading>(), config.ConvertLocalLinks, 
+				new NavigationContext(config.PathSpecification, config.UrlFormatting, config.MaxLevelInToC, config.StripIndexHtm));
 			return htmlContent;
 		}
 

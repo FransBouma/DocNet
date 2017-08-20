@@ -37,6 +37,11 @@ namespace Docnet
 				for(var i = 0; i < splitted.Length; i++)
 				{
 					var splittedValue = splitted[i];
+					if (string.Equals(splittedValue, ".") || string.Equals(splittedValue, ".."))
+					{
+						continue;
+					}
+
 					splittedValue = regEx.Replace(splittedValue, replacementValue).Replace(" ", replacementValue);
 
 					if (!string.IsNullOrEmpty(replacementValue))
