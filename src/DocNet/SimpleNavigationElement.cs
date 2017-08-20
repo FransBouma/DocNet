@@ -112,7 +112,7 @@ namespace Docnet
 			sb.Replace("{{Footer}}", activeConfig.Footer);
 			sb.Replace("{{TopicTitle}}", this.Name);
 			sb.Replace("{{Path}}", relativePathToRoot);
-			sb.Replace("{{RelativeSourceFileName}}", Utils.MakeRelativePathForUri(activeConfig.Destination, sourceFile).TrimEnd('/'));
+			sb.Replace("{{RelativeSourceFileName}}", Utils.MakeRelativePathForUri(activeConfig.Source, sourceFile).TrimEnd('/'));
 			sb.Replace("{{RelativeTargetFileName}}", Utils.MakeRelativePathForUri(activeConfig.Destination, destinationFile).TrimEnd('/'));
 			sb.Replace("{{Breadcrumbs}}", activePath.CreateBreadCrumbsHTML(relativePathToRoot, navigationContext));
 			sb.Replace("{{ToC}}", activePath.CreateToCHTML(relativePathToRoot, navigationContext));
