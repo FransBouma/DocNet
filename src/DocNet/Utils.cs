@@ -38,34 +38,70 @@ namespace Docnet
 		/// Regex expression used to parse @@include(filename.html) tag.
 		/// </summary>
 		private static Regex includeRegex = new Regex(@"@@include\((.*)\)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
-        #endregion
+		#endregion
 
-        /// <summary>
-        /// Converts the markdown to HTML.
-        /// </summary>
-        /// <param name="toConvert">The markdown string to convert.</param>
-        /// <param name="destinationDocumentPath">The document path (without the document filename).</param>
-        /// <param name="siteRoot">The site root.</param>
-        /// <param name="sourceDocumentFilename">the filename of the source markdown file</param>
-        /// <param name="createdAnchorCollector">The created anchor collector, for ToC sublinks for H2 headers.</param>
-        /// <param name="convertLocalLinks">if set to <c>true</c>, convert local links to md files to target files.</param>
-        /// <returns></returns>
-        public static string ConvertMarkdownToHtml(string toConvert, string destinationDocumentPath, string siteRoot, string sourceDocumentFilename, 
-                                                   List<Heading> createdAnchorCollector, bool convertLocalLinks)
+		/// <summary>
+		/// Converts the markdown to HTML.
+		/// </summary>
+		/// <param name="toConvert">The markdown string to convert.</param>
+		/// <param name="destinationDocumentPath">The document path (without the document filename).</param>
+		/// <param name="siteRoot">The site root.</param>
+		/// <param name="sourceDocumentFilename">the filename of the source markdown file</param>
+		/// <param name="createdAnchorCollector">The created anchor collector, for ToC sublinks for H2 headers.</param>
+		/// <param name="convertLocalLinks">if set to <c>true</c>, convert local links to md files to target files.</param>
+		/// <param name="navigationContext">The navigation context.</param>
+		/// <returns></returns>
+		public static string ConvertMarkdownToHtml(string toConvert, string destinationDocumentPath, string siteRoot, string sourceDocumentFilename,
+												   List<Heading> createdAnchorCollector, bool convertLocalLinks, NavigationContext navigationContext)
 		{
+			var localLinkProcessor = new Func<string, string>(s =>
+			{
+				var result = s;
+
+				if (!string.IsNullOrWhiteSpace(result))
+				{
+					switch (navigationContext.PathSpecification)
+					{
+						case PathSpecification.Full:
+							break;
+
+						case PathSpecification.Relative:
+							break;
+
+						case PathSpecification.RelativeAsFolder:
+							// Step 1: we need to move up 1 additional folder (get out of current subfolder)
+							var relativeAsFolderIndex = result.StartsWith("./") ? 2 : 0;
+							result = result.Insert(relativeAsFolderIndex, "../");
+							
+							// Step 2: we need an additional layer to go into (filename is now a folder)
+							result = ResolveTargetURL(result, false, navigationContext);
+
+							// Step 3: get the final url
+							result = result.GetFinalTargetUrl(navigationContext);
+							break;
+
+						default:
+							throw new ArgumentOutOfRangeException(nameof(navigationContext.PathSpecification), navigationContext.PathSpecification, null);
+					}
+				}
+
+				return result;
+			});
+
 			var parser = new MarkdownDeep.Markdown
-						 {
-							 ExtraMode = true,
-							 GitHubCodeBlocks = true,
-							 AutoHeadingIDs = true,
-							 NewWindowForExternalLinks = true,
-							 DocNetMode = true,
-						     ConvertLocalLinks = convertLocalLinks,
-                             DestinationDocumentLocation = destinationDocumentPath,
-							 DocumentRoot = siteRoot,
-                             SourceDocumentFilename = sourceDocumentFilename,
-							 HtmlClassTitledImages = "figure",
-						 };
+			{
+				ExtraMode = true,
+				GitHubCodeBlocks = true,
+				AutoHeadingIDs = true,
+				NewWindowForExternalLinks = true,
+				DocNetMode = true,
+				ConvertLocalLinks = convertLocalLinks,
+				LocalLinkProcessor = localLinkProcessor,
+				DestinationDocumentLocation = destinationDocumentPath,
+				DocumentRoot = siteRoot,
+				SourceDocumentFilename = sourceDocumentFilename,
+				HtmlClassTitledImages = "figure",
+			};
 
 			var toReturn = parser.Transform(toConvert);
 
@@ -74,6 +110,33 @@ namespace Docnet
 			return toReturn;
 		}
 
+		public static string ResolveTargetURL(string sourceFileName, bool isIndexElement, NavigationContext navigationContext)
+		{
+			var toReplace = "mdext";
+			var replacement = ".htm";
+
+			var value = sourceFileName;
+
+			// Replace with custom extension because url formatting might optimize the extension
+			value = value.Replace(".md", toReplace);
+			var targetUrl = value.ApplyUrlFormatting(navigationContext.UrlFormatting);
+
+			if (navigationContext.PathSpecification == PathSpecification.RelativeAsFolder)
+			{
+				if (!isIndexElement && !targetUrl.EndsWith($"index{toReplace}", StringComparison.InvariantCultureIgnoreCase))
+				{
+					replacement = "/index.htm";
+				}
+			}
+
+			if (targetUrl.EndsWith(toReplace, StringComparison.InvariantCultureIgnoreCase))
+			{
+				targetUrl = targetUrl.Substring(0, targetUrl.Length - toReplace.Length) + replacement;
+			}
+
+			targetUrl = targetUrl.Replace("\\", "/");
+			return targetUrl;
+		}
 
 		/// <summary>
 		/// Copies directories and files, eventually recursively. From MSDN.
@@ -85,26 +148,26 @@ namespace Docnet
 		{
 			// Get the subdirectories for the specified directory.
 			DirectoryInfo sourceFolder = new DirectoryInfo(sourceFolderName);
-			if(!sourceFolder.Exists)
+			if (!sourceFolder.Exists)
 			{
 				throw new DirectoryNotFoundException("Source directory does not exist or could not be found: " + sourceFolderName);
 			}
 
 			DirectoryInfo[] sourceFoldersToCopy = sourceFolder.GetDirectories();
 			// If the destination directory doesn't exist, create it.
-			if(!Directory.Exists(destinationFolderName))
+			if (!Directory.Exists(destinationFolderName))
 			{
 				Directory.CreateDirectory(destinationFolderName);
 			}
 
 			// Get the files in the directory and copy them to the new location.
-			foreach(FileInfo file in sourceFolder.GetFiles())
+			foreach (FileInfo file in sourceFolder.GetFiles())
 			{
 				file.CopyTo(Path.Combine(destinationFolderName, file.Name), true);
 			}
-			if(copySubFolders)
+			if (copySubFolders)
 			{
-				foreach(DirectoryInfo subFolder in sourceFoldersToCopy)
+				foreach (DirectoryInfo subFolder in sourceFoldersToCopy)
 				{
 					Utils.DirectoryCopy(subFolder.FullName, Path.Combine(destinationFolderName, subFolder.Name), copySubFolders);
 				}
@@ -121,11 +184,11 @@ namespace Docnet
 		/// <returns></returns>
 		public static string MakeAbsolutePath(string rootPath, string toMakeAbsolute)
 		{
-			if(string.IsNullOrWhiteSpace(toMakeAbsolute))
+			if (string.IsNullOrWhiteSpace(toMakeAbsolute))
 			{
 				return rootPath;
 			}
-			if(Path.IsPathRooted(toMakeAbsolute))
+			if (Path.IsPathRooted(toMakeAbsolute))
 			{
 				return toMakeAbsolute;
 			}
@@ -141,12 +204,12 @@ namespace Docnet
 		public static void CreateFoldersIfRequired(string fullPath)
 		{
 			string folderToCheck = Path.GetDirectoryName(fullPath);
-			if(string.IsNullOrWhiteSpace(folderToCheck))
+			if (string.IsNullOrWhiteSpace(folderToCheck))
 			{
 				// nothing to do, no folder to emit
 				return;
 			}
-			if(!Directory.Exists(folderToCheck))
+			if (!Directory.Exists(folderToCheck))
 			{
 				Directory.CreateDirectory(folderToCheck);
 			}
@@ -163,20 +226,20 @@ namespace Docnet
 		public static string MakeRelativePath(string fromPath, string toPath)
 		{
 			var fromPathToUse = fromPath;
-			if(string.IsNullOrEmpty(fromPathToUse))
+			if (string.IsNullOrEmpty(fromPathToUse))
 			{
 				return string.Empty;
 			}
 			var toPathToUse = toPath;
-			if(string.IsNullOrEmpty(toPathToUse))
+			if (string.IsNullOrEmpty(toPathToUse))
 			{
 				return string.Empty;
 			}
-			if(fromPathToUse.Last() != Path.DirectorySeparatorChar)
+			if (fromPathToUse.Last() != Path.DirectorySeparatorChar)
 			{
 				fromPathToUse += Path.DirectorySeparatorChar;
 			}
-			if(toPathToUse.Last() != Path.DirectorySeparatorChar)
+			if (toPathToUse.Last() != Path.DirectorySeparatorChar)
 			{
 				toPathToUse += Path.DirectorySeparatorChar;
 			}
@@ -184,7 +247,7 @@ namespace Docnet
 			var fromUri = new Uri(Uri.UnescapeDataString(Path.GetFullPath(fromPathToUse)));
 			var toUri = new Uri(Uri.UnescapeDataString(Path.GetFullPath(toPathToUse)));
 
-			if(fromUri.Scheme != toUri.Scheme)
+			if (fromUri.Scheme != toUri.Scheme)
 			{
 				// path can't be made relative.
 				return toPathToUse;
@@ -193,7 +256,7 @@ namespace Docnet
 			var relativeUri = fromUri.MakeRelativeUri(toUri);
 			string relativePath = Uri.UnescapeDataString(relativeUri.ToString());
 
-			if(toUri.Scheme.ToUpperInvariant() == "FILE")
+			if (toUri.Scheme.ToUpperInvariant() == "FILE")
 			{
 				relativePath = relativePath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
 			}
@@ -242,5 +305,5 @@ namespace Docnet
 			}
 			return content;
 		}
-    }
+	}
 }

@@ -58,24 +58,32 @@ namespace MarkdownDeep
 			{
 				HtmlTag tag = new HtmlTag("a");
 
-			    var url = this.Url;
+				var url = this.Url;
 
-			    if (m.DocNetMode && m.ConvertLocalLinks)
-			    {
-			        // A few requirements before we can convert local links:
-                    //   1. Link contains .md
-                    //   2. Link is relative
-                    //   3. Link is included in the index
-                    var index = url.LastIndexOf(".md", StringComparison.OrdinalIgnoreCase);
-			        if (index >= 0)
-			        {
-			            Uri uri;
-						if(Uri.TryCreate(url, UriKind.Relative, out uri))
+				if (m.DocNetMode && m.ConvertLocalLinks)
+				{
+					// A few requirements before we can convert local links:
+					//   1. Link contains .md
+					//   2. Link is relative
+					//   3. Link is included in the index
+					var index = url.LastIndexOf(".md", StringComparison.OrdinalIgnoreCase);
+					if (index >= 0)
+					{
+						var linkProcessor = m.LocalLinkProcessor;
+						if (linkProcessor != null)
 						{
-							url = String.Concat(url.Substring(0, index), ".htm", url.Substring(index + ".md".Length));
+							url = linkProcessor(url);
 						}
-			        }
-			    }
+						else
+						{
+							Uri uri;
+							if (Uri.TryCreate(url, UriKind.Relative, out uri))
+							{
+								url = String.Concat(url.Substring(0, index), ".htm", url.Substring(index + ".md".Length));
+							}
+						}
+					}
+				}
 
 				// encode url
 				StringBuilder sb = m.GetStringBuilder();
@@ -83,14 +91,14 @@ namespace MarkdownDeep
 				tag.attributes["href"] = sb.ToString();
 
 				// encode title
-				if (!String.IsNullOrEmpty(this.Title ))
+				if (!String.IsNullOrEmpty(this.Title))
 				{
 					sb.Length = 0;
 					Utils.SmartHtmlEncodeAmpsAndAngles(sb, this.Title);
 					tag.attributes["title"] = sb.ToString();
 				}
 
-				if(specialAttributes.Any())
+				if (specialAttributes.Any())
 				{
 					LinkDefinition.HandleSpecialAttributes(specialAttributes, sb, tag);
 				}
@@ -101,7 +109,7 @@ namespace MarkdownDeep
 				// Render the opening tag
 				tag.RenderOpening(b);
 
-				b.Append(link_text);	  // Link text already escaped by SpanFormatter
+				b.Append(link_text);      // Link text already escaped by SpanFormatter
 				b.Append("</a>");
 			}
 		}
@@ -131,7 +139,7 @@ namespace MarkdownDeep
 				Utils.SmartHtmlEncodeAmpsAndAngles(sb, Title);
 				tag.attributes["title"] = sb.ToString();
 			}
-			if(specialAttributes.Any())
+			if (specialAttributes.Any())
 			{
 				LinkDefinition.HandleSpecialAttributes(specialAttributes, sb, tag);
 			}
@@ -153,9 +161,9 @@ namespace MarkdownDeep
 		// Parse a link definition
 		internal static LinkDefinition ParseLinkDefinition(StringScanner p, bool ExtraMode)
 		{
-			int savepos=p.Position;
+			int savepos = p.Position;
 			var l = ParseLinkDefinitionInternal(p, ExtraMode);
-			if (l==null)
+			if (l == null)
 				p.Position = savepos;
 			return l;
 
@@ -181,7 +189,7 @@ namespace MarkdownDeep
 				return null;
 
 			// Parse the url and title
-			var link=ParseLinkTarget(p, id, ExtraMode);
+			var link = ParseLinkTarget(p, id, ExtraMode);
 
 			// and trailing whitespace
 			p.SkipLinespace();
@@ -236,7 +244,7 @@ namespace MarkdownDeep
 				int paren_depth = 1;
 				while (!p.Eol)
 				{
-					char ch=p.Current;
+					char ch = p.Current;
 					if (char.IsWhiteSpace(ch))
 						break;
 					if (id == null)
@@ -246,7 +254,7 @@ namespace MarkdownDeep
 						else if (ch == ')')
 						{
 							paren_depth--;
-							if (paren_depth==0)
+							if (paren_depth == 0)
 								break;
 						}
 					}
@@ -275,7 +283,7 @@ namespace MarkdownDeep
 			char delim;
 			switch (p.Current)
 			{
-				case '\'':  
+				case '\'':
 				case '\"':
 					delim = p.Current;
 					break;
@@ -349,27 +357,27 @@ namespace MarkdownDeep
 		private static void HandleSpecialAttributes(List<string> specialAttributes, StringBuilder sb, HtmlTag tag)
 		{
 			string id = specialAttributes.FirstOrDefault(s => s.StartsWith("#"));
-			if(id != null && id.Length > 1)
+			if (id != null && id.Length > 1)
 			{
 				sb.Length = 0;
 				Utils.SmartHtmlEncodeAmpsAndAngles(sb, id.Substring(1));
 				tag.attributes["id"] = sb.ToString();
 			}
 			var cssClasses = new List<string>();
-			foreach(var cssClass in specialAttributes.Where(s => s.StartsWith(".") && s.Length > 1))
+			foreach (var cssClass in specialAttributes.Where(s => s.StartsWith(".") && s.Length > 1))
 			{
 				sb.Length = 0;
 				Utils.SmartHtmlEncodeAmpsAndAngles(sb, cssClass.Substring(1));
 				cssClasses.Add(sb.ToString());
 			}
-			if(cssClasses.Any())
+			if (cssClasses.Any())
 			{
 				tag.attributes["class"] = string.Join(" ", cssClasses.ToArray());
 			}
-			foreach(var nameValuePair in specialAttributes.Where(s => s.Contains("=") && s.Length > 2 && !s.StartsWith(".") && !s.StartsWith("#")))
+			foreach (var nameValuePair in specialAttributes.Where(s => s.Contains("=") && s.Length > 2 && !s.StartsWith(".") && !s.StartsWith("#")))
 			{
 				var pair = nameValuePair.Split('=');
-				if(pair.Length == 2)
+				if (pair.Length == 2)
 				{
 					sb.Length = 0;
 					Utils.SmartHtmlEncodeAmpsAndAngles(sb, pair[0]);

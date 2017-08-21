@@ -180,7 +180,10 @@ namespace Docnet
 			searchSimpleElement.ExtraScriptProducerFunc = (e,c,n) => @"
 	<script>var base_url = '.';</script>
 	<script data-main=""js/search.js"" src=""js/require.js""></script>";
-			searchSimpleElement.GenerateOutput(this, activePath, navigationContext);
+
+			// Force custom navigation context because this should end up in the root
+			searchSimpleElement.GenerateOutput(this, activePath, new NavigationContext(PathSpecification.Full, UrlFormatting.None, 0, false));
+
 			activePath.Pop();
 		}
 

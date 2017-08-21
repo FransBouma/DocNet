@@ -72,7 +72,7 @@ namespace Docnet
 				this.MarkdownFromFile = File.ReadAllText(sourceFile, Encoding.UTF8);
 				// Check if the content contains @@include tag
 				content = Utils.IncludeProcessor(this.MarkdownFromFile, Utils.MakeAbsolutePath(activeConfig.Source, activeConfig.IncludeFolder));
-				content = Utils.ConvertMarkdownToHtml(content, Path.GetDirectoryName(destinationFile), activeConfig.Destination, sourceFile, _relativeLinksOnPage, activeConfig.ConvertLocalLinks);
+				content = Utils.ConvertMarkdownToHtml(content, Path.GetDirectoryName(destinationFile), activeConfig.Destination, sourceFile, _relativeLinksOnPage, activeConfig.ConvertLocalLinks, navigationContext);
 			}
 			else
 			{
@@ -95,7 +95,7 @@ namespace Docnet
 							sibling.GetFinalTargetUrl(navigationContext), Environment.NewLine);
 					}
 					defaultMarkdown.Append(Environment.NewLine);
-					content = Utils.ConvertMarkdownToHtml(defaultMarkdown.ToString(), Path.GetDirectoryName(destinationFile), activeConfig.Destination, string.Empty, _relativeLinksOnPage, activeConfig.ConvertLocalLinks);
+					content = Utils.ConvertMarkdownToHtml(defaultMarkdown.ToString(), Path.GetDirectoryName(destinationFile), activeConfig.Destination, string.Empty, _relativeLinksOnPage, activeConfig.ConvertLocalLinks, navigationContext);
 				}
 				else
 				{
@@ -112,7 +112,7 @@ namespace Docnet
 			sb.Replace("{{Footer}}", activeConfig.Footer);
 			sb.Replace("{{TopicTitle}}", this.Name);
 			sb.Replace("{{Path}}", relativePathToRoot);
-			sb.Replace("{{RelativeSourceFileName}}", Utils.MakeRelativePathForUri(activeConfig.Destination, sourceFile).TrimEnd('/'));
+			sb.Replace("{{RelativeSourceFileName}}", Utils.MakeRelativePathForUri(activeConfig.Source, sourceFile).TrimEnd('/'));
 			sb.Replace("{{RelativeTargetFileName}}", Utils.MakeRelativePathForUri(activeConfig.Destination, destinationFile).TrimEnd('/'));
 			sb.Replace("{{Breadcrumbs}}", activePath.CreateBreadCrumbsHTML(relativePathToRoot, navigationContext));
 			sb.Replace("{{ToC}}", activePath.CreateToCHTML(relativePathToRoot, navigationContext));
@@ -226,29 +226,7 @@ namespace Docnet
 		{
 			if (_targetURLForHTML == null)
 			{
-				var toReplace = "mdext";
-				var replacement = ".htm";
-
-				var value = (this.Value ?? string.Empty);
-
-				// Replace with custom extension because url formatting might optimize the extension
-				value = value.Replace(".md", toReplace);
-				_targetURLForHTML = value.ApplyUrlFormatting(navigationContext.UrlFormatting);
-
-				if (navigationContext.PathSpecification == PathSpecification.RelativeAsFolder)
-				{
-					if (!IsIndexElement && !_targetURLForHTML.EndsWith($"index{toReplace}", StringComparison.InvariantCultureIgnoreCase))
-					{
-						replacement = "/index.htm";
-					}
-				}
-
-				if (_targetURLForHTML.EndsWith(toReplace, StringComparison.InvariantCultureIgnoreCase))
-				{
-					_targetURLForHTML = _targetURLForHTML.Substring(0, _targetURLForHTML.Length - toReplace.Length) + replacement;
-				}
-
-				_targetURLForHTML = _targetURLForHTML.Replace("\\", "/");
+				_targetURLForHTML = Utils.ResolveTargetURL(this.Value ?? string.Empty, IsIndexElement, navigationContext);
 			}
 
 			return _targetURLForHTML;

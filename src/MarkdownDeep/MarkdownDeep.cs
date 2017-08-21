@@ -880,6 +880,14 @@ namespace MarkdownDeep
 	    /// </summary>
 	    public bool ConvertLocalLinks { get; set; }
 
+        /// <summary>
+        /// Gets or sets the local link processor allowing customization of the local links before being transformed.
+        /// </summary>
+        /// <value>
+        /// The local link processor.
+        /// </value>
+        public Func<string, string> LocalLinkProcessor { get; set; }
+
         // When set, all html block level elements automatically support
         // markdown syntax within them.  
         // (Similar to Pandoc's handling of markdown in html)
