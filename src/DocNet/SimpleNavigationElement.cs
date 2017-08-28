@@ -197,7 +197,7 @@ namespace Docnet
 			if (isCurrent && _relativeLinksOnPage.SelectMany(x => x.Children).Any(x => x.Level > 1))
 			{
 				// generate relative links
-				fragments.Add(string.Format("<ul class=\"{0}\">", this.ParentContainer.IsRoot ? "currentrelativeroot" : "currentrelative"));
+				fragments.Add("<ul class=\"currentrelative\">");
 
 				foreach (var heading in _relativeLinksOnPage)
 				{
@@ -259,7 +259,7 @@ namespace Docnet
 				if (!isHeading1)
 				{
 					stringBuilder.AppendLine("<li class=\"tocentry\">");
-					stringBuilder.AppendLine(string.Format("<ul class=\"{0}\">", this.ParentContainer.IsRoot ? "currentrelativeroot" : "currentrelative"));
+					stringBuilder.AppendLine("<ul class=\"currentrelative\">");
 				}
 
 				stringBuilder.AppendLine(childContentBuilder.ToString());
