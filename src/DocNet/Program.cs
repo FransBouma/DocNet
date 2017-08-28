@@ -88,7 +88,7 @@ namespace Docnet
 
 		private static void DisplayHeader()
 		{
-			Console.WriteLine("Docnet v{0}. (c)2016 Frans Bouma", FileVersionInfo.GetVersionInfo(typeof(Program).Assembly.Location).FileVersion);
+			Console.WriteLine("Docnet v{0}. (c)2017 Frans Bouma and contributors", FileVersionInfo.GetVersionInfo(typeof(Program).Assembly.Location).FileVersion);
 			Console.WriteLine("Get your copy at: https://github.com/FransBouma/Docnet \n");
 		}
 
