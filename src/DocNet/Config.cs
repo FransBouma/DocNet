@@ -218,6 +218,15 @@ namespace Docnet
 			}
 		}
 
+		public string StartingPageName
+		{
+			get
+			{
+				string rawName = _configData.StartingPageName;
+				return string.IsNullOrWhiteSpace(rawName) ? "Home" : rawName;
+			}
+		}
+
 		public string IncludeFolder
 		{
 			get
@@ -336,7 +345,7 @@ namespace Docnet
 				if(_pages == null)
 				{
 					JObject rawPages = _configData.Pages;
-					_pages = new NavigationLevel(Source) {Name = "Home", IsRoot = true};
+					_pages = new NavigationLevel(Source) {Name = StartingPageName, IsRoot = true};
 					_pages.Load(rawPages);
 				}
 				return _pages;
