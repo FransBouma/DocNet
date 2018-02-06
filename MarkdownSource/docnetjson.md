@@ -12,17 +12,18 @@ DocNet uses a json file to determine what to do in what form. The format is stra
     "Theme" : "themefolder",
     "SourceFoldersToCopy" : ["folder1", "foldern"],
     "Footer" : "footer text or HTML",
-    "ConvertLocalLinks: "true" | "false",
-    "PathSpecification": "Full" | "Relative" | "RelativeAsFolder",
-    "UrlFormatting": "None" | "Strip" | "Dashes",
-    "MaxLevelInToC": "3",
-    "StripIndexHtm": "true" | "false",
+    "StartingPageName" : "Home",
+    "ConvertLocalLinks" : "true" | "false",
+    "PathSpecification" : "Full" | "Relative" | "RelativeAsFolder",
+    "UrlFormatting" : "None" | "Strip" | "Dashes",
+    "MaxLevelInToC" : "3",
+    "StripIndexHtm" : "true" | "false",
     "Pages" : 
     {
         "__index" : "index.md",
-        "Title Page 1": "filename_page1.md", 
-        "Title Page 2": "filename_page2.md",
-        "Sub Header 1": 
+        "Title Page 1" : "filename_page1.md", 
+        "Title Page 2" : "filename_page2.md",
+        "Sub Header 1" : 
         {
             "__index" : "index.md",
             "Title Page 3" : "filename_page3.md",
@@ -90,6 +91,9 @@ Note that setting this value to `true` will remove the possibility to view the d
 
 ### Footer
 This is text and/or HTML which is placed in the footer of each page, using a _marker_ (see below).
+
+### StartingPageName
+This is the name used for the home/starting page, i.e. the `__index` page at the root level. The default value is "Home".
 
 ### Pages
 Contains the pages to generate into the output, in the order and structure in which you want them to appear in the navigation. The name given is the value used in the navigation tree and has to be unique per level. The value specified with each name is the markdown file to load, parse and generate as .htm file in the output. The markdown file is relative to the path specified in `Source`. A file `foo.md` will be generated as `foo.htm` in the output. 
