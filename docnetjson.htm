@@ -62,6 +62,8 @@
 
 <li class="tocentry"><a href="#footer">Footer</a></li>
 
+<li class="tocentry"><a href="#startingpagename">StartingPageName</a></li>
+
 <li class="tocentry"><a href="#pages">Pages</a></li>
 
 <li class="tocentry"><a href="#levels-without-index-defined">Levels without __index defined</a></li>
@@ -122,17 +124,18 @@
     &quot;Theme&quot; : &quot;themefolder&quot;,
     &quot;SourceFoldersToCopy&quot; : [&quot;folder1&quot;, &quot;foldern&quot;],
     &quot;Footer&quot; : &quot;footer text or HTML&quot;,
-    &quot;ConvertLocalLinks: &quot;true&quot; | &quot;false&quot;,
-    &quot;PathSpecification&quot;: &quot;Full&quot; | &quot;Relative&quot; | &quot;RelativeAsFolder&quot;,
-    &quot;UrlFormatting&quot;: &quot;None&quot; | &quot;Strip&quot; | &quot;Dashes&quot;,
-    &quot;MaxLevelInToC&quot;: &quot;3&quot;,
-    &quot;StripIndexHtm&quot;: &quot;true&quot; | &quot;false&quot;,
+    &quot;StartingPageName&quot; : &quot;Home&quot;,
+    &quot;ConvertLocalLinks&quot; : &quot;true&quot; | &quot;false&quot;,
+    &quot;PathSpecification&quot; : &quot;Full&quot; | &quot;Relative&quot; | &quot;RelativeAsFolder&quot;,
+    &quot;UrlFormatting&quot; : &quot;None&quot; | &quot;Strip&quot; | &quot;Dashes&quot;,
+    &quot;MaxLevelInToC&quot; : &quot;3&quot;,
+    &quot;StripIndexHtm&quot; : &quot;true&quot; | &quot;false&quot;,
     &quot;Pages&quot; : 
     {
         &quot;__index&quot; : &quot;index.md&quot;,
-        &quot;Title Page 1&quot;: &quot;filename_page1.md&quot;, 
-        &quot;Title Page 2&quot;: &quot;filename_page2.md&quot;,
-        &quot;Sub Header 1&quot;: 
+        &quot;Title Page 1&quot; : &quot;filename_page1.md&quot;, 
+        &quot;Title Page 2&quot; : &quot;filename_page2.md&quot;,
+        &quot;Sub Header 1&quot; : 
         {
             &quot;__index&quot; : &quot;index.md&quot;,
             &quot;Title Page 3&quot; : &quot;filename_page3.md&quot;,
@@ -181,6 +184,8 @@
 </div><div class="alert alert-warning"><span class="alert-title"><i class="fa fa-warning"></i> Important!</span><p>Note that setting this value to <code>true</code> will remove the possibility to view the docs off-line                          </p>
 </div><h3 id="footer">Footer<a class="headerlink" href="#footer" title="Permalink to this headline"><i class="fa fa-link" aria-hidden="true"></i></a></h3>
 <p>This is text and/or HTML which is placed in the footer of each page, using a <em>marker</em> (see below).</p>
+<h3 id="startingpagename">StartingPageName<a class="headerlink" href="#startingpagename" title="Permalink to this headline"><i class="fa fa-link" aria-hidden="true"></i></a></h3>
+<p>This is the name used for the home/starting page, i.e. the <code>__index</code> page at the root level. The default value is &quot;Home&quot;.</p>
 <h3 id="pages">Pages<a class="headerlink" href="#pages" title="Permalink to this headline"><i class="fa fa-link" aria-hidden="true"></i></a></h3>
 <p>Contains the pages to generate into the output, in the order and structure in which you want them to appear in the navigation. The name given is the value used in the navigation tree and has to be unique per level. The value specified with each name is the markdown file to load, parse and generate as .htm file in the output. The markdown file is relative to the path specified in <code>Source</code>. A file <code>foo.md</code> will be generated as <code>foo.htm</code> in the output. </p>
 <p>Paths are expected to use <code>\</code> characters, and as it's json, you have to escape them, so the path <code>.\foo</code> becomes <code>.\\foo</code>.</p>
