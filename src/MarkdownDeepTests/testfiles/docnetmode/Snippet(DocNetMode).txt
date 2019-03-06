@@ -2,8 +2,8 @@
 
 This is some text with a snippet.
 
-@snippet cs [..\..\AutoHeaderIDTests.cs] SetUp
+@snippet cs [c:\temp\AutoHeaderIDTests.cs] SetUp
 
-@snippet cs [..\..\AutoHeaderIDTests.cs] =WithPunctuation
+@snippet cs [c:\temp\AutoHeaderIDTests.cs] =WithPunctuation
 		
 post

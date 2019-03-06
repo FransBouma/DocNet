@@ -194,21 +194,30 @@ namespace Docnet
 										relativePathToRoot,
 										this.GetFinalTargetUrl(navigationContext),
 										this.Name));
-			if (isCurrent && _relativeLinksOnPage.SelectMany(x => x.Children).Any(x => x.Level > 1))
+			if (isCurrent && _relativeLinksOnPage.Count>0)
 			{
-				// generate relative links
-				fragments.Add("<ul class=\"currentrelative\">");
-
-				foreach (var heading in _relativeLinksOnPage)
+				bool renderHeadings = _relativeLinksOnPage.SelectMany(x => x.Children).Any(x => x.Level > 1);
+				if(!renderHeadings)
 				{
-					var content = GenerateToCFragmentForHeading(heading, navigationContext);
-					if (!string.IsNullOrWhiteSpace(content))
-					{
-						fragments.Add(content);
-					}
+					// check if there are headings of a higher level than 1 present. If so, continue and render as usual
+					renderHeadings = _relativeLinksOnPage.Any(x => x.Level > 1);
 				}
 
-				fragments.Add("</ul>");
+				if(renderHeadings)
+				{
+					// generate relative links
+					fragments.Add("<ul class=\"currentrelative\">");
+
+					foreach(var heading in _relativeLinksOnPage)
+					{
+						var content = GenerateToCFragmentForHeading(heading, navigationContext);
+						if(!string.IsNullOrWhiteSpace(content))
+						{
+							fragments.Add(content);
+						}
+					}
+					fragments.Add("</ul>");
+				}
 			}
 			else
 			{

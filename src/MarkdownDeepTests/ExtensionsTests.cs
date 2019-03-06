@@ -11,15 +11,15 @@ namespace MarkdownDeepTests
 		public void ConvertsHeadingsHierarchy()
 		{
 			var headings = new List<Heading>();
-			headings.Add(new Heading { Level = 1, Name = "1" });
-			headings.Add(new Heading { Level = 2, Name = "1.1" });
-			headings.Add(new Heading { Level = 3, Name = "1.1.1" });
-			headings.Add(new Heading { Level = 2, Name = "1.2" });
-			headings.Add(new Heading { Level = 4, Name = "1.2.1.1" });
-			headings.Add(new Heading { Level = 2, Name = "1.3" });
-			headings.Add(new Heading { Level = 1, Name = "2" });
-			headings.Add(new Heading { Level = 3, Name = "2.1.1" });
-			headings.Add(new Heading { Level = 2, Name = "2.2" });
+			headings.Add(new Heading {Level = 1, Name = "1"});
+			headings.Add(new Heading {Level = 2, Name = "1.1"});
+			headings.Add(new Heading {Level = 3, Name = "1.1.1"});
+			headings.Add(new Heading {Level = 2, Name = "1.2"});
+			headings.Add(new Heading {Level = 4, Name = "1.2.1.1"});
+			headings.Add(new Heading {Level = 2, Name = "1.3"});
+			headings.Add(new Heading {Level = 1, Name = "2"});
+			headings.Add(new Heading {Level = 3, Name = "2.1.1"});
+			headings.Add(new Heading {Level = 2, Name = "2.2"});
 
 			var hierarchy = headings.ConvertToHierarchy();
 

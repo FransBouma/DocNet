@@ -4,6 +4,12 @@ namespace MarkdownDeep
 {
 	public static class Extensions
 	{
+		/// <summary>
+		/// Converts the set of headings in a hierarchy, where a heading of level n contains the headings of leven n+1 etc.
+		/// </summary>
+		/// <param name="headings"></param>
+		/// <returns></returns>
+		/// <remarks>If there's no root found, the returning set will be the same as the one passed in.</remarks>
 		public static List<Heading> ConvertToHierarchy(this List<Heading> headings)
 		{
 			var hierarchy = new List<Heading>();
@@ -32,7 +38,6 @@ namespace MarkdownDeep
 					hierarchy.Add(headings[i]);
 				}
 			}
-
 			return hierarchy;
 		}
 
