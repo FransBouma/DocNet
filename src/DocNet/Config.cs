@@ -275,13 +275,24 @@ namespace Docnet
 			{
 				if(string.IsNullOrWhiteSpace(_themeFolder))
 				{
-					var exeRawFolderUri = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().CodeBase);
-					if(exeRawFolderUri == null)
+					string rawThemeFolder = _configData.ThemeFolder;
+					if(string.IsNullOrWhiteSpace(rawThemeFolder))
 					{
-						return string.Empty;	// will end up as an error as themes now aren't found.
+						// not specified, assume local theme folder.
+						var exeRawFolderUri = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().CodeBase);
+						if(exeRawFolderUri == null)
+						{
+							return string.Empty; // will end up as an error as themes now aren't found.
+						}
+
+						var exeFolder = new Uri(exeRawFolderUri).LocalPath;
+						rawThemeFolder = Path.Combine(exeFolder, "Themes");
 					}
-					var exeFolder = new Uri(exeRawFolderUri).LocalPath;
-					_themeFolder = Path.Combine(Path.Combine(exeFolder, "Themes"), this.ThemeName);
+					else
+					{
+						rawThemeFolder = Utils.MakeAbsolutePath(_configFileSourcePath, (string)_configData.ThemeFolder) ?? ".";
+					}
+					_themeFolder = Path.Combine(rawThemeFolder, this.ThemeName);
 				}
 				return _themeFolder;
 			}
