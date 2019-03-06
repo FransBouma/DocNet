@@ -48,6 +48,8 @@
 
 <li class="tocentry"><a href="#theme">Theme</a></li>
 
+<li class="tocentry"><a href="#themefolder">ThemeFolder</a></li>
+
 <li class="tocentry"><a href="#sourcefolderstocopy">SourceFoldersToCopy</a></li>
 
 <li class="tocentry"><a href="#convertlocallinks">ConvertLocalLinks</a></li>
@@ -121,7 +123,8 @@
     &quot;Source&quot; : &quot;sourcefolder&quot;,
     &quot;Destination&quot; : &quot;destinationfolder&quot;,
     &quot;IncludeSource&quot;: &quot;includefolder&quot;,
-    &quot;Theme&quot; : &quot;themefolder&quot;,
+    &quot;Theme&quot; : &quot;themename&quot;,
+    &quot;ThemeFolder&quot; : &quot;themefolder&quot;,
     &quot;SourceFoldersToCopy&quot; : [&quot;folder1&quot;, &quot;foldern&quot;],
     &quot;Footer&quot; : &quot;footer text or HTML&quot;,
     &quot;StartingPageName&quot; : &quot;Home&quot;,
@@ -156,7 +159,10 @@
 <h3 id="includesource">IncludeSource<a class="headerlink" href="#includesource" title="Permalink to this headline"><i class="fa fa-link" aria-hidden="true"></i></a></h3>
 <p>Specifies the folder where the files specified to be included using <a href="markdownextensions.htm#include-files">@@include directives</a> are located. If <code>IncludeSource</code> isn't specified, the value <code>Includes</code> is assumed. </p>
 <h3 id="theme">Theme<a class="headerlink" href="#theme" title="Permalink to this headline"><i class="fa fa-link" aria-hidden="true"></i></a></h3>
-<p>Specifies the folder within the <code>Themes</code> folder in the folder the <code>docnet</code> executable is located which is used as the theme for the pages to generate. <code>Docnet</code> expects a file called <code>PageTemplate.htm</code> within the specified <code>Theme</code> folder, which contains the HTML which is used as the wrapper file for the HTML generated from the markdown. It has to contain a couple of marker, which are described later in this document. If <code>Theme</code> isn't specified, <code>Default</code> is assumed.</p>
+<p>Specifies the name of the theme to use which is a folder within the <code>Themes</code> folder in the folder the <code>docnet</code> executable is located which is used as the theme for the pages to generate. <code>Docnet</code> expects a file called <code>PageTemplate.htm</code> within the specified <code>Theme</code> folder, which contains the HTML which is used as the wrapper file for the HTML generated from the markdown. It has to contain a couple of marker, which are described later in this document. If <code>Theme</code> isn't specified, <code>Default</code> is assumed.</p>
+<p>If <code>ThemeFolder</code> is specified, the theme is looked up in that folder.</p>
+<h3 id="themefolder">ThemeFolder<a class="headerlink" href="#themefolder" title="Permalink to this headline"><i class="fa fa-link" aria-hidden="true"></i></a></h3>
+<p>Optional folder specification of the folder which contains the theme specified in <code>Theme</code>. If not specified, the <code>Themes</code> folder of the docnet executable is used. </p>
 <h3 id="sourcefolderstocopy">SourceFoldersToCopy<a class="headerlink" href="#sourcefolderstocopy" title="Permalink to this headline"><i class="fa fa-link" aria-hidden="true"></i></a></h3>
 <p>This is an optional directive with, if specified, one or more folder names relative to <code>Source</code>, which contain files to copy to the <code>Destination</code> folder. E.g. image files used in the markdown files, located in an <code>Images</code> folder can be copied this way to the output folder reliably. All folders specified are copied recursively.</p>
 <h3 id="convertlocallinks">ConvertLocalLinks<a class="headerlink" href="#convertlocallinks" title="Permalink to this headline"><i class="fa fa-link" aria-hidden="true"></i></a></h3>

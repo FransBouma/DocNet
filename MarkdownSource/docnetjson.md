@@ -9,7 +9,8 @@ DocNet uses a json file to determine what to do in what form. The format is stra
     "Source" : "sourcefolder",
     "Destination" : "destinationfolder",
     "IncludeSource": "includefolder",
-    "Theme" : "themefolder",
+    "Theme" : "themename",
+	"ThemeFolder" : "themefolder",
     "SourceFoldersToCopy" : ["folder1", "foldern"],
     "Footer" : "footer text or HTML",
     "StartingPageName" : "Home",
@@ -49,7 +50,12 @@ Specifies the folder where the output will be written to (.htm files). The outpu
 Specifies the folder where the files specified to be included using [@@include directives](markdownextensions.htm#include-files) are located. If `IncludeSource` isn't specified, the value `Includes` is assumed. 
 
 ### Theme
-Specifies the folder within the `Themes` folder in the folder the `docnet` executable is located which is used as the theme for the pages to generate. `Docnet` expects a file called `PageTemplate.htm` within the specified `Theme` folder, which contains the HTML which is used as the wrapper file for the HTML generated from the markdown. It has to contain a couple of marker, which are described later in this document. If `Theme` isn't specified, `Default` is assumed.
+Specifies the name of the theme to use which is a folder within the `Themes` folder in the folder the `docnet` executable is located which is used as the theme for the pages to generate. `Docnet` expects a file called `PageTemplate.htm` within the specified `Theme` folder, which contains the HTML which is used as the wrapper file for the HTML generated from the markdown. It has to contain a couple of marker, which are described later in this document. If `Theme` isn't specified, `Default` is assumed.
+
+If `ThemeFolder` is specified, the theme is looked up in that folder.
+
+### ThemeFolder
+Optional folder specification of the folder which contains the theme specified in `Theme`. If not specified, the `Themes` folder of the docnet executable is used. 
 
 ### SourceFoldersToCopy
 This is an optional directive with, if specified, one or more folder names relative to `Source`, which contain files to copy to the `Destination` folder. E.g. image files used in the markdown files, located in an `Images` folder can be copied this way to the output folder reliably. All folders specified are copied recursively.
