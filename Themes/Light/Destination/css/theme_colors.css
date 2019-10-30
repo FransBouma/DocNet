@@ -299,10 +299,6 @@ mark {
 }
 
 @media screen and (min-width: 1400px) {
-	.nav-content-wrap {
-		background: rgba(0,0,0,0.05);
-	}
-
 	.nav-content {
 		background: #fcfcfc;
 	}
