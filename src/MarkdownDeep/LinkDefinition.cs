@@ -74,13 +74,9 @@ namespace MarkdownDeep
 						{
 							url = linkProcessor(url);
 						}
-						else
+						if (Uri.TryCreate(url, UriKind.Relative, out var uri))
 						{
-							Uri uri;
-							if (Uri.TryCreate(url, UriKind.Relative, out uri))
-							{
-								url = String.Concat(url.Substring(0, index), ".htm", url.Substring(index + ".md".Length));
-							}
+							url = String.Concat(url.Substring(0, index), ".htm", url.Substring(index + ".md".Length));
 						}
 					}
 				}
