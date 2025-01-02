@@ -12,11 +12,29 @@ this is a @fa-arrow-right right arrow!
 
    @fa-arrow-right	@fa-arrow-right
 
+@fasolid-arrow-right
+
+ @fasolid-arrow-right
+
+   @fasolid-arrow-right
+
+   @fasolid-arrow-right	@fasolid-arrow-right
+
+a @fasolid-arrow-right
+
 @fa-github
 
  @fa-github
   @fa-github
 
 a @fa-github
+
+@fabrands-github
+
+ @fabrands-github
+  @fabrands-github
+
+a @fabrands-github
+
 		
 post

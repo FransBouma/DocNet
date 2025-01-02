@@ -562,12 +562,11 @@ namespace MarkdownDeep
 			var scanner = new StringScanner(str, currentPos);
 			// skip '@'
 			scanner.SkipForward(1);
-			if(!scanner.DoesMatch("fa-"))
+			if(!MatchAnyAndSkip(scanner, new List<string>() { "fa-", "fabrands-", "fasolid-" }))
 			{
-				// not a font awesome specification
+				// nothing matches
 				return false;
 			}
-			scanner.SkipForward(3);
 			iconName = string.Empty;
 			if(!scanner.SkipIdentifier(ref iconName, dashIsValidChar:true))
 			{
@@ -580,6 +579,34 @@ namespace MarkdownDeep
 			}
 			// matched a fontawesome specification
 			newPos = scanner.Position;
+			return true;
+		}
+
+
+		/// <summary>
+		/// Tries to match any of the strings passed in at the current scanner position. If matched it'll skip the matched string on the scanner and return true,
+		/// otherwise it won't skip and false
+		/// </summary>
+		/// <param name="scanner"></param>
+		/// <param name="toMatch"></param>
+		/// <returns></returns>
+		private static bool MatchAnyAndSkip(StringScanner scanner, List<string> toMatch)
+		{
+			int toSkip = 0;
+			foreach(string s in toMatch)
+			{
+				if(scanner.DoesMatch(s))
+				{
+					toSkip = s.Length;
+					break;
+				}
+			}
+
+			if(toSkip == 0)
+			{
+				return false;
+			}
+			scanner.SkipForward(toSkip);
 			return true;
 		}
 	}

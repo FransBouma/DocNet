@@ -267,6 +267,18 @@ namespace MarkdownDeep
 						sb.Append(str, t.startOffset, t.length);
 						sb.Append("\"></i>");
 						break;
+					
+					case TokenType.font_awesome_brands:
+						sb.Append("<i class=\"fa-brands fa-");
+						sb.Append(str, t.startOffset, t.length);
+						sb.Append("\"></i>");
+						break;
+
+					case TokenType.font_awesome_solid:
+						sb.Append("<i class=\"fa-solid fa-");
+						sb.Append(str, t.startOffset, t.length);
+						sb.Append("\"></i>");
+						break;
 				}
 
 				FreeToken(t);
@@ -486,6 +498,30 @@ namespace MarkdownDeep
 								{
 									// token should be just the iconname, so adjust position specification to that.
 									token = CreateToken(TokenType.font_awesome, newPosition - iconName.Length, iconName.Length);
+									this.Position = newPosition;
+								}
+							}
+							if(this.DoesMatch("@fabrands-"))
+							{
+								// expect FontAwesome brands v6.
+								string iconName = string.Empty;
+								int newPosition = 0;
+								if(Utils.SkipFontAwesome(this.Input, this.Position, out newPosition, out iconName))
+								{
+									// token should be just the iconname, so adjust position specification to that.
+									token = CreateToken(TokenType.font_awesome_brands, newPosition - iconName.Length, iconName.Length);
+									this.Position = newPosition;
+								}
+							}
+							if(this.DoesMatch("@fasolid-"))
+							{
+								// expect FontAwesome solid v6.
+								string iconName = string.Empty;
+								int newPosition = 0;
+								if(Utils.SkipFontAwesome(this.Input, this.Position, out newPosition, out iconName))
+								{
+									// token should be just the iconname, so adjust position specification to that.
+									token = CreateToken(TokenType.font_awesome_solid, newPosition - iconName.Length, iconName.Length);
 									this.Position = newPosition;
 								}
 							}

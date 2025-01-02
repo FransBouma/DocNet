@@ -55,6 +55,8 @@ namespace MarkdownDeep
 
 		// DocNet Extensions
 		font_awesome,	// <i class="fa fa-name"></i>
+		font_awesome_brands,	// <i class="fa-brands fa-name"></i>
+		font_awesome_solid,		// <i class="fa-solid fa-name"></i>
 	}
 
 	// Token

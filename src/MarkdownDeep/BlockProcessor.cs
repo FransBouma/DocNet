@@ -1271,7 +1271,15 @@ namespace MarkdownDeep
 			var initialStart = this.Position;
 			if(DoesMatch("@fa-"))
 			{
-				return HandleFontAwesomeExtension(b);
+				return HandleFontAwesomeExtension(b, BlockType.font_awesome);
+			}
+			if(DoesMatch("@fabrands-"))
+			{
+				return HandleFontAwesomeExtension(b, BlockType.font_awesome_brands);
+			}
+			if(DoesMatch("@fasolid-"))
+			{
+				return HandleFontAwesomeExtension(b, BlockType.font_awesome_solid);
 			}
 			// first match @tabs, and then @tab, as both are handled by this processor.
 			if(DoesMatch("@tabs"))
@@ -1553,7 +1561,7 @@ namespace MarkdownDeep
         /// </summary>
         /// <param name="b">The b.</param>
         /// <returns></returns>
-        private bool HandleFontAwesomeExtension(Block b)
+        private bool HandleFontAwesomeExtension(Block b, BlockType typeofBlock = BlockType.font_awesome)
 		{
 			string iconName = string.Empty;
 			int newPosition = this.Position;
@@ -1562,7 +1570,7 @@ namespace MarkdownDeep
 				return false;
 			}
 			this.Position = newPosition;
-			b.BlockType = BlockType.font_awesome;
+			b.BlockType = typeofBlock;
 			b.Data = iconName;
 			return true;
 		}

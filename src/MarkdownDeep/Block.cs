@@ -61,6 +61,8 @@ namespace MarkdownDeep
 		alert,			// Data is the alert type specified.
 		tab,			// Data is the tab header text.
 		tabs,			// children are the tabs.
+		font_awesome_brands,		// data is icon name
+		font_awesome_solid,		// data is icon name
 	}
 
 	class Block
@@ -391,6 +393,22 @@ namespace MarkdownDeep
 					if(m.DocNetMode)
 					{
 						b.Append("<i class=\"fa fa-");
+						b.Append(this.Data as string ?? string.Empty);
+						b.Append("\"></i>");
+					}
+					break;
+				case BlockType.font_awesome_brands:
+					if(m.DocNetMode)
+					{
+						b.Append("<i class=\"fa-brands fa-");
+						b.Append(this.Data as string ?? string.Empty);
+						b.Append("\"></i>");
+					}
+					break;
+				case BlockType.font_awesome_solid:
+					if(m.DocNetMode)
+					{
+						b.Append("<i class=\"fa-solid fa-");
 						b.Append(this.Data as string ?? string.Empty);
 						b.Append("\"></i>");
 					}
