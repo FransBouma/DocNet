@@ -79,9 +79,12 @@ This is a tip! It will be displayed in a tip alert box!
 @end
 
 ## Font Awesome icons
-To specify a font-awesome icon, use `@fa-iconname`, where _iconname_ is the name of the font-awesome icon.
+To specify a font-awesome v4 icon, use `@fa-iconname`, where _iconname_ is the name of the font-awesome icon.
 
 Example: To specify the font awesome icon for GitHub, use `@fa-github`, which will result in: @fa-github
+
+To use font-awesome v6, you have to use either `@fabrands-iconname` or `@fasolid-iconname` and adjust the template html to include
+v6 fontawesome assets. 
 
 ## Tabs
 It's very easy with `Docnet` to add a tab control with one or more tabs to the HTML with a simple set of markdown statements. The tab statements are converted into pure CSS3/HTML tabs, based on the work of [Joseph Fusco](http://codepen.io/fusco/pen/Wvzjrm).

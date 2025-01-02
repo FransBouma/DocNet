@@ -134,8 +134,10 @@ This is a tip! It will be displayed in a tip alert box!
 </pre><p>Results in</p>
 <div class="alert alert-tip"><span class="alert-title"><i class="fa fa-info-circle"></i> Tip</span><p>This is a tip! It will be displayed in a tip alert box!</p>
 </div><h2 id="font-awesome-icons">Font Awesome icons<a class="headerlink" href="#font-awesome-icons" title="Permalink to this headline"><i class="fa fa-link" aria-hidden="true"></i></a></h2>
-<p>To specify a font-awesome icon, use <code>@fa-iconname</code>, where <em>iconname</em> is the name of the font-awesome icon.</p>
+<p>To specify a font-awesome v4 icon, use <code>@fa-iconname</code>, where <em>iconname</em> is the name of the font-awesome icon.</p>
 <p>Example: To specify the font awesome icon for GitHub, use <code>@fa-github</code>, which will result in: <i class="fa fa-github"></i></p>
+<p>To use font-awesome v6, you have to use either <code>@fabrands-iconname</code> or <code>@fasolid-iconname</code> and adjust the template html to include
+v6 fontawesome assets. </p>
 <h2 id="tabs">Tabs<a class="headerlink" href="#tabs" title="Permalink to this headline"><i class="fa fa-link" aria-hidden="true"></i></a></h2>
 <p>It's very easy with <code>Docnet</code> to add a tab control with one or more tabs to the HTML with a simple set of markdown statements. The tab statements are converted into pure CSS3/HTML tabs, based on the work of <a href="http://codepen.io/fusco/pen/Wvzjrm" target="_blank">Joseph Fusco</a>.</p>
 <p>To start a Tab control, start with <code>@tabs</code> and end the tabs definition with <code>@endtabs</code>. Between those two statements, which each need to be suffixed with a newline, you define one or more tabs using <code>@tab</code> followed by the label text for that tab, followed by a newline. End your tab contents with <code>@end</code>.</p>
